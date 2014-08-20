@@ -82,6 +82,25 @@ class NCountSimul:
     
     return header, sim
     
+class ChooseParamsInput(object):
+    params=None
+    keys=None
+    keys_values=None
+    keys_cov=None
+    keys_bounds=None
+    sdata=None
+    sdata_weights=None
+    prior_dist=None
+    
+    def set_de(self):
+       if "Om" in self.keys:
+         self.params["OL"]=1.-self.params["Om"]-self.params["Ob"]
+    
+    def update_keys(self,x):
+       for i in xrange( len( self.keys ) ):
+          self.params[ self.keys[ i ] ]=x[ i ]
+      
+    
 def summary_quantile( data, mass_bin, q_list ):
     #Summary statistics by as the quantiles in q_list.
     #Calculates the quantiles for a distribution of redshift for observed masses above a mass threshold given by mass_bin.
@@ -162,28 +181,26 @@ def choose_par( hyper_par, hyper_par_cov, bounds,dist ):
         w_try  -> float: equation of state parameter
         sig8_try -> float: sigma8
     """
-    size=len(hyper_par)
+    Nparams=len(hyper_par)
     
    # U,S,V=linalg.svd(hyper_par_cov)
     
    # new_mean=numpy.dot(numpy.transpose(U),hyper_par)
     
 
-    flag=numpy.array([ False for i in xrange(size) ])
+    flag = numpy.array([ False for i in xrange( Nparams ) ])
     
+    print "***********************************"
     while (flag.all() == False ):
-    
- 
-        
-        if dist == 'normal':
-           # y=numpy.random.multivariate_normal(new_mean,numpy.diag(S))
-            
-           # params=numpy.dot(U,y)
-            params=numpy.random.multivariate_normal(hyper_par,hyper_par_cov)
-            
-            flag=((params>=bounds[0]) & (params<=bounds[1]))
-
-    return params
+          L = numpy.linalg.cholesky( hyper_par_cov )
+          norm = numpy.random.normal(size=1*Nparams).reshape(Nparams, 1)
+          params =numpy.array( hyper_par) + numpy.dot(L, norm).reshape(1,Nparams)
+          #print norm,hyper_par,params
+          flag=((params[0]>=bounds[0]) & (params[0]<=bounds[1]))
+         # print params,flag
+    #print "***********************************"
+    #print "generated parameters=", numpy.array( params[0] )
+    return numpy.array(params[0])
     
 
 
@@ -235,8 +252,13 @@ def set_distances( summary_fid, mass_bin, quantile_list, zmin, zmax, area, ncoun
         return difference
 
 
+def weighted_values(values, probabilities, size):
+    bins = numpy.cumsum(probabilities)
+    return values[numpy.digitize(numpy.random.random_sample(size), bins)]
+    
+    
 
-def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, CP, keys, hyper_par_cov, bounds,dist, zmin, zmax, area, ncount1, seed ):
+def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, CP, zmin, zmax, area, ncount, seed ):
     """
     Select model parameters surviving summary statistics distance threshold.
 
@@ -277,51 +299,109 @@ def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, C
                  [[ redshift, mass]]
     """
 
-    #list to store results
     
     
-    hyper_par = numpy.array([CP[iten] for iten in keys])
+    Nparams=len(CP.keys)
     
+    if ( CP.sdata is None ):
+       
+       flag = True 
+       
+       par_mean = CP.keys_values[:]
+       
+       par_surv = par_mean[:]
+       
+       par_cov =  CP.keys_cov[:] 
+      
+    else:
+       
+       flag = False 
+       
+       par_mean = CP.sdata[:,:Nparams].mean(axis=0) # compute the mean of the previous data
+       
+       par_surv = CP.sdata[:,:Nparams]-par_mean[:]  # center previous data
+       
+    #   print "###################"
+    #   print par_surv
+    #   print "###################"
+       
+       weights = CP.sdata_weights[:]
+       
+       par_cov = 2*numpy.dot( numpy.transpose( par_surv ), numpy.dot( numpy.diag( weights ) , par_surv ) ) # compute new covariance matrix
+       
+       print par_cov
+
+   # 2*numpy.dot( numpy.transpose( par_surv[:,:Nparams] ),numpy.dot( numpy.diag( weights ) , par_surv[:,:Nparams] ) )
+
+    bounds = CP.keys_bounds[:]
+
+    indx_list= []
     
     result = []
-    data_all = []
-
-    while len( result ) < n_tries :
-
-        print 'tries = ' + str( len( result ) )
-
-        #choose model parameters
-        par_list = list( choose_par( hyper_par,hyper_par_cov,bounds, dist )  )
-        
-        for i in xrange( len( keys ) ):
-           CP[keys[i]]=par_list[i]
-
-        if "Om" in keys:
-           CP["OL"]=1-CP["Om"]
-        
-        print par_list
-
-        #calculate summary statistics distance to fiducial data  
-        d = set_distances( summary_fid, mass_bin, quantile_list,  zmin, zmax, area, ncount1, seed, CP  )
-        d1 = sum( d )
-
-        if d1 <=  tolerance:
-
-            
-            print '        dist = ' + str( d1 )
-
-            #add distance to parameter list
-            par_list.append( d1 )
-
-            #append parameters if tolerance is satisfied
-            result.append( par_list  )
     
-    return numpy.array(result)
+    par_list = []
+        
+    for k in xrange( n_tries ) : 
+     
+        d1 = 10*tolerance
+       # print "d1=",d1,"tolerance=",tolerance
+        while ( d1 >= tolerance ):
+        
+        
+           #########################################################
+           #draw from a multivariate normal distribution
 
+           if ( flag == True ):
+              
+              indx=numpy.array( [ 0 ] )
+              
+              new_par = choose_par( par_surv, par_cov, bounds, CP.prior_dist ) 
+           
+           else:
+              
+              #choose one of the instances of simulation set
+              indx = weighted_values(range( n_tries ), weights,1)
+              print "Choosed iten=",indx,CP.sdata[indx,:Nparams]
+              new_par = choose_par( CP.sdata[indx,:Nparams], par_cov, bounds, CP.prior_dist ) 
+           
+           #print new_par
+           
+           CP.update_keys( new_par ) # update dictionary with containing the cosmological parameters
+        
+           CP.set_de()  # update OL key
+        
+           #print CP.params
+           
+           d = set_distances( summary_fid, mass_bin, quantile_list, zmin, zmax, area, ncount, seed, CP.params  )
+           d1 = sum( d )
+           print 'tries = ' + str( k )
+           
+           if ( d1 <=  tolerance ):
 
-def weighted_values(values, probabilities, size):
-    bins = numpy.cumsum(probabilities)
-    return values[numpy.digitize(numpy.random.random_sample(size), bins)]
+                    indx_list.append( indx )
+                    
+                    print '        dist = ' + str( d1 ) + ', epsilon = ' + str( tolerance )
+
+                    result = list( new_par ) + [ d1 ]
+                    print "Accpeted point:", result
+
+                    #add distance to parameter list
+                    par_list.append( result )
+
+                ###############################################################
+ 
+     
+     
+    del par_surv
+    del new_par
+    del par_mean
+    del d1
+    del flag
+    del bounds
+       
+   
+    return numpy.array( par_list ),numpy.array( indx_list ),par_cov
+
 
 
 def norm_pdf_multivariate(x, mu, sigma):
