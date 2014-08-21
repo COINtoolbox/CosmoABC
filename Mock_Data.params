@@ -1,0 +1,13 @@
+Parameters used
+zmin=0.300
+zmax=1.320
+H0=71.15
+Omega_baryons=0.044
+Omega_matter=0.262
+Tgamma0=2.725
+zmin=0.970
+sigma8=0.807
+w=-1.010
+
+Mass bins
+1.9953e+14	3.1623e+14	5.0119e+14	7.9433e+14	1.2589e+15	1.9953e+15	3.1623e+15	5.0119e+15	
