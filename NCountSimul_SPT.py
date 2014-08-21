@@ -43,16 +43,17 @@ class NCountSimul:
     del cluster_z
     del cluster_m
 
-  def simulation (self, z_max, H0, Omegab, Omegam, OmegaL, Tgamma0, ns, sigma8, w):
-    self.cosmo.props.H0      = H0
-    self.cosmo.props.Omegab  = Omegab
-    self.cosmo.props.Omegac  = Omegam
-    self.cosmo.props.Omegax  = OmegaL
-    self.cosmo.props.Tgamma0 = Tgamma0
-    self.cosmo.props.ns      = ns
-    self.cosmo.props.sigma8  = sigma8
-    self.cosmo.props.w       = w
+  def simulation (self, z_max, seed, CP):
+    self.cosmo.props.H0      = CP["H0"]
+    self.cosmo.props.Omegab  = CP["Ob"]
+    self.cosmo.props.Omegac  = CP["Om"]
+    self.cosmo.props.Omegax  = CP["OL"]
+    self.cosmo.props.Tgamma0 = CP["Tgamma"]
+    self.cosmo.props.ns      = CP["ns"]
+    self.cosmo.props.sigma8  = CP["sigma8"]
+    self.cosmo.props.w       = CP["w"]        
 
+    Ncm.RNG.set_seed ( self.rng , seed )
     self.ncdata.resample (self.mset, self.rng)
 
     lnM_true = self.ncdata.get_lnM_true ()
@@ -133,6 +134,23 @@ def summary_quantile( data, mass_bin, q_list ):
 
     return res, pop
 
+class ChooseParamsInput(object):
+    params=None
+    keys=None
+    keys_values=None
+    keys_cov=None
+    keys_bounds=None
+    sdata=None
+    sdata_weights=None
+    prior_dist=None
+    
+    def set_de(self):
+       if "Om" in self.keys:
+         self.params["OL"]=1.-self.params["Om"]-self.params["Ob"]
+    
+    def update_keys(self,x):
+       for i in xrange( len( self.keys ) ):
+          self.params[ self.keys[ i ] ]=x[ i ]
 
 
 def deviation_quantile( summary_fid, summary_sim ):

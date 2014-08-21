@@ -12,7 +12,7 @@ import numpy
 import random 
 import os 
 
-from NCountSimul_true_mass_nw_v4 import *
+
 
 import pylab as plt
 
@@ -32,7 +32,10 @@ w = -1.01                #Dark energy equation of state
 
 #mass bin
 #dm = [5*10**13, 10**14, 10**14.25, 10**14.5, 10**14.75,  10**15, 10**15.25,  10**15.5, 10**15.75 ]
-dm = [10**14.3, 10**14.5, 10**14.7,  10**14.9, 10**15.1, 10**15.3,  10**15.5, 10**15.7 ]
+dm_choose = [10**14.3, 10**14.5, 10**14.7,  10**14.9, 10**15.1, 10**15.3,  10**15.5, 10**15.7 ]
+
+mass_min = 10**14.3
+mass_max = 10**16
 
 #quantile list
 quant_list = [ 0.02, 0.09, 0.25, 0.5, 0.75, 0.91, 0.98]
@@ -56,9 +59,11 @@ epsilon_ini = [1e20, 1e20]		#Starting tolerance
 
 seed = 100  # seed for ncount
 
+observable = 'SZ'
+
 ##############################################################
 
-path1="teste_3p_NO_weight_dist"
+path1="/home/emille/Dropbox/WGC/ABC/github/covariance_arlindo/teste_SZ"
 
 
 
@@ -66,6 +71,11 @@ path1="teste_3p_NO_weight_dist"
 if not os.path.exists( path1 ):
     os.makedirs( path1 )
     
+
+if observable == 'true_mass':
+    from NCountSimul_true_mass_nw_v4 import *
+else:
+    from NCountSimul_SPT import *
     
     
 CosmoParams=ChooseParamsInput()
@@ -85,7 +95,6 @@ CosmoParams.keys_bounds=numpy.array( [ [0.0 , -3.0, 0.3 ] , [1.0-Omegab, 0.0, 1.
 #CosmoParams.keys=["Om"]
 
 #CosmoParams.keys_values=numpy.array( [  0.25  ] )
-
 #CosmoParams.keys_cov=numpy.diag( [ 0.5  ] )**2.
 
 #CosmoParams.keys_bounds=numpy.array( [ [0.0  ] , [1.0-Omegab] ] )
@@ -98,20 +107,25 @@ Nparams=len( CosmoParams.keys )
 
 epsilon = [ ]
 
+if observable == 'true_mass':
+    dm = dm_choose
+else:
+    dm = mquantiles( data_fid[:,1], prob=quant_list[1:-1] )
+
 
 for ii in xrange(time_steps):
     print ii
     if (ii==0):
     
         #new simulation object
-        ncount = NCountSimul (zmin, zmax, log ( dm[0] ), log ( 10**16 ), area )
+        ncount = NCountSimul (zmin, zmax, log ( mass_min ), log ( mass_max ), area )
+  
 
         #Generate fiducial data
         data_fid = numpy.array( ncount.simulation( zmax, seed, CosmoParams.params)[1] )
 
         #keep number of fiducial data set
         nobjs_fid = len( data_fid )
-
 
         #Calculate summary statistics for fiducial data
         summ_fid = summary_quantile( data_fid, dm, quant_list )
