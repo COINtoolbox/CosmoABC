@@ -41,13 +41,13 @@ area = 2500
 
 time_steps =10 # number of time steps to take
 
-Ninit=1000 # initial number of samples 
+Ninit=1500 # initial number of samples 
 
-N=250      # particle sample size after the first iteration
+N=800 #particle sample size after the first iteration
 
 seed=100
 
-path1="teste_3p_NO_weight_dist"
+path1="/home/emille/Dropbox/WGC/ABC/final_sim/loose_seed/teste_3p"
 
 
 

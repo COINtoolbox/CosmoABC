@@ -56,7 +56,7 @@ class NCountSimul:
     self.cosmo.props.sigma8  = CP["sigma8"]
     self.cosmo.props.w       = CP["w"]
     
-    Ncm.RNG.set_seed ( self.rng , seed )
+    #Ncm.RNG.set_seed ( self.rng , seed )
     self.ncdata.resample (self.mset, self.rng)
 
     lnM_true = self.ncdata.get_lnM_true ()
