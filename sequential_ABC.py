@@ -16,7 +16,6 @@ from NCountSimul_true_mass_nw_v4 import *
 
 import pylab as plt
 
-#make random changes
 
 ############################################################
 ### Fiducial Cosmological parameters: ref. arXiv:1203.5775 (table 5. wCDM CMB+BAO+H0+SNeIa+SPTcl), Tgamma0 and ns are not given.
