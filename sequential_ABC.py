@@ -63,7 +63,7 @@ observable = 'SZ'
 
 ##############################################################
 
-path1="/home/emille/Dropbox/WGC/ABC/github/covariance_arlindo/teste_SZ"
+path1="/home/emille/Dropbox/WGC/ABC/github/covariance_arlindo/teste_SZ/"
 
 
 
