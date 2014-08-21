@@ -12,9 +12,14 @@ import numpy
 import random 
 import os 
 
-from NCountSimul_true_mass_nw_v4 import *
+from NCountSimul_true_mass_nw  import *
 
 import pylab as plt
+
+################################################################
+
+
+
 
 #make random changes
 
@@ -23,46 +28,49 @@ import pylab as plt
 
 zmin = 0.3              #minimum redshift
 zmax = 1.32             #maximum redshift
-H0 = 71.15               #Hubble parameter
-Omegam = 0.262           #Dark matter density
-Omegab = 0.0439          #Baryon density
-Tgamma0 = 2.725          #Radiation temperature today
-ns = 0.97                #spectral index 
-sigma8 = 0.807           #sigma8
-w = -1.01                #Dark energy equation of state     
-
-#mass bin
-#dm = [5*10**13, 10**14, 10**14.25, 10**14.5, 10**14.75,  10**15, 10**15.25,  10**15.5, 10**15.75 ]
-dm = [10**14.3, 10**14.5, 10**14.7,  10**14.9, 10**15.1, 10**15.3,  10**15.5, 10**15.7 ]
-
-#quantile list
-quant_list = [ 0.02, 0.09, 0.25, 0.5, 0.75, 0.91, 0.98]
+H0 = 71.15 #Hubble parameter
+Omegam = 0.262 #Dark matter density
+Omegab = 0.0439 #Baryon density
+Tgamma0 = 2.725 #Radiation temperature today
+ns = 0.97 #spectral index
+sigma8 = 0.807 #sigma8
+w = -1.01 #Dark energy equation of state 
 
 #sky area
 area = 2500
 
-#######
-#priors over Om (dark matter), w and sigma8
-
-
-#time_steps = 10
 time_steps =10 # number of time steps to take
 
 Ninit=1000 # initial number of samples 
 
 N=250      # particle sample size after the first iteration
 
-												
-epsilon_ini = [1e20, 1e20]		#Starting tolerance
-
-seed = 100  # seed for ncount
-
-##############################################################
+seed=100
 
 path1="teste_3p_NO_weight_dist"
 
 
 
+#quantile list
+quant_list = [ 0.02, 0.09, 0.25, 0.5, 0.75, 0.91, 0.98]
+
+epsilon_ini = [1e20, 1e20]		#Starting tolerance
+
+mock_data = "Mock_Data.dat"  # path and name to mock data file
+
+# Load mock data
+data_fid = numpy.loadtxt( mock_data )
+
+#keep number of fiducial data set
+nobjs_fid = len( data_fid )
+
+#mass bin
+#dm = [5*10**13, 10**14, 10**14.25, 10**14.5, 10**14.75,  10**15, 10**15.25,  10**15.5, 10**15.75 ]
+dm = [10**14.3, 10**14.5, 10**14.7,  10**14.9, 10**15.1, 10**15.3,  10**15.5, 10**15.7 ]
+
+#Calculate summary statistics for fiducial data
+summ_fid = summary_quantile( data_fid, dm, quant_list )
+##############################################################
 #create output directory
 if not os.path.exists( path1 ):
     os.makedirs( path1 )
@@ -83,19 +91,13 @@ CosmoParams.keys_bounds=numpy.array( [ [0.0 , -3.0, 0.3 ] , [1.0-Omegab, 0.0, 1.
 
 
 
-#CosmoParams.keys=["Om"]
-
-#CosmoParams.keys_values=numpy.array( [  0.25  ] )
-
-#CosmoParams.keys_cov=numpy.diag( [ 0.5  ] )**2.
-
-#CosmoParams.keys_bounds=numpy.array( [ [0.0  ] , [1.0-Omegab] ] )
 
 CosmoParams.prior_dist="normal"
 
 Nparams=len( CosmoParams.keys )
     
-   
+#new simulation object
+ncount = NCountSimul (zmin, zmax, log ( dm[0] ), log ( 10**16 ), area )
 
 epsilon = [ ]
 
@@ -104,18 +106,7 @@ for ii in xrange(time_steps):
     print ii
     if (ii==0):
     
-        #new simulation object
-        ncount = NCountSimul (zmin, zmax, log ( dm[0] ), log ( 10**16 ), area )
-
-        #Generate fiducial data
-        data_fid = numpy.array( ncount.simulation( zmax, seed, CosmoParams.params)[1] )
-
-        #keep number of fiducial data set
-        nobjs_fid = len( data_fid )
-
-
-        #Calculate summary statistics for fiducial data
-        summ_fid = summary_quantile( data_fid, dm, quant_list )
+        
         
         par_surv, indx,par_cov = choose_surv_par( summ_fid, dm, quant_list, epsilon_ini, Ninit, CosmoParams, zmin, zmax, area, ncount, seed, nobjs_fid )
         
