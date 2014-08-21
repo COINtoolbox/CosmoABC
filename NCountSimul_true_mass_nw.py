@@ -152,7 +152,10 @@ def deviation_quantile( summary_fid, summary_sim ):
     #                    [ distances_for_each_mass_bin ]             
 
   
-    distance = [ numpy.sqrt( sum( [ ( summary_fid[1][i] * summary_fid[0][ i ][ j ] - summary_sim[1][i] * summary_sim[0][ i ][ j ] ) ** 2  for j in range( len( summary_fid[0][ i ] ) ) ] ) ) for i in range( len( summary_fid[0] ) ) ]
+    #distance = [ numpy.sqrt( sum( [ ( summary_fid[1][i] * summary_fid[0][ i ][ j ] - summary_sim[1][i] * summary_sim[0][ i ][ j ] ) ** 2  for j in range( len( summary_fid[0][ i ] ) ) ] ) ) for i in range( len( summary_fid[0] ) ) ]
+    
+    print '****no weight in distance **' 
+    distance = [ numpy.sqrt( sum( [ ( summary_fid[0][ i ][ j ] -  summary_sim[0][ i ][ j ] ) ** 2  for j in range( len( summary_fid[0][ i ] ) ) ] ) ) for i in range( len( summary_fid[0] ) ) ]
     
     return distance
 
@@ -236,6 +239,7 @@ def set_distances( summary_fid, mass_bin, quantile_list, zmin, zmax, area, ncoun
     #simulate instance of data
     
     data_sim = numpy.array( ncount1.simulation( zmax, seed, CP )[1] )
+    data_size = len( data_sim )
 
     #calculate summary statistics for simulated data
     summ_sim = summary_quantile( data_sim, mass_bin, quantile_list )
@@ -249,7 +253,10 @@ def set_distances( summary_fid, mass_bin, quantile_list, zmin, zmax, area, ncoun
     if difference == 0.0:
         return 1000
     else:
-        return difference
+ 
+        ##################
+        # return the dimension of simulated data set   
+        return difference, data_size
 
 
 def weighted_values(values, probabilities, size):
@@ -258,7 +265,7 @@ def weighted_values(values, probabilities, size):
     
     
 
-def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, CP, zmin, zmax, area, ncount, seed ):
+def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, CP, zmin, zmax, area, ncount, seed, ndata_fid ):
     """
     Select model parameters surviving summary statistics distance threshold.
 
@@ -327,6 +334,7 @@ def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, C
        
        weights = CP.sdata_weights[:]
        
+     
        par_cov = 2*numpy.dot( numpy.transpose( par_surv ), numpy.dot( numpy.diag( weights ) , par_surv ) ) # compute new covariance matrix
        
        print par_cov
@@ -343,9 +351,10 @@ def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, C
         
     for k in xrange( n_tries ) : 
      
-        d1 = 10*tolerance
+        d1 = 10*tolerance[0]
+        d2 = 10*tolerance[1]
        # print "d1=",d1,"tolerance=",tolerance
-        while ( d1 >= tolerance ):
+        while ( d1 >= tolerance[0] ) or d2 >= tolerance[1]:
         
         
            #########################################################
@@ -373,22 +382,31 @@ def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, C
            #print CP.params
            
            d = set_distances( summary_fid, mass_bin, quantile_list, zmin, zmax, area, ncount, seed, CP.params  )
-           d1 = sum( d )
-           print 'tries = ' + str( k )
+
+           ##################
+           # set dimension of output from set_distances
+           d1 = sum( d[0] )
+
            
-           if ( d1 <=  tolerance ):
+           if ( d1 <=  tolerance[0] ) and d[1] > 0:
+
+               d2 = max( abs( 1 - float( d[1] )/float( ndata_fid ) ), abs( 1 - float( ndata_fid  )/float( d[1] ) ) )
+ 
+               if  d2 <= tolerance[1]:
+
+                    print 'tries = ' + str( len( par_list ) )
 
                     indx_list.append( indx )
                     
-                    print '        dist = ' + str( d1 ) + ', epsilon = ' + str( tolerance )
+                    print '        dist = ' + str( d1 ) + ', epsilon1 = ' + str( tolerance[0] ) + ',   epsilon2 = ' + str( tolerance[1] )
 
-                    result = list( new_par ) + [ d1 ]
+                    result = list( new_par ) + [ d1, d2 ]   
                     print "Accpeted point:", result
 
                     #add distance to parameter list
                     par_list.append( result )
 
-                ###############################################################
+            ###############################################################
  
      
      

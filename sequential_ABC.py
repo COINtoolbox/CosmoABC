@@ -39,29 +39,25 @@ quant_list = [ 0.02, 0.09, 0.25, 0.5, 0.75, 0.91, 0.98]
 #sky area
 area = 2500
 
-#output directory
-path1 = 'all_res_SPT'
-
-
 #######
 #priors over Om (dark matter), w and sigma8
 
 
 #time_steps = 10
-time_steps =4 # number of time steps to take
+time_steps =10 # number of time steps to take
 
-Ninit=50 # initial number of samples 
+Ninit=1000 # initial number of samples 
 
-N=200      # particle sample size after the first iteration
+N=250      # particle sample size after the first iteration
 
 												
-epsilon_ini = 1e20		#Starting tolerance
+epsilon_ini = [1e20, 1e20]		#Starting tolerance
 
 seed = 100  # seed for ncount
 
 ##############################################################
 
-path1="teste_3p"
+path1="teste_3p_NO_weight_dist"
 
 
 
@@ -75,11 +71,11 @@ CosmoParams=ChooseParamsInput()
 
 CosmoParams.params={"H0":H0,"Ob":Omegab,"Om":Omegam,"OL":1.-Omegam-Omegab,"Tgamma":Tgamma0,"ns":ns,"sigma8":0.8,"w":-1.0}
 
-CosmoParams.keys=["Om","w", "sigma8"]
+CosmoParams.keys=["Om","w","sigma8"]
 
 CosmoParams.keys_values=numpy.array( [  0.25 , -1.01,  0.7 ] )
 
-CosmoParams.keys_cov=numpy.diag( [ 0.5 , 0.5, 0.5 ] )**2.
+CosmoParams.keys_cov=numpy.diag( [1.0 , 1.0, 1.0 ] )**2.
 
 CosmoParams.keys_bounds=numpy.array( [ [0.0 , -3.0, 0.3 ] , [1.0-Omegab, 0.0, 1.0] ] )
 
@@ -112,56 +108,66 @@ for ii in xrange(time_steps):
         #Generate fiducial data
         data_fid = numpy.array( ncount.simulation( zmax, seed, CosmoParams.params)[1] )
 
+        #keep number of fiducial data set
+        nobjs_fid = len( data_fid )
+
+
         #Calculate summary statistics for fiducial data
         summ_fid = summary_quantile( data_fid, dm, quant_list )
         
-        par_surv, indx,par_cov = choose_surv_par( summ_fid, dm, quant_list, epsilon_ini, Ninit, CosmoParams, zmin, zmax, area, ncount, seed )
+        par_surv, indx,par_cov = choose_surv_par( summ_fid, dm, quant_list, epsilon_ini, Ninit, CosmoParams, zmin, zmax, area, ncount, seed, nobjs_fid )
         
-       # print "Data generated"
-       # print par_surv
-       # print "indexes"
-       # print indx
-       # print "covariance"
-       # print par_cov
-        
-        par_surv=par_surv[ par_surv[:,-1].argsort()  ]
+        # print "Data generated"
+        # print par_surv
+        # print "indexes"
+        # print indx
+        # print "covariance"
+        # print par_cov
+
+        #sort distances according to the sum of the summary statistics distance and population tests
+        final_dist = numpy.array([ sum( [ par_surv[ i ][ l1 ]/numpy.mean(par_surv[:, l1])  for l1 in xrange( -2, 0) ]) for i in range( len( par_surv ) ) ])
       
-        par_surv=par_surv[xrange(N)]
-        
-        epsilon.append( mquantiles( [ par_surv[ j1 , -1] for j1 in xrange( len( par_surv ) ) ], [0.75] )[0]  )
+        #par_surv=par_surv[ par_surv[:,-2].argsort()  ]
+      
+        param_sorted = final_dist.argsort() 
+      
+        #par_surv=par_surv[xrange(N)]
+        par_surv = numpy.array([ par_surv[ i3 ] for i3 in param_sorted[:N] ])
+                 
+
+        epsilon.append( [ mquantiles( [ par_surv[ j1 , j2] for j1 in xrange( len( par_surv ) ) ], [0.75] )[0] for j2 in range(-2,0) ]  )
         
         CosmoParams.sdata=par_surv[:]
         
         CosmoParams.sdata_weights = numpy.ones( N )/N
         
         
-      
-      #write results to file
         #write results to file
         op0 = open(os.path.join( path1 , 'sequential_ABC_SPT_res_0.dat'), 'w')
         op0.write( '#' ) 
         for par in CosmoParams.keys:
             op0.write('#' + par + '    ' )
-        op0.write( 'distance    epsilon \n' )
+        op0.write( 'distancia1    distancia2 \n' )
         for elem in par_surv:
            for item in elem:
               op0.write( str( item ) + '    ' )
-           op0.write( str( epsilon_ini ) + '\n' )
+           op0.write('\n' )
         op0.close()
 
       
     else:
     
-        par_surv, indx, par_cov = choose_surv_par( summ_fid, dm, quant_list, epsilon[ii-1], N, CosmoParams,  zmin, zmax, area, ncount, seed )
         
+        par_surv, indx, par_cov = choose_surv_par( summ_fid, dm, quant_list, epsilon[ii-1], N, CosmoParams,  zmin, zmax, area, ncount, seed, nobjs_fid )
         CosmoParams.sdata=par_surv[:]
         
         # store epsilon
-        epsilon.append( mquantiles( [ par_surv[ j1 , -1 ] for j1 in xrange( len( par_surv ) ) ], [0.75] )[0]  )
+        epsilon.append( [ mquantiles( [ par_surv[ j1 , j2 ] for j1 in xrange( len( par_surv ) ) ], [0.75] )[0] for j2 in range(-2,0) ] )
         
         
         #update the weights of the last simulation given the mean and standard deviation from the previous set of simulations
-      
+        ###########
+           ####updated number of epsilon parameters     
         denominator=numpy.array([ sum([CosmoParams.sdata_weights[i]*norm_pdf_multivariate( par_surv[n,:Nparams] , par_surv[ indx[ i ] , :Nparams ],par_cov ) for i in xrange(N)]) for n in xrange(N)]	)
       
         numerator = numpy.array([ norm_pdf_multivariate(par_surv[i,:Nparams],CosmoParams.keys_values,CosmoParams.keys_cov ) for i in xrange(N)]) 
@@ -176,11 +182,10 @@ for ii in xrange(time_steps):
         op1.write( '#' ) 
         for par in CosmoParams.keys:
             op1.write('#' + par + '    ' )
-        op1.write( 'distance    epsilon\n ' )
+        op1.write( 'distancia1    distancia2\n ' )
         for elem in par_surv:
            for item in elem:
               op1.write( str( item ) + '    ' )
-           op1.write( str( epsilon[-2] ) )
            op1.write( '\n' )
         op1.close()
 
