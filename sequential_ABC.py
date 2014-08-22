@@ -61,7 +61,7 @@ epsilon_ini = [1e20, 1e20]		#Starting tolerance
 #if seed == False, use random 
 seed = False  # seed for ncount
 
-Nparams=2
+Nparams=3
 
 ##############################################################
 
@@ -70,7 +70,7 @@ Nparams=2
 data_fid = numpy.loadtxt( mock_data )
  
 #path to results directory
-path1="/home/emille/Dropbox/WGC/ABC/RESULTS/" + observable + '/' + str( Nparams ) + 'p/om_w/'
+path1="/home/emille/Dropbox/WGC/ABC/RESULTS/" + observable + '/' + str( Nparams ) + 'p/'
 output_param_file_root = 'SMC_ABC_' + observable + '_'  
 output_covariance_file = 'covariance_evol_' + observable + '.dat'
 
@@ -94,26 +94,26 @@ CosmoParams=ChooseParamsInput()
 
 CosmoParams.params={"H0":H0,"Ob":Omegab,"Om":Omegam,"OL":1.-Omegam-Omegab,"Tgamma":Tgamma0,"ns":ns,"sigma8":0.8,"w":-1.0}
 
-#CosmoParams.keys=["Om","w","sigma8"]
-CosmoParams.keys=["Om","sigma8"]
+CosmoParams.keys=["Om","w","sigma8"]
+#CosmoParams.keys=["Om","sigma8"]
 
-#CosmoParams.keys_values=numpy.array( [  0.25 , -1.01,  0.7 ] )
-CosmoParams.keys_values=numpy.array( [  0.25 ,  0.7 ] )
+CosmoParams.keys_values=numpy.array( [  0.25 , -1.01,  0.7 ] )
+#CosmoParams.keys_values=numpy.array( [  0.25 ,  0.7 ] )
 
-#CosmoParams.keys_cov=numpy.diag( [1.0 , 1.0, 1.0 ] )**2.
-CosmoParams.keys_cov=numpy.diag( [1.0 , 1.0 ] )**2.
+CosmoParams.keys_cov=numpy.diag( [1.0 , 1.0, 1.0 ] )**2.
+#CosmoParams.keys_cov=numpy.diag( [1.0 , 1.0 ] )**2.
 
 
-#CosmoParams.keys_bounds=numpy.array( [ [0.0 , -10.0, 0.3 ] , [1.0-Omegab, 1.0, 1.0] ] )
-CosmoParams.keys_bounds=numpy.array( [ [0.0 , 0.3 ] , [1.0-Omegab,  1.0] ] )
+CosmoParams.keys_bounds=numpy.array( [ [0.0 , -10.0, 0.3 ] , [1.0-Omegab, 1.0, 1.0] ] )
+#CosmoParams.keys_bounds=numpy.array( [ [0.0 , 0.3 ] , [1.0-Omegab,  1.0] ] )
 
 
 #desired final variance (percentage in relation to the initial variance)
-#CosmoParams.desired_variance = [ 0.1, 0.1, 0.1]
-#CosmoParams.desired_median = [0.1,0.1,0.1]
+CosmoParams.desired_variance = [ 0.1, 0.1, 0.1]
+CosmoParams.desired_median = [0.1,0.1,0.1]
 
-CosmoParams.desired_variance = [ 0.1,  0.1]
-CosmoParams.desired_median = [0.1,0.1]
+#CosmoParams.desired_variance = [ 0.1,  0.1]
+#CosmoParams.desired_median = [0.1,0.1]
 
 
 #CosmoParams.keys=["Om"]
@@ -245,7 +245,7 @@ while var_flag < Nparams:
         if var_flag < Nparams:
 
             CosmoParams.variance = new_cov               
-            CosmoPArams.median = new_median
+            CosmoParams.median = new_median
 
             # store epsilon
             epsilon.append( [ mquantiles( [ par_surv[ j1 , j2 ] for j1 in xrange( len( par_surv ) ) ], [0.75] )[0] for j2 in range(-2,0) ] )
