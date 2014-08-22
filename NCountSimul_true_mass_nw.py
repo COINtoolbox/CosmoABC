@@ -56,7 +56,10 @@ class NCountSimul:
     self.cosmo.props.sigma8  = CP["sigma8"]
     self.cosmo.props.w       = CP["w"]
     
-    Ncm.RNG.set_seed ( self.rng , seed )
+    if seed == False:
+        self.rng.set_random_seed( False )
+    else:   
+        Ncm.RNG.set_seed ( self.rng , seed )
     self.ncdata.resample (self.mset, self.rng)
 
     lnM_true = self.ncdata.get_lnM_true ()
@@ -152,9 +155,6 @@ def deviation_quantile( summary_fid, summary_sim ):
     #                    [ distances_for_each_mass_bin ]             
 
   
-    #distance = [ numpy.sqrt( sum( [ ( summary_fid[1][i] * summary_fid[0][ i ][ j ] - summary_sim[1][i] * summary_sim[0][ i ][ j ] ) ** 2  for j in range( len( summary_fid[0][ i ] ) ) ] ) ) for i in range( len( summary_fid[0] ) ) ]
-    
-    print '****no weight in distance **' 
     distance = [ numpy.sqrt( sum( [ ( summary_fid[0][ i ][ j ] -  summary_sim[0][ i ][ j ] ) ** 2  for j in range( len( summary_fid[0][ i ] ) ) ] ) ) for i in range( len( summary_fid[0] ) ) ]
     
     return distance
@@ -193,7 +193,7 @@ def choose_par( hyper_par, hyper_par_cov, bounds,dist ):
 
     flag = numpy.array([ False for i in xrange( Nparams ) ])
     
-    print "***********************************"
+    #print "***********************************"
     while (flag.all() == False ):
           L = numpy.linalg.cholesky( hyper_par_cov )
           norm = numpy.random.normal(size=1*Nparams).reshape(Nparams, 1)
@@ -370,7 +370,7 @@ def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, C
               
               #choose one of the instances of simulation set
               indx = weighted_values(range( n_tries ), weights,1)
-              print "Choosed iten=",indx,CP.sdata[indx,:Nparams]
+              #print "Choosed iten=",indx,CP.sdata[indx,:Nparams]
               new_par = choose_par( CP.sdata[indx,:Nparams], par_cov, bounds, CP.prior_dist ) 
            
            #print new_par

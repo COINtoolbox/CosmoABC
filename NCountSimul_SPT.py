@@ -3,9 +3,11 @@ from gi.repository import NumCosmoMath as Ncm
 from numpy import pi
 import numpy
 import random
+import math
 
 from scipy.stats import anderson_ksamp
 from scipy.stats.mstats import mquantiles
+from numpy import linalg 
 
 class NCountSimul:
 
@@ -53,7 +55,10 @@ class NCountSimul:
     self.cosmo.props.sigma8  = CP["sigma8"]
     self.cosmo.props.w       = CP["w"]        
 
-    Ncm.RNG.set_seed ( self.rng , seed )
+    if seed == False:
+        self.rng.set_random_seed( False )
+    else:   
+        Ncm.RNG.set_seed ( self.rng , seed )
     self.ncdata.resample (self.mset, self.rng)
 
     lnM_true = self.ncdata.get_lnM_true ()
@@ -77,27 +82,25 @@ class NCountSimul:
     
     return header, sim 
 
-def summary_anderson( fid_data, sim_data, mass_bin ):
-
-
-    #convert mass bins to natural log
-    mass = [ numpy.log( item ) for item in mass_bin ]
-
-    #separate fiducial data
-    fid_data_bin = numpy.array([ [ item[0] for item in fid_data  if item[1] >= mass[ i ] ] for i in range (len(mass) -1) ])
+class ChooseParamsInput(object):
+    params=None
+    keys=None
+    keys_values=None
+    keys_cov=None
+    keys_bounds=None
+    sdata=None
+    sdata_weights=None
+    prior_dist=None
     
-    #separate simulated data
-    sim_data_bin = numpy.array([ [ item[0] for item in sim_data  if item[1] >= mass[ i ] ] for i in range (len(mass) -1) ])
-
-    for ii in range( len( fid_data_bin ) ):
-        print 'sim = ' + str( len( sim_data_bin[ ii ] ) ) + '   fid = ' + str( len( fid_data_bin[ ii ] ) )
-
-    #perform anderson darling test
-    res = numpy.array( [ [ anderson_ksamp( [ fid_data_bin[ i ], sim_data_bin[ i ] ] )[ j ] for j in [0,2] ]  for i in range( len( fid_data_bin ) ) if ( len( fid_data_bin[ i ] ) > 0 and len( sim_data_bin[ i ] ) > 0 ) ])
-
-    return res 
-
-
+    def set_de(self):
+       if "Om" in self.keys:
+         self.params["OL"]=1.-self.params["Om"]-self.params["Ob"]
+    
+    def update_keys(self,x):
+       for i in xrange( len( self.keys ) ):
+          self.params[ self.keys[ i ] ]=x[ i ]
+      
+    
 def summary_quantile( data, mass_bin, q_list ):
     #Summary statistics by as the quantiles in q_list.
     #Calculates the quantiles for a distribution of redshift for observed masses above a mass threshold given by mass_bin.
@@ -133,26 +136,8 @@ def summary_quantile( data, mass_bin, q_list ):
         pop = [ 0 for i in range( len( data_bin ) ) ] 
 
     return res, pop
-
-class ChooseParamsInput(object):
-    params=None
-    keys=None
-    keys_values=None
-    keys_cov=None
-    keys_bounds=None
-    sdata=None
-    sdata_weights=None
-    prior_dist=None
     
-    def set_de(self):
-       if "Om" in self.keys:
-         self.params["OL"]=1.-self.params["Om"]-self.params["Ob"]
-    
-    def update_keys(self,x):
-       for i in xrange( len( self.keys ) ):
-          self.params[ self.keys[ i ] ]=x[ i ]
-
-
+   
 def deviation_quantile( summary_fid, summary_sim ):
     #Calculates the distance between 2 data sets given the quantiles calculated by summary_quantile function.
     #Distances are calculated for each mass threshold, e.g. mass1, as
@@ -167,11 +152,16 @@ def deviation_quantile( summary_fid, summary_sim ):
     #                    [ distances_for_each_mass_bin ]             
 
   
-    distance = [ numpy.sqrt( sum( [ ( summary_fid[1][i] * summary_fid[0][ i ][ j ] - summary_sim[1][i] * summary_sim[0][ i ][ j ] ) ** 2  for j in range( len( summary_fid[0][ i ] ) ) ] ) ) for i in range( len( summary_fid[0] ) ) ]
+    #distance = [ numpy.sqrt( sum( [ ( summary_fid[1][i] * summary_fid[0][ i ][ j ] - summary_sim[1][i] * summary_sim[0][ i ][ j ] ) ** 2  for j in range( len( summary_fid[0][ i ] ) ) ] ) ) for i in range( len( summary_fid[0] ) ) ]
+    
+    print '****no weight in distance **' 
+    distance = [ numpy.sqrt( sum( [ ( summary_fid[0][ i ][ j ] -  summary_sim[0][ i ][ j ] ) ** 2  for j in range( len( summary_fid[0][ i ] ) ) ] ) ) for i in range( len( summary_fid[0] ) ) ]
     
     return distance
 
-def choose_par( hyper_par, dist, Ob ):
+
+
+def choose_par( hyper_par, hyper_par_cov, bounds,dist ):
     """
     Sample cosmological parameter from prior. 
     Current constraints are:
@@ -194,37 +184,30 @@ def choose_par( hyper_par, dist, Ob ):
         w_try  -> float: equation of state parameter
         sig8_try -> float: sigma8
     """
+    Nparams=len(hyper_par)
+    
+   # U,S,V=linalg.svd(hyper_par_cov)
+    
+   # new_mean=numpy.dot(numpy.transpose(U),hyper_par)
+    
+
+    flag = numpy.array([ False for i in xrange( Nparams ) ])
+    
+    print "***********************************"
+    while (flag.all() == False ):
+          L = numpy.linalg.cholesky( hyper_par_cov )
+          norm = numpy.random.normal(size=1*Nparams).reshape(Nparams, 1)
+          params =numpy.array( hyper_par) + numpy.dot(L, norm).reshape(1,Nparams)
+          #print norm,hyper_par,params
+          flag=((params[0]>=bounds[0]) & (params[0]<=bounds[1]))
+         # print params,flag
+    #print "***********************************"
+    #print "generated parameters=", numpy.array( params[0] )
+    return numpy.array(params[0])
+    
 
 
-    om_try = 0.0
-    w_try  = 0.0
-    sig8_try = 0.0
-
-    flag = False
-    while flag == False:
-        
-        if dist == 'normal':
-            om_try = random.normalvariate( hyper_par[0][0], hyper_par[0][1] )
-            w_try = random.normalvariate( hyper_par[1][0], hyper_par[1][1] ) 
-            sig8_try  = random.normalvariate( hyper_par[2][0], hyper_par[2][1] )
-            
-
-        elif dist == 'flat':
-            om_try = random.uniform(  hyper_par[0][0] - hyper_par[0][1], hyper_par[0][0] + hyper_par[0][1] )
-            w_try = random.uniform(  hyper_par[1][0] - hyper_par[1][1], hyper_par[1][0] + hyper_par[1][1] )
-            sig8_try  = random.uniform(  hyper_par[2][0] - hyper_par[2][1],  hyper_par[2][0] + hyper_par[2][1] ) 
-
-        if om_try <= Ob or om_try > 1 - Ob or w_try > 0.0 or sig8_try > 1.0 or sig8_try < 0.2:
-            flag = False 
-        else:
-            flag = True
-
-
-    return om_try, w_try, sig8_try
-
-
-
-def set_distances( summary_fid, mass_bin, quantile_list, omX, wX, sigX, zmin, zmax, area, ncount1, H0=71.15, Omegab=0.0439, Tgamma0=2.725, ns=0.97 ):
+def set_distances( summary_fid, mass_bin, quantile_list, zmin, zmax, area, ncount1, seed, CP):
     """
     Calculate summary statistics difference between the fiducial data and a specific model defined by the inputed cosmological parameters.
 
@@ -252,9 +235,11 @@ def set_distances( summary_fid, mass_bin, quantile_list, omX, wX, sigX, zmin, zm
                        summary statistic difference between the fiducial data and inputed cosmological model as outputed by function deviation_quantile 
         
     """
-
+    
     #simulate instance of data
-    data_sim = numpy.array( ncount1.simulation( zmax, H0, Omegab, omX, 1-omX-Omegab, Tgamma0, ns, sigX, wX )[1] )
+    
+    data_sim = numpy.array( ncount1.simulation( zmax, seed, CP )[1] )
+    data_size = len( data_sim )
 
     #calculate summary statistics for simulated data
     summ_sim = summary_quantile( data_sim, mass_bin, quantile_list )
@@ -263,14 +248,24 @@ def set_distances( summary_fid, mass_bin, quantile_list, omX, wX, sigX, zmin, zm
     difference = deviation_quantile( summary_fid, summ_sim ) 
 
     del summ_sim
-    del data_sim
+    del data_sim 
   
     if difference == 0.0:
         return 1000
     else:
-        return difference
+ 
+        ##################
+        # return the dimension of simulated data set   
+        return difference, data_size
 
-def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, hyper_par, dist, zmin, zmax, area, ncount1, Ob  ):
+
+def weighted_values(values, probabilities, size):
+    bins = numpy.cumsum(probabilities)
+    return values[numpy.digitize(numpy.random.random_sample(size), bins)]
+    
+    
+
+def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, CP, zmin, zmax, area, ncount, seed, ndata_fid ):
     """
     Select model parameters surviving summary statistics distance threshold.
 
@@ -311,33 +306,137 @@ def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, h
                  [[ redshift, mass]]
     """
 
-    #list to store results
-    result = []
-    data_all = []
-
-    while len( result ) < n_tries :
-
-        print 'tries = ' + str( len( result ) )
-
-        #choose model parameters
-        par_list = list( choose_par( hyper_par, dist, Ob )  )
-
-        print par_list
-
-        #calculate summary statistics distance to fiducial data  
-        d = set_distances( summary_fid, mass_bin, quantile_list, par_list[0], par_list[1], par_list[2], zmin, zmax, area, ncount1  )
-        d1 = sum( d )
-
-        if d1 <=  tolerance:
-
-            
-            print '        dist = ' + str( d1 )
-
-            #add distance to parameter list
-            par_list.append( d1 )
-
-            #append parameters if tolerance is satisfied
-            result.append( par_list  )
     
-    return result
+    
+    Nparams=len(CP.keys)
+    
+    if ( CP.sdata is None ):
+       
+       flag = True 
+       
+       par_mean = CP.keys_values[:]
+       
+       par_surv = par_mean[:]
+       
+       par_cov =  CP.keys_cov[:] 
+      
+    else:
+       
+       flag = False 
+       
+       par_mean = CP.sdata[:,:Nparams].mean(axis=0) # compute the mean of the previous data
+       
+       par_surv = CP.sdata[:,:Nparams]-par_mean[:]  # center previous data
+       
+    #   print "###################"
+    #   print par_surv
+    #   print "###################"
+       
+       weights = CP.sdata_weights[:]
+       
+     
+       par_cov = 2*numpy.dot( numpy.transpose( par_surv ), numpy.dot( numpy.diag( weights ) , par_surv ) ) # compute new covariance matrix
+       
+       print par_cov
+
+   # 2*numpy.dot( numpy.transpose( par_surv[:,:Nparams] ),numpy.dot( numpy.diag( weights ) , par_surv[:,:Nparams] ) )
+
+    bounds = CP.keys_bounds[:]
+
+    indx_list= []
+    
+    result = []
+    
+    par_list = []
+        
+    for k in xrange( n_tries ) : 
+     
+        d1 = 10*tolerance[0]
+        d2 = 10*tolerance[1]
+       # print "d1=",d1,"tolerance=",tolerance
+        while ( d1 >= tolerance[0] ) or d2 >= tolerance[1]:
+        
+        
+           #########################################################
+           #draw from a multivariate normal distribution
+
+           if ( flag == True ):
+              
+              indx=numpy.array( [ 0 ] )
+              
+              new_par = choose_par( par_surv, par_cov, bounds, CP.prior_dist ) 
+           
+           else:
+              
+              #choose one of the instances of simulation set
+              indx = weighted_values(range( n_tries ), weights,1)
+              print "Choosed iten=",indx,CP.sdata[indx,:Nparams]
+              new_par = choose_par( CP.sdata[indx,:Nparams], par_cov, bounds, CP.prior_dist ) 
+           
+           #print new_par
+           
+           CP.update_keys( new_par ) # update dictionary with containing the cosmological parameters
+        
+           CP.set_de()  # update OL key
+        
+           #print CP.params
+           
+           d = set_distances( summary_fid, mass_bin, quantile_list, zmin, zmax, area, ncount, seed, CP.params  )
+
+           ##################
+           # set dimension of output from set_distances
+           d1 = sum( d[0] )
+
+           
+           if ( d1 <=  tolerance[0] ) and d[1] > 0:
+
+               d2 = max( abs( 1 - float( d[1] )/float( ndata_fid ) ), abs( 1 - float( ndata_fid  )/float( d[1] ) ) )
+ 
+               if  d2 <= tolerance[1]:
+
+                    print 'tries = ' + str( len( par_list ) )
+
+                    indx_list.append( indx )
+                    
+                    print '        dist = ' + str( d1 ) + ', epsilon1 = ' + str( tolerance[0] ) + ',   epsilon2 = ' + str( tolerance[1] )
+
+                    result = list( new_par ) + [ d1, d2 ]   
+                    print "Accpeted point:", result
+
+                    #add distance to parameter list
+                    par_list.append( result )
+
+            ###############################################################
+ 
+     
+     
+    del par_surv
+    del new_par
+    del par_mean
+    del d1
+    del flag
+    del bounds
+       
+   
+    return numpy.array( par_list ),numpy.array( indx_list ),par_cov
+
+
+
+def norm_pdf_multivariate(x, mu, sigma):
+  size = len(x)
+  if size == len(mu) and (size, size) == sigma.shape:
+    det = linalg.det(sigma)
+    if det == 0:
+        raise NameError("The covariance matrix can't be singular")
+
+    norm_const = 1.0/ ( math.pow((2*numpy.pi),float(size)/2) * math.pow(det,1.0/2) )
+    x_mu = numpy.matrix(x - mu)
+    inv = numpy.matrix(sigma).I        
+    result = math.pow(math.e, -0.5 * (x_mu * inv * x_mu.T))
+    return norm_const * result
+  else:
+    raise NameError("The dimensions of the input don't match")
+
+
+
 
