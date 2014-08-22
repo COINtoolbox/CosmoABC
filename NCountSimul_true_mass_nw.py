@@ -56,8 +56,10 @@ class NCountSimul:
     self.cosmo.props.sigma8  = CP["sigma8"]
     self.cosmo.props.w       = CP["w"]
     
-   # Ncm.RNG.set_seed ( self.rng , seed )
-    self.RNG.set_random_seed(False)
+    if seed == False:
+        self.rng.set_random_seed( False )
+    else:   
+        Ncm.RNG.set_seed ( self.rng , seed )
     self.ncdata.resample (self.mset, self.rng)
 
     lnM_true = self.ncdata.get_lnM_true ()
@@ -153,9 +155,6 @@ def deviation_quantile( summary_fid, summary_sim ):
     #                    [ distances_for_each_mass_bin ]             
 
   
-    #distance = [ numpy.sqrt( sum( [ ( summary_fid[1][i] * summary_fid[0][ i ][ j ] - summary_sim[1][i] * summary_sim[0][ i ][ j ] ) ** 2  for j in range( len( summary_fid[0][ i ] ) ) ] ) ) for i in range( len( summary_fid[0] ) ) ]
-    
-    print '****no weight in distance **' 
     distance = [ numpy.sqrt( sum( [ ( summary_fid[0][ i ][ j ] -  summary_sim[0][ i ][ j ] ) ** 2  for j in range( len( summary_fid[0][ i ] ) ) ] ) ) for i in range( len( summary_fid[0] ) ) ]
     
     return distance
@@ -194,7 +193,7 @@ def choose_par( hyper_par, hyper_par_cov, bounds,dist ):
 
     flag = numpy.array([ False for i in xrange( Nparams ) ])
     
-    print "***********************************"
+    #print "***********************************"
     while (flag.all() == False ):
           L = numpy.linalg.cholesky( hyper_par_cov )
           norm = numpy.random.normal(size=1*Nparams).reshape(Nparams, 1)
@@ -208,7 +207,7 @@ def choose_par( hyper_par, hyper_par_cov, bounds,dist ):
     
 
 
-def set_distances( summary_fid, mass_bin, quantile_list, zmin, zmax, area, ncount1, seed, CP):
+def set_distances( summary_fid, mass_bin, quantile_list, simul_data ):
     """
     Calculate summary statistics difference between the fiducial data and a specific model defined by the inputed cosmological parameters.
 
@@ -239,7 +238,8 @@ def set_distances( summary_fid, mass_bin, quantile_list, zmin, zmax, area, ncoun
     
     #simulate instance of data
     
-    data_sim = numpy.array( ncount1.simulation( zmax, seed, CP )[1] )
+    data_sim = simul_data[:]
+    
     data_size = len( data_sim )
 
     #calculate summary statistics for simulated data
@@ -266,7 +266,7 @@ def weighted_values(values, probabilities, size):
     
     
 
-def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, CP, zmin, zmax, area, ncount, seed, ndata_fid ):
+def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, ncpu, CP, zmin, zmax, area,  seed, ndata_fid ):
     """
     Select model parameters surviving summary statistics distance threshold.
 
@@ -307,6 +307,9 @@ def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, C
                  [[ redshift, mass]]
     """
 
+    numpy.random.seed()
+    
+    ncount=NCountSimul (zmin, zmax, numpy.log ( mass_bin[0] ), numpy.log ( 10**16 ), area )
     
     
     Nparams=len(CP.keys)
@@ -349,13 +352,18 @@ def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, C
     result = []
     
     par_list = []
-        
-    for k in xrange( n_tries ) : 
+    
+    if ncpu==1:
+       size=n_tries
+    else:
+       size=n_tries/ncpu
+    
+    for k in xrange( size ) : 
      
         d1 = 10*tolerance[0]
         d2 = 10*tolerance[1]
        # print "d1=",d1,"tolerance=",tolerance
-        while ( d1 >= tolerance[0] ) or d2 >= tolerance[1]:
+        while ( d1 >= tolerance[0] ) or ( d2 >= tolerance[1] ):
         
         
            #########################################################
@@ -371,7 +379,7 @@ def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, C
               
               #choose one of the instances of simulation set
               indx = weighted_values(range( n_tries ), weights,1)
-              print "Choosed iten=",indx,CP.sdata[indx,:Nparams]
+              #print "Choosed iten=",indx,CP.sdata[indx,:Nparams]
               new_par = choose_par( CP.sdata[indx,:Nparams], par_cov, bounds, CP.prior_dist ) 
            
            #print new_par
@@ -382,8 +390,9 @@ def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, C
         
            #print CP.params
            
-           d = set_distances( summary_fid, mass_bin, quantile_list, zmin, zmax, area, ncount, seed, CP.params  )
-
+           data_simul = numpy.array( ncount.simulation( zmax, seed, CP.params )[1] )
+           
+           d = set_distances( summary_fid, mass_bin, quantile_list, data_simul  )
            ##################
            # set dimension of output from set_distances
            d1 = sum( d[0] )
@@ -419,7 +428,7 @@ def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, C
     del bounds
        
    
-    return numpy.array( par_list ),numpy.array( indx_list ),par_cov
+    return [ numpy.array( par_list ),numpy.array( indx_list ),par_cov ]
 
 
 
@@ -439,5 +448,7 @@ def norm_pdf_multivariate(x, mu, sigma):
     raise NameError("The dimensions of the input don't match")
 
 
-
+def worker( args ):
+    
+    return choose_surv_par (*args)
 
