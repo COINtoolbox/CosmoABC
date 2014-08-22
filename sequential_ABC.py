@@ -19,12 +19,11 @@ import pylab as plt
 
 ############################################################
 ### Fiducial Cosmological parameters: ref. arXiv:1203.5775 (table 5. wCDM CMB+BAO+H0+SNeIa+SPTcl), Tgamma0 and ns are not given.
-
 zmin = 0.3              #minimum redshift
 zmax = 1.32             #maximum redshift
 H0 = 71.15               #Hubble parameter
 Omegam = 0.262           #Dark matter density
-Omegab = 0.0439          #Baryon density
+Omegab = 0.044          #Baryon density
 Tgamma0 = 2.725          #Radiation temperature today
 ns = 0.97                #spectral index 
 sigma8 = 0.807           #sigma8
@@ -33,10 +32,6 @@ w = -1.01                #Dark energy equation of state
 #choose observable
 observable = 'true_mass'
 
-#path to results directory
-path1="/home/emille/Dropbox/WGC/ABC/RESULTS/" + observable + '/'
-output_param_file_root = 'SMC_ABC_' + observable + '_'  
-output_covariance_file = 'covariance_evol_' + observable + '.dat'
 
 #mass bin
 #dm = [5*10**13, 10**14, 10**14.25, 10**14.5, 10**14.75,  10**15, 10**15.25,  10**15.5, 10**15.75 ]
@@ -53,27 +48,31 @@ area = 2500
 
 #######
 # path and name to mock data file
-mock_data = "Mock_Data.dat"  
+mock_data = "/home/emille/Dropbox/WGC/ABC/data/Mock_Data.dat"  
 
 
-Ninit=200 # initial number of samples 
+Ninit=2000 # initial number of samples 
 
-N=100      # particle sample size after the first iteration
+N=1000      # particle sample size after the first iteration
 
 												
 epsilon_ini = [1e20, 1e20]		#Starting tolerance
 
 #if seed == False, use random 
-seed = 100  # seed for ncount
+seed = False  # seed for ncount
 
-
+Nparams=2
 
 ##############################################################
 
 
 # Load mock data
 data_fid = numpy.loadtxt( mock_data )
-
+ 
+#path to results directory
+path1="/home/emille/Dropbox/WGC/ABC/RESULTS/" + observable + '/' + str( Nparams ) + 'p/om_w/'
+output_param_file_root = 'SMC_ABC_' + observable + '_'  
+output_covariance_file = 'covariance_evol_' + observable + '.dat'
 
 #create output directory
 if not os.path.exists( path1 ):
@@ -88,23 +87,34 @@ if observable == 'true_mass':
 else:
     from NCountSimul_SPT import *
     shutil.copy2( 'NCountSimul_SPT.py', path1 + 'functions.py' )  
-    
-    
+
+
+   
 CosmoParams=ChooseParamsInput()
 
 CosmoParams.params={"H0":H0,"Ob":Omegab,"Om":Omegam,"OL":1.-Omegam-Omegab,"Tgamma":Tgamma0,"ns":ns,"sigma8":0.8,"w":-1.0}
 
-CosmoParams.keys=["Om","w","sigma8"]
+#CosmoParams.keys=["Om","w","sigma8"]
+CosmoParams.keys=["Om","sigma8"]
 
-CosmoParams.keys_values=numpy.array( [  0.25 , -1.01,  0.7 ] )
+#CosmoParams.keys_values=numpy.array( [  0.25 , -1.01,  0.7 ] )
+CosmoParams.keys_values=numpy.array( [  0.25 ,  0.7 ] )
 
-CosmoParams.keys_cov=numpy.diag( [1.0 , 1.0, 1.0 ] )**2.
+#CosmoParams.keys_cov=numpy.diag( [1.0 , 1.0, 1.0 ] )**2.
+CosmoParams.keys_cov=numpy.diag( [1.0 , 1.0 ] )**2.
 
-CosmoParams.keys_bounds=numpy.array( [ [0.0 , -10.0, 0.3 ] , [1.0-Omegab, 1.0, 1.0] ] )
+
+#CosmoParams.keys_bounds=numpy.array( [ [0.0 , -10.0, 0.3 ] , [1.0-Omegab, 1.0, 1.0] ] )
+CosmoParams.keys_bounds=numpy.array( [ [0.0 , 0.3 ] , [1.0-Omegab,  1.0] ] )
+
 
 #desired final variance (percentage in relation to the initial variance)
-CosmoParams.desired_variance = [ 0.1, 0.1, 0.1]
-CosmoParams.desired_median = [0.1,0.1,0.1]
+#CosmoParams.desired_variance = [ 0.1, 0.1, 0.1]
+#CosmoParams.desired_median = [0.1,0.1,0.1]
+
+CosmoParams.desired_variance = [ 0.1,  0.1]
+CosmoParams.desired_median = [0.1,0.1]
+
 
 #CosmoParams.keys=["Om"]
 
@@ -116,7 +126,9 @@ CosmoParams.desired_median = [0.1,0.1,0.1]
 CosmoParams.prior_dist="normal"
 
 Nparams=len( CosmoParams.keys )
-    
+
+
+   
 op3 = open( path1 + output_covariance_file, 'w')
 for item in CosmoParams.keys:
     op3.write( item + '    ' )
@@ -213,12 +225,12 @@ while var_flag < Nparams:
         #check if desired variance was achieved
         new_cov = [ numpy.std( CosmoParams.sdata[:, i2] ) for i2 in range( Nparams ) ]
         new_median = [ numpy.median( CosmoParams.sdata[:, i2] ) for i2 in range( Nparams ) ]
-        CosmoParams.variance_diff = [ abs( new_cov[ i2 ] - CosmoParams.variance[ i2 ] )/CosmoParams.variance[ j4 ] for i2 in range( Nparams )]
-        CosmoParams.mean_diff = [ abs( new_median[ i2 ] - CosmoParams.median[ i2 ] )/CosmoParams.median[ j4 ] for i2 in range( Nparams )]
+        CosmoParams.variance_diff = [ abs( new_cov[ i2 ] - CosmoParams.variance[ i2 ] )/CosmoParams.variance[ i2 ] for i2 in range( Nparams )]
+        CosmoParams.median_diff = [ abs( new_median[ i2 ] - CosmoParams.median[ i2 ] )/CosmoParams.median[ i2 ] for i2 in range( Nparams )]
 
         var_flag = 0
         for j4 in range( Nparams ):
-            if CosmoParams.variance_diff[ j4 ] < CosmoParams.desired_variance[ j4 ] and CosmoParams.median_diff < CosmoParams_desired_median[ j4 ]:
+            if CosmoParams.variance_diff[ j4 ] < CosmoParams.desired_variance[ j4 ] and CosmoParams.median_diff < CosmoParams.desired_median[ j4 ]:
                 var_flag = var_flag + 1
         
         print 'cov_diff = ' + str( CosmoParams.variance_diff )
@@ -233,6 +245,7 @@ while var_flag < Nparams:
         if var_flag < Nparams:
 
             CosmoParams.variance = new_cov               
+            CosmoPArams.median = new_median
 
             # store epsilon
             epsilon.append( [ mquantiles( [ par_surv[ j1 , j2 ] for j1 in xrange( len( par_surv ) ) ], [0.75] )[0] for j2 in range(-2,0) ] )
