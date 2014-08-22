@@ -12,7 +12,7 @@ import numpy
 import random 
 import os 
 
-from NCountSimul_true_mass_nw_v6 import *
+from NCountSimul_true_mass_nw_vp import *
 from multiprocessing import Pool
 
 import pylab as plt
