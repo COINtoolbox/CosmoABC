@@ -52,15 +52,13 @@ quant_list = [ 0.02, 0.09, 0.25, 0.5, 0.75, 0.91, 0.98]
 area = 2500
 
 #######
-#priors over Om (dark matter), w and sigma8
+# path and name to mock data file
+mock_data = "Mock_Data.dat"  
 
 
-#time_steps = 10
-#time_steps =10 # number of time steps to take
+Ninit=200 # initial number of samples 
 
-Ninit=20 # initial number of samples 
-
-N=10      # particle sample size after the first iteration
+N=100      # particle sample size after the first iteration
 
 												
 epsilon_ini = [1e20, 1e20]		#Starting tolerance
@@ -73,7 +71,8 @@ seed = 100  # seed for ncount
 ##############################################################
 
 
-
+# Load mock data
+data_fid = numpy.loadtxt( mock_data )
 
 
 #create output directory
@@ -105,6 +104,7 @@ CosmoParams.keys_bounds=numpy.array( [ [0.0 , -10.0, 0.3 ] , [1.0-Omegab, 1.0, 1
 
 #desired final variance (percentage in relation to the initial variance)
 CosmoParams.desired_variance = [ 0.1, 0.1, 0.1]
+CosmoParams.desired_median = [0.1,0.1,0.1]
 
 #CosmoParams.keys=["Om"]
 
@@ -182,6 +182,7 @@ while var_flag < Nparams:
         CosmoParams.sdata_weights = numpy.ones( N )/N
         
         CosmoParams.variance = [ numpy.std( CosmoParams.sdata[:, i] ) for i in range( Nparams )]
+        CosmoParams.median =  [ numpy.median( CosmoParams.sdata[:, i] ) for i in range( Nparams )]
         print 'covariances = ' + str( CosmoParams.variance )
 
         for elem in CosmoParams.variance:
@@ -211,14 +212,17 @@ while var_flag < Nparams:
         
         #check if desired variance was achieved
         new_cov = [ numpy.std( CosmoParams.sdata[:, i2] ) for i2 in range( Nparams ) ]
-        CosmoParams.variance_diff = [ abs( new_cov[ i2 ] - CosmoParams.variance[ i2 ] ) for i2 in range( Nparams )]
-        
+        new_median = [ numpy.median( CosmoParams.sdata[:, i2] ) for i2 in range( Nparams ) ]
+        CosmoParams.variance_diff = [ abs( new_cov[ i2 ] - CosmoParams.variance[ i2 ] )/CosmoParams.variance[ j4 ] for i2 in range( Nparams )]
+        CosmoParams.mean_diff = [ abs( new_median[ i2 ] - CosmoParams.median[ i2 ] )/CosmoParams.median[ j4 ] for i2 in range( Nparams )]
+
         var_flag = 0
         for j4 in range( Nparams ):
-            if CosmoParams.variance_diff[ j4 ]/CosmoParams.variance[ j4 ] < CosmoParams.desired_variance[ j4 ]:
+            if CosmoParams.variance_diff[ j4 ] < CosmoParams.desired_variance[ j4 ] and CosmoParams.median_diff < CosmoParams_desired_median[ j4 ]:
                 var_flag = var_flag + 1
         
         print 'cov_diff = ' + str( CosmoParams.variance_diff )
+        print 'median_diff  = ' + str( CosmoParams.median_diff )
  
 
         for elem in CosmoParams.variance:
