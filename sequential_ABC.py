@@ -230,7 +230,7 @@ while var_flag < Nparams:
 
         var_flag = 0
         for j4 in range( Nparams ):
-            if CosmoParams.variance_diff[ j4 ] < CosmoParams.desired_variance[ j4 ] and CosmoParams.median_diff < CosmoParams.desired_median[ j4 ]:
+            if CosmoParams.variance_diff[ j4 ] < CosmoParams.desired_variance[ j4 ] and CosmoParams.median_diff[ j4 ] < CosmoParams.desired_median[ j4 ]:
                 var_flag = var_flag + 1
         
         print 'cov_diff = ' + str( CosmoParams.variance_diff )
@@ -278,6 +278,7 @@ while var_flag < Nparams:
 
             del op1
             cont = cont + 1 
+
             
       
 op3.close()      
