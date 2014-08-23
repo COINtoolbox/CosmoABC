@@ -51,9 +51,9 @@ area = 2500
 mock_data = "/home/emille/Dropbox/WGC/ABC/data/Mock_Data.dat"  
 
 
-Ninit=2000 # initial number of samples 
+Ninit=10 # initial number of samples 
 
-N=1000      # particle sample size after the first iteration
+N=8      # particle sample size after the first iteration
 
 												
 epsilon_ini = [1e20, 1e20]		#Starting tolerance
