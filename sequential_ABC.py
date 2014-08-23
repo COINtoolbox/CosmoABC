@@ -53,9 +53,9 @@ mock_data = "Mock_Data.dat"
 
 Ncpu=2 # number of cpus to be used
 
-Ninit=10 # initial number of samples 
+Ninit=200 # initial number of samples 
 
-N=8      # particle sample size after the first iteration
+N=180      # particle sample size after the first iteration
 
 												
 epsilon_ini = [1e20, 1e20]		#Starting tolerance
@@ -73,7 +73,7 @@ data_fid = numpy.loadtxt( mock_data )
  
 #path to results directory
 
-path1="teste"
+path1="teste_1"
 
 #path1="/home/emille/Dropbox/WGC/ABC/RESULTS/" + observable + '/' + str( Nparams ) + 'p/om_w/'
 output_param_file_root = 'SMC_ABC_' + observable + '_'  
@@ -117,8 +117,9 @@ CosmoParams.keys_bounds=numpy.array( [ [0.0 , 0.3 ] , [1.0-Omegab,  1.0] ] )
 #CosmoParams.desired_variance = [ 0.1, 0.1, 0.1]
 #CosmoParams.desired_median = [0.1,0.1,0.1]
 
-CosmoParams.desired_variance = [ 0.1,  0.1]
-CosmoParams.desired_median = [0.1,0.1]
+CosmoParams.desired_variance = [ 0.05,  0.05]
+CosmoParams.desired_median = [0.05,0.05]
+CosmoParams.desired_mean = [0.05,0.05]
 
 
 #CosmoParams.keys=["Om"]
@@ -201,7 +202,8 @@ while var_flag < Nparams:
               indx.append(results[i][1])
            
            par_surv = numpy.vstack( par_surv )
-           indx = numpy.vstack( indx ).flatten()
+           #indx = numpy.vstack( indx ).flatten()
+           indx = numpy.hstack( indx )
         
         cont = cont + 1 
         # print "Data generated"
@@ -230,7 +232,10 @@ while var_flag < Nparams:
         
         CosmoParams.variance = [ numpy.std( CosmoParams.sdata[:, i] ) for i in range( Nparams )]
         CosmoParams.median =  [ numpy.median( CosmoParams.sdata[:, i] ) for i in range( Nparams )]
+        CosmoParams.mean =  [ numpy.mean( CosmoParams.sdata[:, i] ) for i in range( Nparams )]
         print 'covariances = ' + str( CosmoParams.variance )
+        print 'mean = ' + str( CosmoParams.mean )
+        print 'median = ' + str( CosmoParams.median )
 
         for elem in CosmoParams.variance:
             op3.write( str( elem ) + '    ' )
@@ -257,11 +262,11 @@ while var_flag < Nparams:
         
         if (Ncpu == 1):
            
-           par_surv, indx,par_cov = choose_surv_par (summ_fid, dm, quant_list, epsilon_ini, N, Ncpu , CosmoParams,  zmin, zmax, area,  seed, nobjs_fid)
+           par_surv, indx,par_cov = choose_surv_par (summ_fid, dm, quant_list, epsilon[ -1 ], N, Ncpu , CosmoParams,  zmin, zmax, area,  seed, nobjs_fid)
         
         else: 
            
-           job_args=[ (summ_fid, dm, quant_list, epsilon_ini, N, Ncpu , CosmoParams,  zmin, zmax, area,  seed, nobjs_fid) for i in xrange(Ncpu)  ]
+           job_args=[ (summ_fid, dm, quant_list, epsilon[ -1 ], N, Ncpu , CosmoParams,  zmin, zmax, area,  seed, nobjs_fid) for i in xrange(Ncpu)  ]
            
            results = p.map(worker, job_args)
            
@@ -277,7 +282,9 @@ while var_flag < Nparams:
               indx.append(results[i][1])
            
            par_surv = numpy.vstack( par_surv )
-           indx = numpy.vstack( indx ).flatten()
+           
+           #indx = numpy.vstack( indx ).flatten()
+           indx = numpy.hstack( indx )
         
         
         
@@ -286,16 +293,22 @@ while var_flag < Nparams:
         #check if desired variance was achieved
         new_cov = [ numpy.std( CosmoParams.sdata[:, i2] ) for i2 in range( Nparams ) ]
         new_median = [ numpy.median( CosmoParams.sdata[:, i2] ) for i2 in range( Nparams ) ]
+        new_mean = [ numpy.mean( CosmoParams.sdata[:, i2] ) for i2 in range( Nparams ) ]
         CosmoParams.variance_diff = [ abs( new_cov[ i2 ] - CosmoParams.variance[ i2 ] )/CosmoParams.variance[ i2 ] for i2 in range( Nparams )]
         CosmoParams.median_diff = [ abs( new_median[ i2 ] - CosmoParams.median[ i2 ] )/CosmoParams.median[ i2 ] for i2 in range( Nparams )]
+        CosmoParams.mean_diff = [ abs( new_mean[ i2 ] - CosmoParams.mean[ i2 ] )/CosmoParams.mean[ i2 ] for i2 in range( Nparams )]
 
         var_flag = 0
+        
+        
+        
         for j4 in range( Nparams ):
-            if CosmoParams.variance_diff[ j4 ] < CosmoParams.desired_variance[ j4 ] and CosmoParams.median_diff < CosmoParams.desired_median[ j4 ]:
+            if CosmoParams.variance_diff[ j4 ] < CosmoParams.desired_variance[ j4 ] and CosmoParams.mean_diff[ j4 ] < CosmoParams.desired_mean[ j4 ] and CosmoParams.median_diff[ j4 ] < CosmoParams.desired_median[ j4 ]:
                 var_flag = var_flag + 1
         
         print 'cov_diff = ' + str( CosmoParams.variance_diff )
         print 'median_diff  = ' + str( CosmoParams.median_diff )
+        print 'mean_diff  = ' + str( CosmoParams.median_diff )
  
 
         for elem in CosmoParams.variance:
@@ -306,8 +319,8 @@ while var_flag < Nparams:
         if var_flag < Nparams:
 
             CosmoParams.variance = new_cov               
-            CosmoParams.median = new_median
 
+            CosmoParams.median = new_median
             # store epsilon
             epsilon.append( [ mquantiles( [ par_surv[ j1 , j2 ] for j1 in xrange( len( par_surv ) ) ], [0.75] )[0] for j2 in range(-2,0) ] )
         
@@ -325,7 +338,7 @@ while var_flag < Nparams:
         
             CosmoParams.sdata_weights=weights[:]
             
-            cont = cont + 1 
+            
 
         
         op1 = open(os.path.join( path1 , output_param_file_root + str( cont ) + '.dat'), 'w')
@@ -340,14 +353,17 @@ while var_flag < Nparams:
         op1.close()
 
         del op1
+        
+        cont = cont + 1 
             
             
       
 op3.close()      
 
 if Ncpu!=1:
-  p.join()
   p.close()
+  p.join()
+  
 else: 
    pass
 print "Done!"
