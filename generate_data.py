@@ -35,7 +35,7 @@ def generate_data(name):
    
    CosmoParams=ChooseParamsInput()
 
-   CosmoParams.params={"H0":H0,"Ob":Omegab,"Om":Omegam,"OL":1.-Omegam-Omegab,"Tgamma":Tgamma0,"ns":ns,"sigma8":0.8,"w":-1.0}
+   CosmoParams.params={"H0":H0,"Ob":Omegab,"Om":Omegam,"OL":1.-Omegam-Omegab,"Tgamma":Tgamma0,"ns":ns,"sigma8":sigma8,"w":w}
 
    ncount = NCountSimul (zmin, zmax, log ( dm[0] ), log ( 10**16 ), area )
    
