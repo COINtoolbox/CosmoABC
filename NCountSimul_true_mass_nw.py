@@ -122,7 +122,8 @@ def summary_quantile( data, mass_bin, q_list ):
 
 
     #convert mass bins to natural log
-    mass = [ numpy.log( item ) for item in mass_bin ]
+    #mass = [ numpy.log( item ) for item in mass_bin ]
+    mass = mass_bin
 
     #separate fiducial data
     data_bin = numpy.array([ [ item[0] for item in data  if item[1] >= mass[ i ] ] for i in range (len(mass) -1) ])
@@ -207,7 +208,7 @@ def choose_par( hyper_par, hyper_par_cov, bounds,dist ):
     
 
 
-def set_distances( summary_fid, mass_bin, quantile_list, zmin, zmax, area, ncount1, seed, CP):
+def set_distances( summary_fid, mass_bin, quantile_list, simul_data ):
     """
     Calculate summary statistics difference between the fiducial data and a specific model defined by the inputed cosmological parameters.
 
@@ -238,7 +239,8 @@ def set_distances( summary_fid, mass_bin, quantile_list, zmin, zmax, area, ncoun
     
     #simulate instance of data
     
-    data_sim = numpy.array( ncount1.simulation( zmax, seed, CP )[1] )
+    data_sim = simul_data[:]
+    
     data_size = len( data_sim )
 
     #calculate summary statistics for simulated data
@@ -265,7 +267,7 @@ def weighted_values(values, probabilities, size):
     
     
 
-def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, CP, zmin, zmax, area, ncount, seed, ndata_fid ):
+def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, ncpu, CP, zmin, zmax, area,  seed, ndata_fid ):
     """
     Select model parameters surviving summary statistics distance threshold.
 
@@ -306,6 +308,10 @@ def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, C
                  [[ redshift, mass]]
     """
 
+    numpy.random.seed()
+    
+    #ncount=NCountSimul (zmin, zmax, numpy.logmass_bin[0] ), numpy.log ( 10**16 ), area )
+    ncount=NCountSimul (zmin, zmax, mass_bin[0] , mass_bin[-1], area )
     
     
     Nparams=len(CP.keys)
@@ -348,13 +354,18 @@ def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, C
     result = []
     
     par_list = []
-        
-    for k in xrange( n_tries ) : 
+    
+    if ncpu==1:
+       size=n_tries
+    else:
+       size=n_tries/ncpu
+    
+    for k in xrange( size ) : 
      
         d1 = 10*tolerance[0]
         d2 = 10*tolerance[1]
        # print "d1=",d1,"tolerance=",tolerance
-        while ( d1 >= tolerance[0] ) or d2 >= tolerance[1]:
+        while ( d1 >= tolerance[0] ) or ( d2 >= tolerance[1] ):
         
         
            #########################################################
@@ -381,8 +392,9 @@ def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, C
         
            #print CP.params
            
-           d = set_distances( summary_fid, mass_bin, quantile_list, zmin, zmax, area, ncount, seed, CP.params  )
-
+           data_simul = numpy.array( ncount.simulation( zmax, seed, CP.params )[1] )
+           
+           d = set_distances( summary_fid, mass_bin, quantile_list, data_simul  )
            ##################
            # set dimension of output from set_distances
            d1 = sum( d[0] )
@@ -418,7 +430,7 @@ def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, C
     del bounds
        
    
-    return numpy.array( par_list ),numpy.array( indx_list ),par_cov
+    return [ numpy.array( par_list ),numpy.array( indx_list ),par_cov ]
 
 
 
@@ -438,5 +450,7 @@ def norm_pdf_multivariate(x, mu, sigma):
     raise NameError("The dimensions of the input don't match")
 
 
-
+def worker( args ):
+    
+    return choose_surv_par (*args)
 

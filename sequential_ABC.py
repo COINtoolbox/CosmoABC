@@ -5,7 +5,7 @@ from gi.repository import NumCosmo as Nc
 from gi.repository import NumCosmoMath as Ncm
 
 from scipy.stats.mstats import mquantiles
-from scipy.stats import norm,rv_discrete
+from scipy.stats import norm
 
 
 import numpy
@@ -13,10 +13,10 @@ import random
 import os 
 import shutil
 
+from multiprocessing import Pool
+import time
 
-import pylab as plt
-
-
+starttime=time.time()
 ############################################################
 ### Fiducial Cosmological parameters: ref. arXiv:1203.5775 (table 5. wCDM CMB+BAO+H0+SNeIa+SPTcl), Tgamma0 and ns are not given.
 zmin = 0.3              #minimum redshift
@@ -30,12 +30,12 @@ sigma8 = 0.807           #sigma8
 w = -1.01                #Dark energy equation of state     
 
 #choose observable
-observable = 'true_mass'
+observable = 'SZ'
 
 
 #mass bin
 #dm = [5*10**13, 10**14, 10**14.25, 10**14.5, 10**14.75,  10**15, 10**15.25,  10**15.5, 10**15.75 ]
-dm_choose = [10**14.3, 10**14.5, 10**14.7,  10**14.9, 10**15.1, 10**15.3,  10**15.5, 10**15.7 ]
+#dm_choose = [10**14.3, 10**14.5, 10**14.7,  10**14.9, 10**15.1, 10**15.3,  10**15.5, 10**15.7 ]
 
 mass_min = 10**14.3
 mass_max = 10**16
@@ -48,12 +48,15 @@ area = 2500
 
 #######
 # path and name to mock data file
-mock_data = "/home/emille/Dropbox/WGC/ABC/data/Mock_Data.dat"  
+mock_data = "/home/emille/Dropbox/WGC/ABC/data/Mock_Data.dat"
+mock_data = "/home/emille/Dropbox/WGC/ABC/data/Data_SZ.dat"
+#mock_data = "data_fid.dat"  
 
+Ncpu=1 # number of cpus to be used
 
-Ninit=10 # initial number of samples 
+Ninit=250 # initial number of samples 
 
-N=8      # particle sample size after the first iteration
+N=200      # particle sample size after the first iteration
 
 												
 epsilon_ini = [1e20, 1e20]		#Starting tolerance
@@ -68,9 +71,25 @@ Nparams=3
 
 # Load mock data
 data_fid = numpy.loadtxt( mock_data )
- 
+
+if observable == 'true_mass':
+    dm_choose = [ numpy.log( mass_min ) ]
+else:
+    dm_choose = [ min( data_fid[:,1] ) ]
+
+mq = mquantiles( data_fid[:,1], prob=quant_list )
+for it in mq:
+    dm_choose.append( it )
+
+if observable == 'true_mass':
+    dm_choose.append( numpy.log( mass_max ) )
+else:
+    dm_choose.append( max( data_fid[:,1] ) ) 
 #path to results directory
-path1="/home/emille/Dropbox/WGC/ABC/RESULTS/" + observable + '/' + str( Nparams ) + 'p/'
+
+path1="teste_6_SZ"
+
+#path1="/home/emille/Dropbox/WGC/ABC/RESULTS/" + observable + '/' + str( Nparams ) + 'p/om_w/'
 output_param_file_root = 'SMC_ABC_' + observable + '_'  
 output_covariance_file = 'covariance_evol_' + observable + '.dat'
 
@@ -95,25 +114,26 @@ CosmoParams=ChooseParamsInput()
 CosmoParams.params={"H0":H0,"Ob":Omegab,"Om":Omegam,"OL":1.-Omegam-Omegab,"Tgamma":Tgamma0,"ns":ns,"sigma8":0.8,"w":-1.0}
 
 CosmoParams.keys=["Om","w","sigma8"]
-#CosmoParams.keys=["Om","sigma8"]
+#CosmoParams.keys=["Om","w"]
 
 CosmoParams.keys_values=numpy.array( [  0.25 , -1.01,  0.7 ] )
-#CosmoParams.keys_values=numpy.array( [  0.25 ,  0.7 ] )
+#CosmoParams.keys_values=numpy.array( [  0.25 ,  -0.8 ] )
 
 CosmoParams.keys_cov=numpy.diag( [1.0 , 1.0, 1.0 ] )**2.
-#CosmoParams.keys_cov=numpy.diag( [1.0 , 1.0 ] )**2.
+#CosmoParams.keys_cov=numpy.diag( [1.0, 1.0 ] )**2.
 
 
 CosmoParams.keys_bounds=numpy.array( [ [0.0 , -10.0, 0.3 ] , [1.0-Omegab, 1.0, 1.0] ] )
-#CosmoParams.keys_bounds=numpy.array( [ [0.0 , 0.3 ] , [1.0-Omegab,  1.0] ] )
+#CosmoParams.keys_bounds=numpy.array( [ [0.0 , -10.0 ] , [1.0-Omegab,  1.0] ] )
 
 
 #desired final variance (percentage in relation to the initial variance)
-CosmoParams.desired_variance = [ 0.1, 0.1, 0.1]
-CosmoParams.desired_median = [0.1,0.1,0.1]
+CosmoParams.desired_variance = [ 0.05, 0.05, 2.0]
+CosmoParams.desired_median = [0.05,0.05,2.0]
 
-#CosmoParams.desired_variance = [ 0.1,  0.1]
-#CosmoParams.desired_median = [0.1,0.1]
+#CosmoParams.desired_variance = [ 0.05,  2.0]
+#CosmoParams.desired_median = [0.05,2.0]
+#CosmoParams.desired_mean = [0.05,2.0]
 
 
 #CosmoParams.keys=["Om"]
@@ -140,6 +160,14 @@ epsilon = [ ]
 var_flag = 0
 #for ii in xrange(time_steps):
 cont = 0
+
+
+if Ncpu!=1:
+  p=Pool(Ncpu)
+else:
+  pass
+  
+
 while var_flag < Nparams:
 
     print 'cont  = ' + str( cont )
@@ -147,17 +175,17 @@ while var_flag < Nparams:
     if ( cont == 0 ):
     
         #new simulation object
-        ncount = NCountSimul (zmin, zmax, log ( mass_min ), log ( mass_max ), area )
+        #ncount = NCountSimul (zmin, zmax, log ( mass_min ), log ( mass_max ), area )
   
 
         #Generate fiducial data
-        data_fid = numpy.array( ncount.simulation( zmax, seed, CosmoParams.params)[1] )
+        #data_fid = numpy.array( ncount.simulation( zmax, seed, CosmoParams.params)[1] )
 
 
-        if observable == 'true_mass':
-            dm = dm_choose
-        else:
-            dm = mquantiles( data_fid[:,1], prob=quant_list[1:-1] )
+        #if observable == 'true_mass':
+        dm = dm_choose
+        #else:
+        #    dm = mquantiles( data_fid[:,1], prob=quant_list[1:-1] )
 
 
         #keep number of fiducial data set
@@ -166,7 +194,30 @@ while var_flag < Nparams:
         #Calculate summary statistics for fiducial data
         summ_fid = summary_quantile( data_fid, dm, quant_list )
         
-        par_surv, indx,par_cov = choose_surv_par( summ_fid, dm, quant_list, epsilon_ini, Ninit, CosmoParams, zmin, zmax, area, ncount, seed, nobjs_fid )
+        if (Ncpu == 1):
+           
+           par_surv, indx,par_cov = choose_surv_par (summ_fid, dm, quant_list, epsilon_ini, N, Ncpu , CosmoParams,  zmin, zmax, area,  seed, nobjs_fid)
+        
+        else: 
+           
+           job_args=[ (summ_fid, dm, quant_list, epsilon_ini, N, Ncpu , CosmoParams,  zmin, zmax, area,  seed, nobjs_fid) for i in xrange(Ncpu)  ]
+           
+           results = p.map(worker, job_args)
+           
+           par_surv=[]
+           indx=[]
+           par_cov=numpy.array(results[0][-1])
+           
+           for i in xrange(Ncpu):
+              
+              
+              par_surv.append(results[i][0])
+           
+              indx.append(results[i][1])
+           
+           par_surv = numpy.vstack( par_surv )
+           #indx = numpy.vstack( indx ).flatten()
+           indx = numpy.hstack( indx )
         
         cont = cont + 1 
         # print "Data generated"
@@ -195,7 +246,10 @@ while var_flag < Nparams:
         
         CosmoParams.variance = [ numpy.std( CosmoParams.sdata[:, i] ) for i in range( Nparams )]
         CosmoParams.median =  [ numpy.median( CosmoParams.sdata[:, i] ) for i in range( Nparams )]
+        CosmoParams.mean =  [ numpy.mean( CosmoParams.sdata[:, i] ) for i in range( Nparams )]
         print 'covariances = ' + str( CosmoParams.variance )
+        print 'mean = ' + str( CosmoParams.mean )
+        print 'median = ' + str( CosmoParams.median )
 
         for elem in CosmoParams.variance:
             op3.write( str( elem ) + '    ' )
@@ -219,22 +273,56 @@ while var_flag < Nparams:
     
         print 'cont = ' + str( cont )
 
-        par_surv, indx, par_cov = choose_surv_par( summ_fid, dm, quant_list, epsilon[-1], N, CosmoParams,  zmin, zmax, area, ncount, seed, nobjs_fid )
+        
+        if (Ncpu == 1):
+           
+																																																										   par_surv, indx,par_cov = choose_surv_par (summ_fid, dm, quant_list, epsilon[ -1 ], N, Ncpu , CosmoParams,  zmin, zmax, area,  seed, nobjs_fid)
+		
+        else: 
+           
+           job_args=[ (summ_fid, dm, quant_list, epsilon[ -1 ], N, Ncpu , CosmoParams,  zmin, zmax, area,  seed, nobjs_fid) for i in xrange(Ncpu)  ]
+           
+           results = p.map(worker, job_args)
+           
+           par_surv=[]
+           indx=[]
+           par_cov=numpy.array(results[0][-1])
+           
+           for i in xrange(Ncpu):
+              
+              
+              par_surv.append(results[i][0])
+           
+              indx.append(results[i][1])
+           
+           par_surv = numpy.vstack( par_surv )
+           
+           #indx = numpy.vstack( indx ).flatten()
+           indx = numpy.hstack( indx )
+        
+        
+        
         CosmoParams.sdata=par_surv[:]
         
         #check if desired variance was achieved
         new_cov = [ numpy.std( CosmoParams.sdata[:, i2] ) for i2 in range( Nparams ) ]
         new_median = [ numpy.median( CosmoParams.sdata[:, i2] ) for i2 in range( Nparams ) ]
+        new_mean = [ numpy.mean( CosmoParams.sdata[:, i2] ) for i2 in range( Nparams ) ]
         CosmoParams.variance_diff = [ abs( new_cov[ i2 ] - CosmoParams.variance[ i2 ] )/CosmoParams.variance[ i2 ] for i2 in range( Nparams )]
         CosmoParams.median_diff = [ abs( new_median[ i2 ] - CosmoParams.median[ i2 ] )/CosmoParams.median[ i2 ] for i2 in range( Nparams )]
+        CosmoParams.mean_diff = [ abs( new_mean[ i2 ] - CosmoParams.mean[ i2 ] )/CosmoParams.mean[ i2 ] for i2 in range( Nparams )]
 
         var_flag = 0
+        
+        
+        
         for j4 in range( Nparams ):
-            if CosmoParams.variance_diff[ j4 ] < CosmoParams.desired_variance[ j4 ] and CosmoParams.median_diff[ j4 ] < CosmoParams.desired_median[ j4 ]:
+            if CosmoParams.variance_diff[ j4 ] < CosmoParams.desired_variance[ j4 ] and CosmoParams.mean_diff[ j4 ] < CosmoParams.desired_median[ j4 ]:
                 var_flag = var_flag + 1
         
         print 'cov_diff = ' + str( CosmoParams.variance_diff )
         print 'median_diff  = ' + str( CosmoParams.median_diff )
+        print 'mean_diff  = ' + str( CosmoParams.median_diff )
  
 
         for elem in CosmoParams.variance:
@@ -245,8 +333,8 @@ while var_flag < Nparams:
         if var_flag < Nparams:
 
             CosmoParams.variance = new_cov               
-            CosmoParams.median = new_median
 
+            CosmoParams.median = new_median
             # store epsilon
             epsilon.append( [ mquantiles( [ par_surv[ j1 , j2 ] for j1 in xrange( len( par_surv ) ) ], [0.75] )[0] for j2 in range(-2,0) ] )
         
@@ -263,23 +351,34 @@ while var_flag < Nparams:
             weights=weights_new/weights_new.sum()
         
             CosmoParams.sdata_weights=weights[:]
+            
+            
 
         
-            op1 = open(os.path.join( path1 , output_param_file_root + str( cont ) + '.dat'), 'w')
-            op1.write( '#' ) 
-            for par in CosmoParams.keys:
-                op1.write('#' + par + '    ' )
-            op1.write( 'distancia1    distancia2\n ' )
-            for elem in par_surv:
-               for item in elem:
-                  op1.write( str( item ) + '    ' )
-               op1.write( '\n' )
-            op1.close()
+        op1 = open(os.path.join( path1 , output_param_file_root + str( cont ) + '.dat'), 'w')
+        op1.write( '#' ) 
+        for par in CosmoParams.keys:
+            op1.write('#' + par + '    ' )
+        op1.write( 'distancia1    distancia2\n ' )
+        for elem in par_surv:
+           for item in elem:
+              op1.write( str( item ) + '    ' )
+           op1.write( '\n' )
+        op1.close()
 
-            del op1
-            cont = cont + 1 
-
+        del op1
+        
+        cont = cont + 1 
+            
             
       
 op3.close()      
 
+if Ncpu!=1:
+  p.close()
+  p.join()
+  
+else: 
+   pass
+print "Done!"
+print "time=%.4f seconds" % (time.time()-starttime)
