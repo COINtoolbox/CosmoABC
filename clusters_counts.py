@@ -119,12 +119,19 @@ def dist( summary_fid , summary_sim  ):
 
 	#d = dist=RHO ( data , model , SumStats , dist , (False,) )
 
-d = RHO ( data_obs , model , SumStats ,  dist,(0,))
+d = RHO ( data_obs , model , SumStats ,  dist)
 
-Prior=Distributions( "Normal" , np.array( [ 0.3 , 0.8 ] ), np.diag([0.5,0.5]), np.array( [[0.0,0.4],[1-Omegab,1.0]]) )
+Prior=Distributions( "Normal" , np.array( [ 0.3 , 0.7 ] ), np.diag([1,1]), np.array( [[0.0,0.4],[1-Omegab,1.0]]) )
 	
-P=StoreInfo(10,2,100,Prior, d)
+#P=StoreInfo(10,2,100,Prior, d)
 
-sc = ABC(P)
+N_iter= 4
+
+N=20
+
+Ncpu = 2
+
+P=StoreInfo(N_iter,Ncpu,N)
+sc = ABC(P,Prior,d)
 	
 out=sc.sampler("SimpleTest")

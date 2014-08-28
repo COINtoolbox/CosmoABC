@@ -17,14 +17,15 @@ import time as time
 
 class StoreInfo( object ):
 	
-	def __init__(self,n_iter, Ncpu, N, prior,dist):
+	#def __init__(self,n_iter, Ncpu, N, prior,dist):
+	def __init__(self,n_iter, Ncpu, N):
 	#def __init__(self):
 		
-		self.prior=prior
+		#self.prior=prior
 		
 		#elf.kernel=Kernel
 		
-		self.rho=dist
+		#self.rho=dist
 		
 		
 		############################
@@ -111,7 +112,8 @@ class Distributions( object ):
 class RHO( object ):
 	
 	
-	def __init__( self , data_obs ,  model , SummaryStatistics , dist, args=None):
+	#def __init__( self , data_obs ,  model , SummaryStatistics , dist, *args):
+	def __init__( self , data_obs ,  model , SummaryStatistics , dist, *args):
 		
 		self.model = model 
 		
@@ -193,7 +195,10 @@ def kernel(  mean, cov, bounds ):
     return np.array(params)
     
 
-def first_inner_loop(storeinfo):
+#def first_inner_loop(storeinfo,prior,rho):
+def first_inner_loop(args):
+	
+		storeinfo,prior,rho = args
 		
 		print storeinfo.Ncpu
 		
@@ -214,14 +219,16 @@ def first_inner_loop(storeinfo):
 		results = []
 		
 		for i in xrange( size ):
-			
+						
 			#p_proposed = storeinfo.prior.gen( )
 			
-			p_proposed = storeinfo.prior.gen( )
+			p_proposed = prior.gen( )
 			
 			#d=storeinfo.rho.call ( p_proposed )
 			
-			d=storeinfo.rho.call ( p_proposed )
+			#d=storeinfo.rho.call ( p_proposed )
+			
+			d=rho.call ( p_proposed )
 			
 			results.append(  list( p_proposed ) + [ d ] )
 			
@@ -231,7 +238,9 @@ def first_inner_loop(storeinfo):
 		
 def inner_loop(args):
 		
-		storeinfo , tol = args
+		#storeinfo , tol = args
+		
+		storeinfo,prior,rho , tol = args
 		
 		np.random.seed()		
 		
@@ -264,18 +273,22 @@ def inner_loop(args):
 			
 			print "prior bounds"
 			
-			print storeinfo.prior.bounds
+			#print storeinfo.prior.bounds
+			
+			print prior.bounds
 			
 			print "choosend triplet=" , storeinfo.sdata[index]
 			
 			
-			p_proposed = kernel( storeinfo.sdata[index] , storeinfo.weighted_cov, storeinfo.prior.bounds )
+			#p_proposed = kernel( storeinfo.sdata[index] , storeinfo.weighted_cov, storeinfo.prior.bounds )
+			
+			p_proposed = kernel( storeinfo.sdata[index] , storeinfo.weighted_cov, prior.bounds )
 			
 			print "proposed point:", p_proposed
 			
 			#d = storeinfo.rho( p_proposed )
 			
-			d=storeinfo.rho.call ( p_proposed )
+			d=rho.call ( p_proposed )
 			
 			
 			
@@ -339,13 +352,18 @@ def norm_pdf_multivariate(x, mu, sigma):
 
 class ABC(object):
 	
-	def __init__(self,SI):
+	#def __init__(self,SI):
+	def __init__(self,SI,Prior,Rho):
 		
 		self.SI=SI
+		self.prior=Prior
+		self.rho=Rho
 		self.results = None
 		
 	
 	def sampler(self, db ):
+		
+		q=0.25 #0.75
 		
 		start_time = time.time()
 		
@@ -365,7 +383,9 @@ class ABC(object):
 					
 					print "%d CPU being used!" % self.SI.Ncpu
 					
-					self.results = first_inner_loop ( self.SI )
+					#self.results = first_inner_loop ( self.SI )
+					
+					self.results = first_inner_loop ( (self.SI, self.prior, self.rho) )
 				
 					self.SI.sdata = np.array ( self.results )
 			
@@ -373,7 +393,9 @@ class ABC(object):
 					
 					print "%d CPU being used!" % self.SI.Ncpu
 				
-					self.results = p.map ( first_inner_loop , [ self.SI for j in xrange ( self.SI.Ncpu ) ] )
+					#self.results = p.map ( first_inner_loop , [ self.SI for j in xrange ( self.SI.Ncpu ) ] )
+					
+					self.results = p.map ( first_inner_loop , [ (self.SI, self.prior, self.rho ) for j in xrange ( self.SI.Ncpu ) ] )
 				
 					print self.results
 				
@@ -383,13 +405,17 @@ class ABC(object):
 				
 					#del p
 				
-				self.SI.weights = np.ones ( self.SI.N)/self.SI.N	 # set initial weights = 1/Nparticles
+				self.SI.weights = np.ones ( self.SI.N ) / self.SI.N	 # set initial weights = 1/Nparticles
 			
 				indx = np.argsort( self.SI.sdata[:,-1] ) # sorting coputing distances
+				
+				print "epsilons:" ,self.SI.sdata[indx,-1]
 			
 				print "indx=", indx
 			
-				self.SI.epsilon.append( mquantiles( self.SI.sdata[indx,-1] ,[0.75] )[0] )
+				self.SI.epsilon.append( mquantiles( self.SI.sdata[indx,-1] ,[q] )[0] )
+				
+				print "espilon choosed:",mquantiles( self.SI.sdata[indx,-1] ,[q] )[0]
 			
 			#	print "sdata before ordering"
 			
@@ -448,15 +474,19 @@ class ABC(object):
 				if ( self.SI.Ncpu == 1 ):
 					
 					
-					results =  inner_loop ( (self.SI , self.SI.epsilon[i-1] ) ) # to complete
+					#results =  inner_loop ( (self.SI , self.SI.epsilon[i-1] ) ) # to complete
 					
-					self.SI.sdata = np.array ( results[0] )
+					self.results =  inner_loop ( (self.SI , self.prior, self.rho, self.SI.epsilon[i-1] ) ) # to complete
 					
-					self.SI.index = np.array ( results[1] )#, dtype=int )
+					self.SI.sdata = np.array ( self.results[0] )
+					
+					self.SI.index = np.array ( self.results[1] )#, dtype=int )
 				
 				else:
 					
-					self.results = p.map (inner_loop , [ (self.SI , self.SI.epsilon[i-1] ) for j in xrange ( self.SI.Ncpu ) ] )
+					#self.results = p.map (inner_loop , [ (self.SI , self.SI.epsilon[i-1] ) for j in xrange ( self.SI.Ncpu ) ] )
+					
+					self.results = p.map (inner_loop , [ (self.SI , self.prior, self.rho, self.SI.epsilon[i-1] ) for j in xrange ( self.SI.Ncpu ) ] )
 					
 					self.SI.sdata = np.vstack ( [ self.results[j][0] for j in xrange(self.SI.Ncpu) ]  )
 					
@@ -465,7 +495,11 @@ class ABC(object):
 					
 				DataToFiles( db + "_" + str( i ) + ".dat", self.SI.sdata )
 				
-				self.SI.epsilon.append( mquantiles( self.SI.sdata[:,-1] ,[0.75] )[0] )
+				print "epsilons:", self.SI.sdata[:,-1]
+				
+				self.SI.epsilon.append( mquantiles( self.SI.sdata[:,-1] ,[q] )[0] )
+				
+				print "espilon choosed:",mquantiles( self.SI.sdata[:,-1] ,[q] )[0]
 				
 				self.SI.sdata=self.SI.sdata[:,:-1]
 				
@@ -473,7 +507,7 @@ class ABC(object):
 				
 				self.SI.sdata_old[n1],self.SI.cov ) for n1 in xrange( self.SI.N ) ] ) for n2  in xrange( self.SI.N ) ])
 				
-				numerator= np.array( [ self.SI.prior.pdf(self.SI.sdata[n1])  for n1 in xrange(self.SI.N) ] )  
+				numerator= np.array( [ self.prior.pdf(self.SI.sdata[n1])  for n1 in xrange(self.SI.N) ] )  
 				
 				self.SI.weights= numerator / denominator
 				
