@@ -73,6 +73,7 @@ def model (p , *args):
 	CosmoParams[ "Ode "] = 1.-CosmoParams[ "Om" ]- CosmoParams[ "Ob" ]
 	CosmoParams[ "sigma8" ] = p[1]
 	
+	#seed =args
 	seed = False
 	
 	return np.array( nclusters.simulation( zmax, seed, CosmoParams )[1] )
@@ -119,7 +120,7 @@ def dist( summary_fid , summary_sim  ):
 
 	#d = dist=RHO ( data , model , SumStats , dist , (False,) )
 
-d = RHO ( data_obs , model , SumStats ,  dist)
+d = RHO ( data_obs , model , SumStats ,  dist )
 
 Prior=Distributions( "Normal" , np.array( [ 0.3 , 0.7 ] ), np.diag([1,1]), np.array( [[0.0,0.4],[1-Omegab,1.0]]) )
 	
