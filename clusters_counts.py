@@ -53,6 +53,15 @@ quant_list = [ 0.02, 0.09, 0.25, 0.5, 0.75, 0.91, 0.98]
 #sky area
 area = 2500
 
+observable = 'true_mass'
+
+if observable == 'true_mass':
+    from NCount_Simul import NCountSimul
+    
+else:
+    from NCount_Simul_SPT import NCountSimul
+
+
 #choose observable
 #observable = 'true_mass'
 
@@ -63,20 +72,19 @@ area = 2500
 #    from NCountSimul_SPT import *
      
 
-nclusters = NCountSimul( zmin, zmax, np.log( mass_min ), np.log( mass_max ), area)
+nclusters = NCountSimul( zmin, zmax, np.log( mass_min ), np.log( mass_max ), area,False)
 
 
 
-def model (p , *args):
+def model (p,*args):
 	
 	CosmoParams[ "Om" ] = p[ 0 ] 
 	CosmoParams[ "Ode "] = 1.-CosmoParams[ "Om" ]- CosmoParams[ "Ob" ]
 	CosmoParams[ "sigma8" ] = p[1]
 	
-	#seed =args
-	seed = False
 	
-	return np.array( nclusters.simulation( zmax, seed, CosmoParams )[1] )
+	
+	return np.array( nclusters.simulation( zmax,  CosmoParams )[1] )
 	
 
 
@@ -105,6 +113,7 @@ def SumStats ( data ):
 def dist( summary_fid , summary_sim  ):
 	
 	distance = np.sum(  (summary_fid[0] - summary_sim[0])**2.   )
+	#distance = np.sum(  (summary_fid - summary_sim)**2.   )
 	
 	#distance =  np.sum( [ np.sqrt( sum( [ ( summary_fid[0][ i ][ j ] -\
 	 # summary_sim[0][ i ][ j ] ) ** 2  for j in range( len( summary_fid[0][ i ] ) ) ] ) ) for i in range( len( summary_fid[0] ) ) ] )
@@ -126,11 +135,11 @@ Prior=Distributions( "Normal" , np.array( [ 0.3 , 0.7 ] ), np.diag([1,1]), np.ar
 	
 #P=StoreInfo(10,2,100,Prior, d)
 
-N_iter= 4
+N_iter= 15
 
-N=20
+N=10
 
-Ncpu = 2
+Ncpu = 1
 
 P=StoreInfo(N_iter,Ncpu,N)
 sc = ABC(P,Prior,d)

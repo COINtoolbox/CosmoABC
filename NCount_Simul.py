@@ -12,7 +12,7 @@ import math
 
 class NCountSimul:
 
-  def __init__ (self, z_min, z_max, lnM_min, lnM_max, area):
+  def __init__ (self, z_min, z_max, lnM_min, lnM_max, area,seed):
     Ncm.cfg_init ()
     self.cosmo = Nc.HICosmo.new_from_name (Nc.HICosmo, "NcHICosmoDEXcdm")
     dist = Nc.Distance.new (z_max * 1.5)
@@ -36,6 +36,12 @@ class NCountSimul:
     self.rng = Ncm.RNG.pool_get ("example_ca_sampling");
 
     self.ncdata.init_from_sampling (self.mset, cluster_z, cluster_m, area * (pi / 180.0)**2, self.rng)
+    
+    if seed == False:
+        self.rng.set_random_seed( False )
+    else:   
+        Ncm.RNG.set_seed ( self.rng , seed )
+    self.ncdata.resample (self.mset, self.rng)
 
     del dist
     del vp
@@ -46,7 +52,7 @@ class NCountSimul:
     del cluster_z
     del cluster_m
 
-  def simulation (self, z_max, seed, CP):
+  def simulation (self, z_max,  CP):
     self.cosmo.props.H0      = CP["H0"]
     self.cosmo.props.Omegab  = CP["Ob"]
     self.cosmo.props.Omegac  = CP["Om"]
@@ -56,11 +62,7 @@ class NCountSimul:
     self.cosmo.props.sigma8  = CP["sigma8"]
     self.cosmo.props.w       = CP["w"]        
 
-    if seed == False:
-        self.rng.set_random_seed( False )
-    else:   
-        Ncm.RNG.set_seed ( self.rng , seed )
-    self.ncdata.resample (self.mset, self.rng)
+    
 
     lnM_true = self.ncdata.get_lnM_true ()
     z_true = self.ncdata.get_z_true ()

@@ -138,7 +138,7 @@ class RHO( object ):
 	#def __call__(self,params):
 	def call(self,params):
 		
-		simul_data=self.model ( params  ,*self.args)
+		simul_data=self.model ( params  ,self.args)
 		#print simul_data
 		
 		sum_stats_model = self.sumstats ( simul_data )
@@ -181,11 +181,11 @@ def kernel(  mean, cov, bounds ):
           #print "L:", L
           
           x = np.random.normal( size=n )
-          print "candidate:", x
+          #print x
           
           params =np.array( mean ) + np.dot(L, x )
           
-          print params
+          print "candidate:", params
           
           flag=((params>=bounds[0]) & (params<=bounds[1]))
           
@@ -206,7 +206,7 @@ def first_inner_loop(args):
 		
 		if ( storeinfo.Ncpu!=1 ): 
 			
-			size = 2*storeinfo.N/storeinfo.Ncpu
+			size = 2*int(storeinfo.N/storeinfo.Ncpu)
 			
 		else:
 			
@@ -248,8 +248,6 @@ def inner_loop(args):
 		
 		results = [ ]
 		
-		
-		
 		d_tol= tol
 		
 		if ( storeinfo.Ncpu!=1 ): 
@@ -264,7 +262,7 @@ def inner_loop(args):
 		k=0
 		
 		while (k<size):
-			
+		
 		
 			
 			index = weighted_values(range( storeinfo.N ), storeinfo.weights,1) 
@@ -294,7 +292,7 @@ def inner_loop(args):
 			
 			if ( d <= d_tol ):
 				
-				print "iteration=%d" % k
+				print "Particle=%d" % k
 				
 				k+=1
 				
@@ -363,7 +361,7 @@ class ABC(object):
 	
 	def sampler(self, db ):
 		
-		q=0.25 #0.75
+		q=0.50 #0.75
 		
 		start_time = time.time()
 		
@@ -397,7 +395,7 @@ class ABC(object):
 					
 					self.results = p.map ( first_inner_loop , [ (self.SI, self.prior, self.rho ) for j in xrange ( self.SI.Ncpu ) ] )
 				
-					print self.results
+					#print self.results
 				
 					self.SI.sdata = np.vstack ( [ self.results[j] for j in xrange(self.SI.Ncpu) ]  )
 				
@@ -467,7 +465,7 @@ class ABC(object):
 				
 			else:
 				
-				print "Iteration: %d" % self.SI.n_iter
+				print "Iteration: %d" % i
 				
 				self.SI.sdata_old = self.SI.sdata [ : ]
 				
