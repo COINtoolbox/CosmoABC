@@ -112,7 +112,7 @@ def SumStats ( data ):
 	
 def dist( summary_fid , summary_sim  ):
 	
-	distance = np.sum(  (summary_fid[0] - summary_sim[0])**2.   )
+	distance = np.sum( np.sqrt( (summary_fid[0] - summary_sim[0])**2. )   )
 	#distance = np.sum(  (summary_fid - summary_sim)**2.   )
 	
 	#distance =  np.sum( [ np.sqrt( sum( [ ( summary_fid[0][ i ][ j ] -\
@@ -135,11 +135,11 @@ Prior=Distributions( "Normal" , np.array( [ 0.3 , 0.7 ] ), np.diag([1,1]), np.ar
 	
 #P=StoreInfo(10,2,100,Prior, d)
 
-N_iter= 15
+N_iter= 20
 
-N=10
+N=250
 
-Ncpu = 1
+Ncpu = 2
 
 P=StoreInfo(N_iter,Ncpu,N)
 sc = ABC(P,Prior,d)

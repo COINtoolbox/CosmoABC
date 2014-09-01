@@ -48,7 +48,7 @@ class NCountSimul:
     del cluster_z
     del cluster_m
 
-  def simulation (self, z_max, seed, CP):
+  def simulation (self, z_max,  CP):
     self.cosmo.props.H0      = CP["H0"]
     self.cosmo.props.Omegab  = CP["Ob"]
     self.cosmo.props.Omegac  = CP["Om"]

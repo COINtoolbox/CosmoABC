@@ -1,10 +1,13 @@
 import numpy as np
 
+#from NCount_Simul import *
+from NCount_Simul_SPT import *
 
-from NCount_Simul import *
 
 
 def generate_data(name):
+   
+   
    
    ############################################################
    ### Fiducial Cosmological parameters: ref. arXiv:1203.5775 (table 5. wCDM CMB+BAO+H0+SNeIa+SPTcl), Tgamma0 and ns are not given.
@@ -33,9 +36,9 @@ def generate_data(name):
 
    CP={"H0":H0,"Ob":Omegab,"Om":Omegam,"OL":1.-Omegam-Omegab,"Tgamma":Tgamma0,"ns":ns,"sigma8":sigma8,"w":w}
 
-   ncount = NCountSimul (zmin, zmax, np.log ( dm[0] ), np.log ( 10**16 ), area )
+   ncount = NCountSimul (zmin, zmax, np.log ( dm[0] ), np.log ( 10**16 ), area, seed )
    
-   data_fid = np.array( ncount.simulation( zmax, seed, CP )[1] )
+   data_fid = np.array( ncount.simulation( zmax,  CP )[1] )
    
    f=open(name+".params","w")
    
