@@ -44,14 +44,14 @@ def generate_data(name):
    
    f.write("Parameters used\n")
    f.write("zmin=%.3f\n" % zmin)
-   f.write("zmax=%.3f" % zmax)
-   f.write("H0=%.2f" % H0)
-   f.write("Omega_baryons=%.3f" % Omegab)
-   f.write("Omega_matter=%.3f" % Omegam)
-   f.write("Tgamma0=%.3f" % Tgamma0)
-   f.write("zmin=%.3f" % ns)
-   f.write("sigma8=%.3f" % sigma8)
-   f.write("w=%.3f" % w)
+   f.write("zmax=%.3f\n" % zmax)
+   f.write("H0=%.2f\n" % H0)
+   f.write("Omega_baryons=%.3f\n" % Omegab)
+   f.write("Omega_matter=%.3f\n" % Omegam)
+   f.write("Tgamma0=%.3f\n" % Tgamma0)
+   f.write("zmin=%.3f\n" % ns)
+   f.write("sigma8=%.3f\n" % sigma8)
+   f.write("w=%.3f\n" % w)
    
    
    np.savetxt(name+".dat",data_fid,fmt="%.4f\t %.4f")

@@ -143,10 +143,11 @@ class RHO( object ):
 		
 		sum_stats_model = self.sumstats ( simul_data )
 		
-		print sum_stats_model 
+		#print sum_stats_model,self.sum_stats_obs
 		
-		#distance =  self.diff( self.sum_stats_obs , sum_stats_model ) 
-		return self.dist ( self.sum_stats_obs , sum_stats_model )
+		distance = self.dist ( self.sum_stats_obs , sum_stats_model )
+		#print distance
+		return distance
 		#return  np.sum((self.sum_stats_obs  - sum_stats_model)**2)
 		
 		
@@ -163,11 +164,11 @@ def kernel(  mean, cov, bounds ):
     
    # new_mean=numpy.dot(numpy.transpose(U),hyper_par)
    
-    print mean
+   # print mean
     
-    print cov
+   # print cov
     
-    print bounds
+   # print bounds
     
 
     flag = np.array([ False for i in xrange( n ) ])
@@ -220,15 +221,14 @@ def first_inner_loop(args):
 		
 		for i in xrange( size ):
 						
-			#p_proposed = storeinfo.prior.gen( )
+
 			
 			p_proposed = prior.gen( )
-			
-			#d=storeinfo.rho.call ( p_proposed )
-			
-			#d=storeinfo.rho.call ( p_proposed )
+	
 			
 			d=rho.call ( p_proposed )
+			
+			print "Accpeted Point: " + str (p_proposed) + "distance:" + str (d)
 			
 			results.append(  list( p_proposed ) + [ d ] )
 			
@@ -269,7 +269,7 @@ def inner_loop(args):
 			
 			print "Sampled index", index
 			
-			print "prior bounds"
+			
 			
 			#print storeinfo.prior.bounds
 			
@@ -300,7 +300,7 @@ def inner_loop(args):
 				
 				print " Gen. Sum. Stats.=%.4f \t Data Sum. Stats.=%.4f\n" % (  d ,d_tol )
 				
-				print "Accpeted Point: " + str (p_proposed)
+				print "Accpeted Point: " + str (p_proposed) + "distance:" + str (d)
 				
 				results.append( list( p_proposed ) + [ d ] )
 		
@@ -361,7 +361,7 @@ class ABC(object):
 	
 	def sampler(self, db ):
 		
-		q=0.50 #0.75
+		q=0.75 #0.75
 		
 		start_time = time.time()
 		

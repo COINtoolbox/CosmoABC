@@ -37,7 +37,7 @@ class NCountSimul:
         self.rng.set_random_seed( False )
     else:   
         Ncm.RNG.set_seed ( self.rng , seed )
-    self.ncdata.resample (self.mset, self.rng)
+
 
     del dist
     del vp
@@ -58,7 +58,7 @@ class NCountSimul:
     self.cosmo.props.sigma8  = CP["sigma8"]
     self.cosmo.props.w       = CP["w"]        
 
-    
+    self.ncdata.resample (self.mset, self.rng)
 
     lnM_true = self.ncdata.get_lnM_true ()
     z_true = self.ncdata.get_z_true ()
