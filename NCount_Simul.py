@@ -88,34 +88,5 @@ class NCountSimul:
 
 
 
-class Counts(object):
-   def __init__ (self, z_min, z_max, lnM_min, lnM_max, area):
-       Ncm.cfg_init ()
-       self.cosmo = Nc.HICosmo.new_from_name (Nc.HICosmo, "NcHICosmoDEXcdm")
-       self.dist = Nc.Distance.new (z_max * 1.5)
-       self.wp =  Nc.Window.new_from_name ("NcWindowTophat")
-       self.tf = Nc.TransferFunc.new_from_name ("NcTransferFuncEH")
-       self.vp = Nc.MatterVar.new (Nc.MatterVarStrategy.FFT, self.wp, self.tf)
-       self.gf = Nc.GrowthFunc.new ()
-       self.mulf = Nc.MultiplicityFunc.new_from_name ("NcMultiplicityFuncTinkerCrit{'Delta':<500.0>}")
-       self.mf = Nc.MassFunction.new (self.dist, self.vp, self.gf, self.mulf)
-    
-   def simulation (self, z_max,  CP):
-      self.cosmo.props.H0      = CP["H0"]
-      self.cosmo.props.Omegab  = CP["Ob"]
-      self.cosmo.props.Omegac  = CP["Om"]
-      self.cosmo.props.Omegax  = CP["OL"]
-      self.cosmo.props.Tgamma0 = CP["Tgamma"]
-      self.cosmo.props.ns      = CP["ns"]
-      self.cosmo.props.sigma8  = CP["sigma8"]
-      self.cosmo.props.w       = CP["w"]
-      self.vp.prepare (cosmo)
-        
-      self.mf.set_area_sd (200.0)
-      self.mf.set_eval_limits (cosmo, log (1e14), log(1e16), 0.0, 2.0)
-        
-      dndza = []
-      for i in range (0, np):
-         dndz = mf.dn_dz (cosmo, log(1e14), log(1e16), za[i], True)
-         dndza.append (dndz)
+
         
