@@ -12,7 +12,7 @@ from numpy import linalg
 
 class NCountSimul:
 
-  def __init__ (self, z_min, z_max, lnM_min, lnM_max, area, seed):
+  def __init__ (self, z_min, z_max, lnM_min, lnM_max, area, seed, observable):
     Ncm.cfg_init ()
     self.cosmo = Nc.HICosmo.new_from_name (Nc.HICosmo, "NcHICosmoDEXcdm")
     dist = Nc.Distance.new (z_max * 1.5)
@@ -22,6 +22,14 @@ class NCountSimul:
     gf = Nc.GrowthFunc.new ()
     mulf = Nc.MultiplicityFunc.new_from_name ("NcMultiplicityFuncTinkerCrit{'Delta':<500.0>}")
     mf = Nc.MassFunction.new (dist, vp, gf, mulf)
+    
+    if observable == 'SZ':
+        cluster_m = Nc.ClusterMass.new_from_name ("NcClusterMassBenson{'M0':<3e14>, 'z0':<0.6>, 'signif-obs-min':<5.0>, 'Asz':<6.24>, 'Bsz':<1.33>, 'Csz':<0.83>, 'Dsz':<0.24>}")
+    elif observable == 'true_mass':
+        cluster_m = Nc.ClusterMass.new_from_name ("NcClusterMassNodist{'lnM-min':<% 20.15g>, 'lnM-max':<% 20.15g>}" % (lnM_min, lnM_max))
+    else:
+        raise NameError('Invalid observable choice. Should be "true_mass" or "SZ"')
+        
     
     cluster_m = Nc.ClusterMass.new_from_name ("NcClusterMassNodist{'lnM-min':<% 20.15g>, 'lnM-max':<% 20.15g>}" % (lnM_min, lnM_max))
     cluster_z = Nc.ClusterRedshift.new_from_name ("NcClusterPhotozGaussGlobal{'pz-min':<%f>, 'pz-max':<%f>, 'z-bias':<0.0>, 'sigma0':<0.05>}" % (z_min, z_max))
@@ -57,10 +65,6 @@ class NCountSimul:
     self.cosmo.props.sigma8  = CP["sigma8"]
     self.cosmo.props.w       = CP["w"]
     
-    #if seed == False:
-    #    self.rng.set_random_seed( False )
-    #else:   
-    #    Ncm.RNG.set_seed ( self.rng , seed )
     self.ncdata.resample (self.mset, self.rng)
 
     lnM_true = self.ncdata.get_lnM_true ()
@@ -74,7 +78,6 @@ class NCountSimul:
 
     sim = []
     for i in range (nobjects):
-        #sim.append ([ z_true.get(i), lnM_true.get (i), z_obs.get (i, 0), lnM_obs.get (i, 0)])
         sim.append ([ z_obs.get (i, 0), lnM_obs.get (i, 0)])
 
 
@@ -105,14 +108,14 @@ class ChooseParamsInput(object):
           self.params[ self.keys[ i ] ]=x[ i ]
       
     
-def summary_quantile( data, mass_bin, q_list ):
+def summary_quantile( data, mass, q_list ):
     #Summary statistics by as the quantiles in q_list.
     #Calculates the quantiles for a distribution of redshift for observed masses above a mass threshold given by mass_bin.
     #
     #input: data -> list of list of floats 
     #               [ redshit, log_obs_Mass ]
-    #       mass_bin -> list of floats
-    #               [ mass_threshold_in_base_10 ]   
+    #       mass -> list of floats
+    #               [ mass_threshold_in_ln ]   
     #       q_list -> list of float
     #               [ quantiles ]
     #
@@ -121,10 +124,6 @@ def summary_quantile( data, mass_bin, q_list ):
     #        pop -> list of float
     #               [ fraction_of_number_of_data_for_each_mass_threshold ]    
 
-
-    #convert mass bins to natural log
-    #mass = [ numpy.log( item ) for item in mass_bin ]
-    mass = mass_bin
 
     #separate fiducial data
     data_bin = numpy.array([ [ item[0] for item in data  if item[1] >= mass[ i ] ] for i in range (len(mass) -1) ])
@@ -187,24 +186,16 @@ def choose_par( hyper_par, hyper_par_cov, bounds,dist ):
         sig8_try -> float: sigma8
     """
     Nparams=len(hyper_par)
-    
-   # U,S,V=linalg.svd(hyper_par_cov)
-    
-   # new_mean=numpy.dot(numpy.transpose(U),hyper_par)
-    
-
+   
     flag = numpy.array([ False for i in xrange( Nparams ) ])
     
-    #print "***********************************"
     while (flag.all() == False ):
           L = numpy.linalg.cholesky( hyper_par_cov )
           norm = numpy.random.normal(size=1*Nparams).reshape(Nparams, 1)
           params =numpy.array( hyper_par) + numpy.dot(L, norm).reshape(1,Nparams)
-          #print norm,hyper_par,params
+         
           flag=((params[0]>=bounds[0]) & (params[0]<=bounds[1]))
-         # print params,flag
-    #print "***********************************"
-    #print "generated parameters=", numpy.array( params[0] )
+       
     return numpy.array(params[0])
     
 
@@ -264,51 +255,15 @@ def weighted_values(values, probabilities, size):
     
     
 
-def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, ncpu, CP, zmin, zmax, area,  seed, ndata_fid, mass_lim ):
+def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, CP, zmin, zmax, area,  seed, ndata_fid, mass_lim, observable, ncpu=1 ):
     """
     Select model parameters surviving summary statistics distance threshold.
 
-    input:
-           summary_fid: list of float outputed by function summary_quantile
-                        [ fraction_of_number_of_data_for_each_mass_threshold ]    
-
-           mass_bin: list of floats
-                     [ mass_threshold_in_base_10 ]  
- 
-           quantile_list: list of float
-                          [ quantiles ]
-
-           tolerance: float
-                      maximum threshold of summary statistic distance. Parameter values are kept if the calculated model distance is lower.
-
-           n_tries: int
-                    number of surviving parameter values
-
-           hyper_par : list of list of float
-            hyper_par[0][0], hyper_par[0][1] : om1, om2 -> float, float: parameters that describe prior for matter energy density
-            hyper_par[2][0], hyper_par[1][1] : w1, w2   -> float, float: that describe prior for dark energy equation of state
-            hyper_par[1][0], hyper_par[2][1] : sig81, sig82 -> float, float:parameters that describe prior for sigma8
-
-           dist: string
-                 prior distribution:  'normal' -> gaussian 
-                                      'flat'   -> top-hat
-           Ob :  float
-            baryon energy density parameter 
-
-    output:
-           result: list of list of float
-                   parameter and distance surviving threshold requirement
-                   [[ dark_matter_density, dark_energ_density, equation_of_state_parameter, distance ]]  
-
-           data: list of list of float   
-                 simulated data for surviving model 
-                 [[ redshift, mass]]
     """
 
     numpy.random.seed()
     
-    #ncount=NCountSimul (zmin, zmax, numpy.logmass_bin[0] ), numpy.log ( 10**16 ), area )
-    ncount=NCountSimul (zmin, zmax, mass_lim[0] , mass_lim[1], area, seed )
+    ncount=NCountSimul (zmin, zmax, mass_lim[0] , mass_lim[1], area, seed, observable )
     
     
     Nparams=len(CP.keys)
@@ -331,10 +286,6 @@ def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, n
        
        par_surv = CP.sdata[:,:Nparams]-par_mean[:]  # center previous data
        
-    #   print "###################"
-    #   print par_surv
-    #   print "###################"
-       
        weights = CP.sdata_weights[:]
        
      
@@ -342,7 +293,6 @@ def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, n
        
        print par_cov
 
-   # 2*numpy.dot( numpy.transpose( par_surv[:,:Nparams] ),numpy.dot( numpy.diag( weights ) , par_surv[:,:Nparams] ) )
 
     bounds = CP.keys_bounds[:]
 
@@ -361,7 +311,7 @@ def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, n
      
         d1 = 10*tolerance[0]
         d2 = 10*tolerance[1]
-       # print "d1=",d1,"tolerance=",tolerance
+
         while ( d1 >= tolerance[0] ) or ( d2 >= tolerance[1]):
         
         
@@ -378,22 +328,21 @@ def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, n
               
               #choose one of the instances of simulation set
               indx = weighted_values(range( n_tries ), weights,1)
-              #print "Choosed iten=",indx,CP.sdata[indx,:Nparams]
+      
               new_par = choose_par( CP.sdata[indx,:Nparams], par_cov, bounds, CP.prior_dist ) 
            
-           #print new_par
+          
            
            CP.update_keys( new_par ) # update dictionary with containing the cosmological parameters
         
            CP.set_de()  # update OL key
         
-           #print CP.params
+           
            
            data_simul = numpy.array( ncount.simulation( zmax, CP.params )[1] )
            
            d = set_distances( summary_fid, mass_bin, quantile_list, data_simul  )
-           ##################
-           # set dimension of output from set_distances
+     
            d1 = sum( d[0] )
 
            
