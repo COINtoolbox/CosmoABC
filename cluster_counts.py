@@ -29,17 +29,17 @@ CosmoParams={"H0":H0,"Ob":Omegab,"Om":Omegam,"OL":1.-Omegam-Omegab,"Tgamma":Tgam
  
 ############ Load observational data ##########################
 
-data_obs = np.loadtxt ( "Mock_Data_True_Mass.dat" )
+data_obs = np.loadtxt ( "/home/emille/Dropbox/WGC/ABC/final_RESULTS/data/SZ_data_noheader.dat" )
 
 ##############################################################
-
-
 
 
 #############################################################################################################################
 
 # Cluster mass stuff!
-dm_choose = [10**14.3, 10**14.5, 10**14.7,  10**14.9, 10**15.1, 10**15.3,  10**15.5, 10**15.7 ]
+#dm_choose = [10**14.3, 10**14.5, 10**14.7,  10**14.9, 10**15.1, 10**15.3,  10**15.5, 10**15.7 ]
+
+
 
 mass_min = 10**14.3
 mass_max = 10**16
@@ -48,31 +48,22 @@ mass_max = 10**16
 #quantile list
 quant_list = [ 0.02, 0.09, 0.25, 0.5, 0.75, 0.91, 0.98]
 
+dm_choose = [ min( data_obs[:,1] ) ]
+mq = mquantiles( data_obs[:,1], prob=quant_list )
+for it in mq:
+    dm_choose.append( it )
+
 ###########################################################################################################################
 
 #sky area
 area = 2500
 
 observable = 'true_mass'
+seed = False
+########################################################################################################################
+ 
 
-if observable == 'true_mass':
-    from NCount_Simul import NCountSimul
-    
-else:
-    from NCount_Simul_SPT import NCountSimul
-
-
-#choose observable
-#observable = 'true_mass'
-
-#if observable == 'true_mass':
-#    from NCountSimul_true_mass_nw import *
-    
-#else:
-#    from NCountSimul_SPT import *
-     
-
-nclusters = NCountSimul( zmin, zmax, np.log( mass_min ), np.log( mass_max ), area,False)
+nclusters = NCountSimul( zmin, zmax, np.log( mass_min ), np.log( mass_max ), area, seed, observable)
 
 
 
@@ -80,7 +71,8 @@ def model (p,*args):
 	
 	CosmoParams[ "Om" ] = p[ 0 ] 
 	CosmoParams[ "Ode "] = 1.-CosmoParams[ "Om" ]- CosmoParams[ "Ob" ]
-	CosmoParams[ "sigma8" ] = p[1]
+        CosmoParams[ 'w' ] = p[1]
+	CosmoParams[ "sigma8" ] = p[2]
 	
 	
 	
@@ -90,10 +82,10 @@ def model (p,*args):
 
 def SumStats ( data ):
 	
-	mass = np.array( [ np.log( item ) for item in dm_choose ] )
+	#mass = np.array( [ np.log( item ) for item in dm_choose ] )
 	
 	
-	data_bin = np.array([ [ item[0] for item in data  if item[1] >= mass[ i ] ] for i in range (len(mass) -1) ])
+	data_bin = np.array([ [ item[0] for item in data  if item[1] >= dm_choose[ i ] ] for i in range (len(dm_choose) ) ])
 	
 	res = np.array( [ mquantiles( elem, prob=quant_list ) if len( elem ) > 0  else [ 0 for jj in quant_list]  for elem in data_bin ] )
 	
@@ -127,13 +119,13 @@ def dist( summary_fid , summary_sim  ):
 
 d = RHO ( data_obs , model , SumStats ,  dist )
 
-Prior=Distributions( "Normal" , np.array( [ 0.3 , 0.7 ] ), np.diag([1,1]), np.array( [[0.0,0.4],[1-Omegab,1.0]]) )
+Prior=Distributions( "Normal" , np.array( [ 0.3 , -0.8, 0.7 ] ), np.diag([1,1,1]), np.array( [[0.0,-10.0, 0.6],[1-Omegab,1.0,1.0]]) )
 	
 #P=StoreInfo(10,2,100,Prior, d)
 
 N_iter= 20
 
-N=250
+N=100
 
 Ncpu = 2
 

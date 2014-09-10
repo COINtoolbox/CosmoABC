@@ -143,9 +143,13 @@ class RHO( object ):
 		
 		sum_stats_model = self.sumstats ( simul_data )
 		
-		#print sum_stats_model 
+		#print 'len( sum_stats_model) = ', len( sum_stats_model )
 		
-		#distance =  self.diff( self.sum_stats_obs , sum_stats_model ) 
+		distance =  self.dist ( self.sum_stats_obs , sum_stats_model )
+
+                #print 'len( distance ) = ', len( distance )
+                #print 'sum_stats_obs = ', self.sum_stats_obs  
+   
 		return self.dist ( self.sum_stats_obs , sum_stats_model )
 		#return  np.sum((self.sum_stats_obs  - sum_stats_model)**2)
 		
@@ -219,6 +223,8 @@ def first_inner_loop(args):
 		results = []
 		
 		for i in xrange( size ):
+
+                        print "Particle=%d" % i
 						
 			#p_proposed = storeinfo.prior.gen( )
 			
@@ -292,7 +298,7 @@ def inner_loop(args):
 			
 			d=rho.call ( p_proposed )
 			
-			#print 'd = ', d
+			#print 'len( d ) = ', len( d )
 			
 			if ( d[0] <= d_tol[0] ):
 

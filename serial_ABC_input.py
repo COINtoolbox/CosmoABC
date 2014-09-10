@@ -266,7 +266,7 @@ while var_flag < Nparams:
         
         print 'cov_diff = ' + str( CosmoParams.variance_diff )
         print 'median_diff  = ' + str( CosmoParams.median_diff )
-        print 'mean_diff  = ' + str( CosmoParams.median_diff )
+        print 'mean_diff  = ' + str( CosmoParams.mean_diff )
  
 
         for elem in CosmoParams.variance:
