@@ -29,9 +29,6 @@ ns = 0.97                #spectral index
 sigma8 = 0.807           #sigma8
 w = -1.01                #Dark energy equation of state     
 
-#choose observable
-observable = 'SZ'
-
 mass_min = 10**14.3
 mass_max = 10**16
 
