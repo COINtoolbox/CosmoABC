@@ -6,7 +6,7 @@ from gi.repository import NumCosmoMath as Ncm
 
 from scipy.stats.mstats import mquantiles
 from scipy.stats import norm
-from serial_ABC_functions import *
+from ABC_functions import *
 
 import numpy
 import random 
@@ -29,6 +29,9 @@ ns = 0.97                #spectral index
 sigma8 = 0.807           #sigma8
 w = -1.01                #Dark energy equation of state     
 
+#choose observable
+observable = 'true_mass'
+
 mass_min = 10**14.3
 mass_max = 10**16
 
@@ -40,12 +43,12 @@ area = 2500
 
 #######
 # path and name to data file
-mock_data = "/home/emille/Dropbox/WGC/ABC/final_RESULTS/data/SZ_data_noheader.dat"
+mock_data = "/home/emille/Dropbox/WGC/ABC/data/Mock_Data.dat"
 
-N=20      # particle sample size after the first iteration
+N=200      # particle sample size after the first iteration
 
 												
-epsilon_ini = [1e20, 1e20,1e20,1e20]		#Starting tolerance
+epsilon_ini = [1e20, 1e20]		#Starting tolerance
 
 #if seed == False, use random 
 seed = False  # seed for ncount
@@ -55,11 +58,9 @@ var_tol = 0.075
 #options are 'Om', 'w' and 'sigma8'
 parm_to_fit=['Om', 'w', 'sigma8']
 
-path_output_dir = '/home/emille/Dropbox/WGC/ABC/desperate_runs/SZ_4epsilons/'
-
 ##############################################################
-output_param_file_root = path_output_dir + 'SMC_ABC_' + observable + '_'  
-output_covariance_file = path_output_dir + 'covariance_evol_' + observable + '.dat'
+output_param_file_root = 'SMC_ABC_' + observable + '_'  
+output_covariance_file = 'covariance_evol_' + observable + '.dat'
 
 CosmoParams=ChooseParamsInput()
 
@@ -148,7 +149,7 @@ var_flag = 0
 cont = 0
 
 
-op4 = open(path_output_dir +'weights.dat', 'w' )
+op4 = open('weights.dat', 'w' )
 op4.write( 'cont    weights...\n' )
 
 while var_flag < Nparams:
@@ -157,21 +158,16 @@ while var_flag < Nparams:
 
     if ( cont == 0 ):
 
-        dz_choose = [ min( data_fid[:,0] ) ]
-
         if observable == 'true_mass':
             dm_choose = [ numpy.log( mass_min ) ]
         else:
             dm_choose = [ min( data_fid[:,1] ) ]
 
         mq = mquantiles( data_fid[:,1], prob=quant_list )
-        mqz = mquantiles( data_fid[:,0], prob=quant_list )
-        for it in range( len( mq ) ):
-            dm_choose.append( mq[ it ] )
-            dm_choose.append( mqz[ it ] )
+        for it in mq:
+            dm_choose.append( it )
 
-        dz_choose.append( max( data_fid[:,0] ) )
-        if observable == 'SZ':
+        if observable == 'true_mass':
             dm_choose.append( numpy.log( mass_max ) )
         else:
             dm_choose.append( max( data_fid[:,1] ) ) 
@@ -180,16 +176,14 @@ while var_flag < Nparams:
 
         #if observable == 'true_mass':
         dm = dm_choose
-        dz = dz_choose
 
         #keep number of fiducial data set
         nobjs_fid = len( data_fid )
 
         #Calculate summary statistics for fiducial data
-        summ_fid = summary_quantile( data_fid, dm, quant_list, 'mass' )
-        summ_fidz = summary_quantile( data_fid, dz, quant_list, 'z' )
+        summ_fid = summary_quantile( data_fid, dm, quant_list )
                 
-        par_surv, indx,par_cov = choose_surv_par (summ_fid, summ_fidz, dm, dz, quant_list, epsilon_ini, 2*N, CosmoParams,  zmin, zmax, area,  seed, nobjs_fid, [numpy.log(mass_min), numpy.log(mass_max)], observable)
+        par_surv, indx,par_cov = choose_surv_par (summ_fid, dm, quant_list, epsilon_ini, 2*N, CosmoParams,  zmin, zmax, area,  seed, nobjs_fid, [numpy.log(mass_min), numpy.log(mass_max)], observable)
         
    
         cont = cont + 1 
@@ -205,7 +199,7 @@ while var_flag < Nparams:
         par_surv = numpy.array([ par_surv[ i3 ] for i3 in param_sorted[:N] ])
                  
 
-        epsilon.append( [ mquantiles( [ par_surv[ j1 , j2] for j1 in xrange( len( par_surv ) ) ], [0.75] )[0] for j2 in range(-4,0) ]  )
+        epsilon.append( [ mquantiles( [ par_surv[ j1 , j2] for j1 in xrange( len( par_surv ) ) ], [0.75] )[0] for j2 in range(-2,0) ]  )
         
         CosmoParams.sdata=par_surv[:]
         
@@ -233,13 +227,10 @@ while var_flag < Nparams:
         op0.write( '#' ) 
         for par in CosmoParams.keys:
             op0.write('#' + par + '    ' )
-        op0.write( 'distancia1    distancia2    distancia3    distancia4  epsilon1    epsilon2    epsilon3    epsilon4\n' )
+        op0.write( 'distancia1    distancia2 \n' )
         for elem in par_surv:
            for item in elem:
               op0.write( str( item ) + '    ' )
-
-           for jj in range( 4 ):
-               op0.write( str( epsilon[-1][ jj ] ) + '    ') 
            op0.write('\n' )
         op0.close()
 
@@ -248,7 +239,7 @@ while var_flag < Nparams:
     
         print 'cont = ' + str( cont )
            
-        par_surv, indx,par_cov = choose_surv_par (summ_fid, summ_fidz, dm, dz,  quant_list, epsilon[ -1 ], N, CosmoParams,  zmin, zmax, area,  seed, nobjs_fid, [numpy.log(mass_min), numpy.log(mass_max)], observable)
+        par_surv, indx,par_cov = choose_surv_par (summ_fid, dm, quant_list, epsilon[ -1 ], N, CosmoParams,  zmin, zmax, area,  seed, nobjs_fid, [numpy.log(mass_min), numpy.log(mass_max)], observable)
         
         CosmoParams.sdata=par_surv[:]
         
@@ -270,7 +261,7 @@ while var_flag < Nparams:
         
         print 'cov_diff = ' + str( CosmoParams.variance_diff )
         print 'median_diff  = ' + str( CosmoParams.median_diff )
-        print 'mean_diff  = ' + str( CosmoParams.mean_diff )
+        print 'mean_diff  = ' + str( CosmoParams.median_diff )
  
 
         for elem in CosmoParams.variance:
@@ -284,7 +275,7 @@ while var_flag < Nparams:
 
             CosmoParams.median = new_median
             # store epsilon
-            epsilon.append( [ mquantiles( [ par_surv[ j1 , j2 ] for j1 in xrange( len( par_surv ) ) ], [0.75] )[0] for j2 in range(-4,0) ] )
+            epsilon.append( [ mquantiles( [ par_surv[ j1 , j2 ] for j1 in xrange( len( par_surv ) ) ], [0.75] )[0] for j2 in range(-2,0) ] )
         
         
             #update the weights of the last simulation given the mean and standard deviation from the previous set of simulations  
@@ -308,13 +299,11 @@ while var_flag < Nparams:
         op1.write( '#' ) 
         for par in CosmoParams.keys:
             op1.write('#' + par + '    ' )
-        op1.write( 'distancia1    distancia2  distancia3 distancia4  epsilon1    epsilon2 epsilon3    epsilon4\n ' )
+        op1.write( 'distancia1    distancia2    epsilon1    epsilon2\n ' )
         for elem in par_surv:
            for item in elem:
               op1.write( str( item ) + '    ' )
-           for kkk in range(4): 
-               op1.write( str( epsilon[-1][kk] ) + '    '  )
-           op1.write( '\n' )
+           op1.write( str( epsilon[-1][0] ) + '    ' + str( epsilon[-1][1] ) + '\n' )
         op1.close()
 
         del op1
