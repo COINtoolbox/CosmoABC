@@ -53,7 +53,7 @@ mock_data = "/home/emille/Dropbox/WGC/ABC/data/Mock_Data.dat"
 N=200      # particle sample size after the first iteration
 
 												
-epsilon_ini = [1e20, 1e20]		#Starting tolerance
+epsilon_ini = [1e20, 1e20,1e20,1e20]		#Starting tolerance
 
 #if seed == False, use random 
 seed = False  # seed for ncount
@@ -163,15 +163,20 @@ while var_flag < Nparams:
 
     if ( cont == 0 ):
 
+        dz_choose = [ min( data_fid[:,0] ) ]
+
         if observable == 'true_mass':
             dm_choose = [ numpy.log( mass_min ) ]
         else:
             dm_choose = [ min( data_fid[:,1] ) ]
 
         mq = mquantiles( data_fid[:,1], prob=quant_list )
-        for it in mq:
-            dm_choose.append( it )
+        mqz = mquantiles( data_fid[:,0], prob=quant_list )
+        for it in len( mq ):
+            dm_choose.append( mq[ it ] )
+            dm_choose.append( mqz[ it ] )
 
+        dz_choose.append( max( data_fid[:,0] ) )
         if observable == 'SZ':
             dm_choose.append( numpy.log( mass_max ) )
         else:
@@ -181,14 +186,16 @@ while var_flag < Nparams:
 
         #if observable == 'true_mass':
         dm = dm_choose
+        dz = dz_choose
 
         #keep number of fiducial data set
         nobjs_fid = len( data_fid )
 
         #Calculate summary statistics for fiducial data
-        summ_fid = summary_quantile( data_fid, dm, quant_list )
+        summ_fid = summary_quantile( data_fid, dm, quant_list, 'mass' )
+        summ_fidz = summary_quantile( data_fid, dz, quant_list, 'z' )
                 
-        par_surv, indx,par_cov = choose_surv_par (summ_fid, dm, quant_list, epsilon_ini, 2*N, CosmoParams,  zmin, zmax, area,  seed, nobjs_fid, [numpy.log(mass_min), numpy.log(mass_max)], observable)
+        par_surv, indx,par_cov = choose_surv_par (summ_fid, summ_fidz, dm, dz, quant_list, epsilon_ini, 2*N, CosmoParams,  zmin, zmax, area,  seed, nobjs_fid, [numpy.log(mass_min), numpy.log(mass_max)], observable)
         
    
         cont = cont + 1 
@@ -204,7 +211,7 @@ while var_flag < Nparams:
         par_surv = numpy.array([ par_surv[ i3 ] for i3 in param_sorted[:N] ])
                  
 
-        epsilon.append( [ mquantiles( [ par_surv[ j1 , j2] for j1 in xrange( len( par_surv ) ) ], [0.75] )[0] for j2 in range(-2,0) ]  )
+        epsilon.append( [ mquantiles( [ par_surv[ j1 , j2] for j1 in xrange( len( par_surv ) ) ], [0.75] )[0] for j2 in range(-4,0) ]  )
         
         CosmoParams.sdata=par_surv[:]
         
@@ -244,7 +251,7 @@ while var_flag < Nparams:
     
         print 'cont = ' + str( cont )
            
-        par_surv, indx,par_cov = choose_surv_par (summ_fid, dm, quant_list, epsilon[ -1 ], N, CosmoParams,  zmin, zmax, area,  seed, nobjs_fid, [numpy.log(mass_min), numpy.log(mass_max)], observable)
+        par_surv, indx,par_cov = choose_surv_par (summ_fid, summ_fidz, dm, dz,  quant_list, epsilon[ -1 ], N, CosmoParams,  zmin, zmax, area,  seed, nobjs_fid, [numpy.log(mass_min), numpy.log(mass_max)], observable)
         
         CosmoParams.sdata=par_surv[:]
         
@@ -280,7 +287,7 @@ while var_flag < Nparams:
 
             CosmoParams.median = new_median
             # store epsilon
-            epsilon.append( [ mquantiles( [ par_surv[ j1 , j2 ] for j1 in xrange( len( par_surv ) ) ], [0.75] )[0] for j2 in range(-2,0) ] )
+            epsilon.append( [ mquantiles( [ par_surv[ j1 , j2 ] for j1 in xrange( len( par_surv ) ) ], [0.75] )[0] for j2 in range(-4,0) ] )
         
         
             #update the weights of the last simulation given the mean and standard deviation from the previous set of simulations  
@@ -304,11 +311,13 @@ while var_flag < Nparams:
         op1.write( '#' ) 
         for par in CosmoParams.keys:
             op1.write('#' + par + '    ' )
-        op1.write( 'distancia1    distancia2    epsilon1    epsilon2\n ' )
+        op1.write( 'distancia1    distancia2  distancia3 distancia4  epsilon1    epsilon2 epsilon3    epsilon4\n ' )
         for elem in par_surv:
            for item in elem:
               op1.write( str( item ) + '    ' )
-           op1.write( str( epsilon[-1][0] ) + '    ' + str( epsilon[-1][1] ) + '\n' )
+           for kkk in range(4): 
+               op1.write( str( epsilon[-1][kk] ) + '    '  )
+           op1.write( '\n' )
         op1.close()
 
         del op1
