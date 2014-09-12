@@ -315,7 +315,7 @@ def choose_surv_par( summary_fid, summary_fidz, mass_bin, dz_bin, quantile_list,
         d1 = 10*tolerance[0]
         d2 = 10*tolerance[1]
 
-        while ( d1 + d3 >= tolerance[0] ) or ( d2+d4 >= tolerance[3]):
+        while ( d1 + d3 >= tolerance[0] ) or ( d2+d4 >= tolerance[3] ):
         
         
            #########################################################
@@ -351,38 +351,33 @@ def choose_surv_par( summary_fid, summary_fidz, mass_bin, dz_bin, quantile_list,
            d3 = sum( dz[0] ) 
 
            
-           if ( d1 <=  tolerance[0] ) and sum( d[1] ) > 0:
+           if ( d1 + d3 <=  tolerance[0] ) and sum( d[1] ) > 0:
 
-               if ( d3 <= tolerance[2] ) and sum( dz[1] ) > 0:
-
-                   pop_sim =  numpy.array( d[1] )
-                   pop_fid = numpy.array( summary_fid[1] )
-
-                   d2 = sum(abs(pop_sim-pop_fid))
+               
+               pop_sim =  numpy.array( d[1] )
+               pop_fid = numpy.array( summary_fid[1] )
+               d2 = sum(abs(pop_sim-pop_fid))
  
-                   if  d2 <= tolerance[1]:
+               popz_sim =  numpy.array( dz[1] )
+               popz_fid =  numpy.array( summary_fidz[1] )
 
-                        popz_sim =  numpy.array( dz[1] )
-                        popz_fid =  numpy.array( summary_fidz[1] )
+               d4 = sum(abs(popz_sim-popz_fid))
 
-                        d4 = sum(abs(popz_sim-popz_fid))
+               if d2 + d4 <= tolerance[1]:
 
-                        if d4 <= tolerance[3]:
-
-                            print 'tries = ' + str( len( par_list ) )
+                       print 'tries = ' + str( len( par_list ) )
   
-                            indx_list.append( indx )
+                       indx_list.append( indx )
                     
-                            print '        dist1 = ', d1,  ',    epsilon1 = ', tolerance[0] 
-                            print '        dist2 = ', d2,  ',    epsilon2 = ', tolerance[1] 
-                            print '        dist3 = ', d3,  ',    epsilon3 = ', tolerance[2]
-                            print '        dist4 = ', d4,  ',    epsilon4 = ', tolerance[3]
+                       print '        dist1 = ', d1+d3,  ',    epsilon1 = ', tolerance[0] 
+                       print '        dist2 = ', d2+d4,  ',    epsilon2 = ', tolerance[1] 
+                      
 
-                            result = list( new_par ) + [ d1, d2 ]   
-                            print "Accpeted point:", result
+                       result = list( new_par ) + [ d1+d3, d2+d4 ]   
+                       print "Accepted point:", result
 
-                            #add distance to parameter list
-                            par_list.append( result )
+                       #add distance to parameter list
+                       par_list.append( result )
   
             ###############################################################
  
