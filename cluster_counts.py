@@ -29,17 +29,14 @@ CosmoParams={"H0":H0,"Ob":Omegab,"Om":Omegam,"OL":1.-Omegam-Omegab,"Tgamma":Tgam
  
 ############ Load observational data ##########################
 
+observable = 'SZ'
+
 data_obs = np.loadtxt ( "/home/emille/Dropbox/WGC/ABC/final_RESULTS/data/SZ_data_noheader.dat" )
 
 ##############################################################
 
 
 #############################################################################################################################
-
-# Cluster mass stuff!
-#dm_choose = [10**14.3, 10**14.5, 10**14.7,  10**14.9, 10**15.1, 10**15.3,  10**15.5, 10**15.7 ]
-
-
 
 mass_min = 10**14.3
 mass_max = 10**16
@@ -58,7 +55,7 @@ for it in mq:
 #sky area
 area = 2500
 
-observable = 'true_mass'
+#seed
 seed = False
 ########################################################################################################################
  
@@ -120,8 +117,6 @@ def dist( summary_fid , summary_sim  ):
 d = RHO ( data_obs , model , SumStats ,  dist )
 
 Prior=Distributions( "Normal" , np.array( [ 0.3 , -0.8, 0.7 ] ), np.diag([1,1,1]), np.array( [[0.0,-10.0, 0.6],[1-Omegab,1.0,1.0]]) )
-	
-#P=StoreInfo(10,2,100,Prior, d)
 
 N_iter= 20
 

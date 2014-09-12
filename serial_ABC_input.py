@@ -6,7 +6,7 @@ from gi.repository import NumCosmoMath as Ncm
 
 from scipy.stats.mstats import mquantiles
 from scipy.stats import norm
-from ABC_functions import *
+from serial_ABC_functions import *
 
 import numpy
 import random 
@@ -30,12 +30,7 @@ sigma8 = 0.807           #sigma8
 w = -1.01                #Dark energy equation of state     
 
 #choose observable
-observable = 'true_mass'
-
-
-#mass bin
-#dm = [5*10**13, 10**14, 10**14.25, 10**14.5, 10**14.75,  10**15, 10**15.25,  10**15.5, 10**15.75 ]
-#dm_choose = [10**14.3, 10**14.5, 10**14.7,  10**14.9, 10**15.1, 10**15.3,  10**15.5, 10**15.7 ]
+observable = 'SZ'
 
 mass_min = 10**14.3
 mass_max = 10**16
@@ -48,9 +43,9 @@ area = 2500
 
 #######
 # path and name to data file
-mock_data = "/home/emille/Dropbox/WGC/ABC/data/Mock_Data.dat"
+mock_data = "/home/emille/Dropbox/WGC/ABC/final_RESULTS/data/SZ_data_noheader.dat"
 
-N=200      # particle sample size after the first iteration
+N=20      # particle sample size after the first iteration
 
 												
 epsilon_ini = [1e20, 1e20,1e20,1e20]		#Starting tolerance
@@ -63,9 +58,11 @@ var_tol = 0.075
 #options are 'Om', 'w' and 'sigma8'
 parm_to_fit=['Om', 'w', 'sigma8']
 
+path_output_dir = '/home/emille/Dropbox/WGC/ABC/desperate_runs/SZ_4epsilons/'
+
 ##############################################################
-output_param_file_root = 'SMC_ABC_' + observable + '_'  
-output_covariance_file = 'covariance_evol_' + observable + '.dat'
+output_param_file_root = path_output_dir + 'SMC_ABC_' + observable + '_'  
+output_covariance_file = path_output_dir + 'covariance_evol_' + observable + '.dat'
 
 CosmoParams=ChooseParamsInput()
 
@@ -154,7 +151,7 @@ var_flag = 0
 cont = 0
 
 
-op4 = open('weights.dat', 'w' )
+op4 = open(path_output_dir +'weights.dat', 'w' )
 op4.write( 'cont    weights...\n' )
 
 while var_flag < Nparams:
@@ -172,7 +169,7 @@ while var_flag < Nparams:
 
         mq = mquantiles( data_fid[:,1], prob=quant_list )
         mqz = mquantiles( data_fid[:,0], prob=quant_list )
-        for it in len( mq ):
+        for it in range( len( mq ) ):
             dm_choose.append( mq[ it ] )
             dm_choose.append( mqz[ it ] )
 
@@ -239,10 +236,13 @@ while var_flag < Nparams:
         op0.write( '#' ) 
         for par in CosmoParams.keys:
             op0.write('#' + par + '    ' )
-        op0.write( 'distancia1    distancia2 \n' )
+        op0.write( 'distancia1    distancia2    distancia3    distancia4  epsilon1    epsilon2    epsilon3    epsilon4\n' )
         for elem in par_surv:
            for item in elem:
               op0.write( str( item ) + '    ' )
+
+           for jj in range( 4 ):
+               op0.write( str( epsilon[-1][ jj ] ) + '    ') 
            op0.write('\n' )
         op0.close()
 

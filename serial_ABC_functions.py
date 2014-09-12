@@ -24,6 +24,7 @@ class NCountSimul:
     mf = Nc.MassFunction.new (dist, vp, gf, mulf)
     
     if observable == 'SZ':
+        print 'observable = ', observable
         cluster_m = Nc.ClusterMass.new_from_name ("NcClusterMassBenson{'M0':<3e14>, 'z0':<0.6>, 'signif-obs-min':<5.0>, 'Asz':<6.24>, 'Bsz':<1.33>, 'Csz':<0.83>, 'Dsz':<0.24>}")
     elif observable == 'true_mass':
         cluster_m = Nc.ClusterMass.new_from_name ("NcClusterMassNodist{'lnM-min':<% 20.15g>, 'lnM-max':<% 20.15g>}" % (lnM_min, lnM_max))
@@ -31,7 +32,6 @@ class NCountSimul:
         raise NameError('Invalid observable choice. Should be "true_mass" or "SZ"')
         
     
-    cluster_m = Nc.ClusterMass.new_from_name ("NcClusterMassNodist{'lnM-min':<% 20.15g>, 'lnM-max':<% 20.15g>}" % (lnM_min, lnM_max))
     cluster_z = Nc.ClusterRedshift.new_from_name ("NcClusterPhotozGaussGlobal{'pz-min':<%f>, 'pz-max':<%f>, 'z-bias':<0.0>, 'sigma0':<0.05>}" % (z_min, z_max))
     cad = Nc.ClusterAbundance.new (mf, None, cluster_z, cluster_m)
 
@@ -127,9 +127,9 @@ def summary_quantile( data, mass, q_list, obs ):
 
     #separate fiducial data
     if obs == 'mass':
-        data_bin = numpy.array([ [ item[0] for item in data  if item[1] >= mass[ i ] ] for i in range (len(mass) -1) ])
+        data_bin = numpy.array([ [ item[0] for item in data  if item[1] >= mass[ i ] ] for i in range (len(mass)) ])
     elif obs == 'z':
-        data_bin = numpy.array([ [ item[1] for item in data  if item[0] >= mass[ i ] ] for i in range (len(mass) -1) ])
+        data_bin = numpy.array([ [ item[1] for item in data  if item[0] >= mass[ i ] ] for i in range (len(mass)) ])
 
     #for item in data_bin:
     #    print ' bin = ' + str( len( item ) )
@@ -138,7 +138,7 @@ def summary_quantile( data, mass, q_list, obs ):
     res = [ mquantiles( elem, prob=q_list ) if len( elem ) > 0  else [ 0 for jj in q_list]  for elem in data_bin ] 
  
     if sum( [ len( data_bin[ k ] ) for k in range( len( data_bin ) ) ] ) > 0:    
-        pop = [ float( len( data_bin[ i ] ) )/sum( [ len( data_bin[ k ] ) for k in range( len( data_bin ) ) ] )  for i in range( len( data_bin ) ) ]   
+        pop = [ float( len( data_bin[ i ] ) )/len(data) for i in range( len( data_bin ) ) ]   
     else:
         pop = [ 0 for i in range( len( data_bin ) ) ] 
 
@@ -203,7 +203,7 @@ def choose_par( hyper_par, hyper_par_cov, bounds,dist ):
     
 
 
-def set_distances( summary_fid, mass_bin, quantile_list, simul_data ):
+def set_distances( summary_fid, mass_bin, quantile_list, simul_data, obs ):
     """
     Calculate summary statistics difference between the fiducial data and a specific model defined by the inputed cosmological parameters.
 
@@ -239,7 +239,7 @@ def set_distances( summary_fid, mass_bin, quantile_list, simul_data ):
     data_size = len( data_sim )
 
     #calculate summary statistics for simulated data
-    summ_sim = summary_quantile( data_sim, mass_bin, quantile_list )
+    summ_sim = summary_quantile( data_sim, mass_bin, quantile_list, obs )
     
     #calculate deviation for every mass threshold
     difference = deviation_quantile( summary_fid, summ_sim ) 
@@ -314,10 +314,8 @@ def choose_surv_par( summary_fid, summary_fidz, mass_bin, dz_bin, quantile_list,
      
         d1 = 10*tolerance[0]
         d2 = 10*tolerance[1]
-        d3 = 10*tolerance[2]
-        d4 = 10*tolerance[3]
 
-        while ( d1 >= tolerance[0] ) or ( d2 >= tolerance[1]) or (d3 >= tolerance[2]) or (d4 >= tolerance[3]):
+        while ( d1 + d3 >= tolerance[0] ) or ( d2+d4 >= tolerance[3]):
         
         
            #########################################################
@@ -346,8 +344,8 @@ def choose_surv_par( summary_fid, summary_fidz, mass_bin, dz_bin, quantile_list,
            
            data_simul = numpy.array( ncount.simulation( zmax, CP.params )[1] )
            
-           d = set_distances( summary_fid, mass_bin, quantile_list, data_simul  )
-           dz =  set_distances( summary_fidz, dz_bin, quantile_list, data_simul  )
+           d = set_distances( summary_fid, mass_bin, quantile_list, data_simul, 'mass'  )
+           dz =  set_distances( summary_fidz, dz_bin, quantile_list, data_simul, 'z'  )
      
            d1 = sum( d[0] )
            d3 = sum( dz[0] ) 
@@ -375,7 +373,10 @@ def choose_surv_par( summary_fid, summary_fidz, mass_bin, dz_bin, quantile_list,
   
                             indx_list.append( indx )
                     
-                            print '        dist = ' + str( d1 ) + ', epsilon1 = ' + str( tolerance[0] ) + ',   epsilon2 = ' + str( tolerance[1] )
+                            print '        dist1 = ', d1,  ',    epsilon1 = ', tolerance[0] 
+                            print '        dist2 = ', d2,  ',    epsilon2 = ', tolerance[1] 
+                            print '        dist3 = ', d3,  ',    epsilon3 = ', tolerance[2]
+                            print '        dist4 = ', d4,  ',    epsilon4 = ', tolerance[3]
 
                             result = list( new_par ) + [ d1, d2 ]   
                             print "Accpeted point:", result
