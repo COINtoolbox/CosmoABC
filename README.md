@@ -1,3 +1,9 @@
+in order to run this code it is necessary to install NumCosmo library.
+It can be found in 
+
+http://www.nongnu.org/numcosmo/
+
+
 Serial version of the code include:
 
     serial_ABC_input.py
