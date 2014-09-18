@@ -6,7 +6,7 @@ from gi.repository import NumCosmoMath as Ncm
 
 from scipy.stats.mstats import mquantiles
 from scipy.stats import norm
-from ABC_functions import *
+from serial_ABC_functions import *
 
 import numpy
 import random 
