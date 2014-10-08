@@ -19,4 +19,4 @@ Parallel version of the code include:
 
 catalog consider 'observed' is in:
  
-    SZ_data_noheader.dat
+    data_ABC_seed123.dat
