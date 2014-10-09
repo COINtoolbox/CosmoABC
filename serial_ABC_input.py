@@ -45,7 +45,7 @@ area = 2500
 # path and name to data file
 mock_data = "/home/emille/Dropbox/WGC/ABC/the_return_of_abc/data/dataset_ABC_seed123.dat"
 
-N=150      # particle sample size after the first iteration
+N=200      # particle sample size after the first iteration
 
 												
 epsilon_ini = [1e20, 1e20]		#Starting tolerance
@@ -182,7 +182,7 @@ while var_flag < Nparams:
         #Calculate summary statistics for fiducial data
         summ_fid = summary_quantile( data_fid, dm, quant_list )
                 
-        par_surv, indx,par_cov = choose_surv_par (summ_fid, dm, quant_list, epsilon_ini, 2*N, CosmoParams,  zmin, zmax, area,  seed, nobjs_fid, [numpy.log(mass_min), numpy.log(mass_max)], observable)
+        par_surv, indx,par_cov = choose_surv_par (summ_fid, dm, quant_list, epsilon_ini, 10*N, CosmoParams,  zmin, zmax, area,  seed, nobjs_fid, [numpy.log(mass_min), numpy.log(mass_max)], observable)
         
    
         cont = cont + 1 
