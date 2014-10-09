@@ -30,7 +30,7 @@ sigma8 = 0.807           #sigma8
 w = -1.01                #Dark energy equation of state     
 
 #choose observable
-observable = 'true_mass'
+observable = 'SZ'
 
 mass_min = 10**14.3
 mass_max = 10**16
@@ -43,9 +43,9 @@ area = 2500
 
 #######
 # path and name to data file
-mock_data = "/home/emille/Dropbox/WGC/ABC/data/Mock_Data.dat"
+mock_data = "/home/emille/Dropbox/WGC/ABC/the_return_of_abc/data/dataset_ABC_seed123.dat"
 
-N=200      # particle sample size after the first iteration
+N=150      # particle sample size after the first iteration
 
 												
 epsilon_ini = [1e20, 1e20]		#Starting tolerance
@@ -56,7 +56,7 @@ seed = False  # seed for ncount
 var_tol = 0.075
 
 #options are 'Om', 'w' and 'sigma8'
-parm_to_fit=['Om', 'w', 'sigma8']
+parm_to_fit=['Om']
 
 ##############################################################
 output_param_file_root = 'SMC_ABC_' + observable + '_'  
@@ -149,8 +149,7 @@ var_flag = 0
 cont = 0
 
 
-op4 = open('weights.dat', 'w' )
-op4.write( 'cont    weights...\n' )
+
 
 while var_flag < Nparams:
 
@@ -196,19 +195,20 @@ while var_flag < Nparams:
         param_sorted = final_dist.argsort() 
       
         #par_surv=par_surv[xrange(N)]
+
+        CosmoParams.sdata_weights = numpy.ones( N )/N
         par_surv = numpy.array([ par_surv[ i3 ] for i3 in param_sorted[:N] ])
-                 
+       
 
         epsilon.append( [ mquantiles( [ par_surv[ j1 , j2] for j1 in xrange( len( par_surv ) ) ], [0.75] )[0] for j2 in range(-2,0) ]  )
         
         CosmoParams.sdata=par_surv[:]
-        
-        CosmoParams.sdata_weights = numpy.ones( N )/N
 
+        op4 = open('weights_' + str( cont ) + '.dat', 'w' )
         op4.write( str( cont ) + '    ' )
         for iii in CosmoParams.sdata_weights:
             op4.write( str( iii ) + '    ' )
-        op4.write( '\n' )
+        op4.close()
         
         CosmoParams.variance = [ numpy.std( CosmoParams.sdata[:, i] ) for i in range( Nparams )]
         CosmoParams.median =  [ numpy.median( CosmoParams.sdata[:, i] ) for i in range( Nparams )]
@@ -224,9 +224,8 @@ while var_flag < Nparams:
 
         #write results to file
         op0 = open(os.path.join( output_param_file_root + '0.dat'), 'w')
-        op0.write( '#' ) 
         for par in CosmoParams.keys:
-            op0.write('#' + par + '    ' )
+            op0.write( par + '    ' )
         op0.write( 'distancia1    distancia2 \n' )
         for elem in par_surv:
            for item in elem:
@@ -238,6 +237,9 @@ while var_flag < Nparams:
     else:
     
         print 'cont = ' + str( cont )
+
+        par_surv_old = par_surv
+        
            
         par_surv, indx,par_cov = choose_surv_par (summ_fid, dm, quant_list, epsilon[ -1 ], N, CosmoParams,  zmin, zmax, area,  seed, nobjs_fid, [numpy.log(mass_min), numpy.log(mass_max)], observable)
         
@@ -261,7 +263,7 @@ while var_flag < Nparams:
         
         print 'cov_diff = ' + str( CosmoParams.variance_diff )
         print 'median_diff  = ' + str( CosmoParams.median_diff )
-        print 'mean_diff  = ' + str( CosmoParams.median_diff )
+        print 'mean_diff  = ' + str( CosmoParams.mean_diff )
  
 
         for elem in CosmoParams.variance:
@@ -279,26 +281,25 @@ while var_flag < Nparams:
         
         
             #update the weights of the last simulation given the mean and standard deviation from the previous set of simulations  
-            denominator=numpy.array([ sum([CosmoParams.sdata_weights[i]*norm_pdf_multivariate( par_surv[n,:Nparams] , par_surv[ indx[ i ] , :Nparams ],par_cov ) for i in xrange(N)]) for n in xrange(N)]	)
+            denominator=numpy.array([ sum([CosmoParams.sdata_weights[i]*norm_pdf_multivariate( par_surv[n,:Nparams] , par_surv_old[ i  , :Nparams ], par_cov ) for i in xrange(N)]) for n in xrange(N)]	)
       
             numerator = numpy.array([ norm_pdf_multivariate(par_surv[i,:Nparams],CosmoParams.keys_values,CosmoParams.keys_cov ) for i in xrange(N)]) 
     
-            weights_new= numerator / denominator
+            weights_new= numerator / denominator 
       
             weights=weights_new/weights_new.sum()
         
             CosmoParams.sdata_weights=weights[:]
             
-            
+        op4 = open('weights_' + str( cont ) + '.dat', 'w' )    
         op4.write( str( cont ) + '    ' )
         for iii in CosmoParams.sdata_weights:
             op4.write( str( iii ) + '    ' )
-        op4.write( '\n' ) 
+        op4.close() 
         
         op1 = open(os.path.join( output_param_file_root + str( cont ) + '.dat'), 'w')
-        op1.write( '#' ) 
         for par in CosmoParams.keys:
-            op1.write('#' + par + '    ' )
+            op1.write( par + '    ' )
         op1.write( 'distancia1    distancia2    epsilon1    epsilon2\n ' )
         for elem in par_surv:
            for item in elem:
@@ -310,8 +311,7 @@ while var_flag < Nparams:
         
         cont = cont + 1 
             
-            
-op4.close()      
+      
 op3.close()      
 
 
