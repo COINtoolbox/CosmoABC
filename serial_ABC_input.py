@@ -43,7 +43,7 @@ area = 2500
 
 #######
 # path and name to data file
-mock_data = "/home/emille/Dropbox/WGC/ABC/the_return_of_abc/data/dataset_ABC_seed123.dat"
+mock_data = "dataset_ABC_seed123.dat"
 
 N=200      # particle sample size after the first iteration
 
