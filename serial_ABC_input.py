@@ -38,14 +38,18 @@ mass_max = 10**16
 #quantile list
 quant_list = [ 0.02, 0.09, 0.25, 0.5, 0.75, 0.91, 0.98]
 
+
+#quantile threshold
+choose_quantile = 0.75
+
 #sky area
 area = 2500
 
 #######
 # path and name to data file
-mock_data = "dataset_ABC_seed123.dat"
+mock_data = "/home/emille/Dropbox/WGC/ABC/the_return_of_abc/data/dataset_ABC_seed123.dat"
 
-N=200      # particle sample size after the first iteration
+N=150      # particle sample size after the first iteration
 
 												
 epsilon_ini = [1e20, 1e20]		#Starting tolerance
@@ -182,7 +186,7 @@ while var_flag < Nparams:
         #Calculate summary statistics for fiducial data
         summ_fid = summary_quantile( data_fid, dm, quant_list )
                 
-        par_surv, indx,par_cov = choose_surv_par (summ_fid, dm, quant_list, epsilon_ini, 10*N, CosmoParams,  zmin, zmax, area,  seed, nobjs_fid, [numpy.log(mass_min), numpy.log(mass_max)], observable)
+        par_surv, indx,par_cov = choose_surv_par (summ_fid, dm, quant_list, epsilon_ini, 2*N, CosmoParams,  zmin, zmax, area,  seed, nobjs_fid, [numpy.log(mass_min), numpy.log(mass_max)], observable)
         
    
         cont = cont + 1 
@@ -200,7 +204,7 @@ while var_flag < Nparams:
         par_surv = numpy.array([ par_surv[ i3 ] for i3 in param_sorted[:N] ])
        
 
-        epsilon.append( [ mquantiles( [ par_surv[ j1 , j2] for j1 in xrange( len( par_surv ) ) ], [0.75] )[0] for j2 in range(-2,0) ]  )
+        epsilon.append( [ mquantiles( [ par_surv[ j1 , j2] for j1 in xrange( len( par_surv ) ) ], [ choose_quantile ] )[0] for j2 in range(-2,0) ]  )
         
         CosmoParams.sdata=par_surv[:]
 
@@ -277,7 +281,7 @@ while var_flag < Nparams:
 
             CosmoParams.median = new_median
             # store epsilon
-            epsilon.append( [ mquantiles( [ par_surv[ j1 , j2 ] for j1 in xrange( len( par_surv ) ) ], [0.75] )[0] for j2 in range(-2,0) ] )
+            epsilon.append( [ mquantiles( [ par_surv[ j1 , j2 ] for j1 in xrange( len( par_surv ) ) ], [ choose_quantile ] )[0] for j2 in range(-2,0) ] )
         
         
             #update the weights of the last simulation given the mean and standard deviation from the previous set of simulations  
