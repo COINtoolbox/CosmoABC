@@ -212,6 +212,7 @@ while var_flag < Nparams:
         op4.write( str( cont ) + '    ' )
         for iii in CosmoParams.sdata_weights:
             op4.write( str( iii ) + '    ' )
+        op4.write( '\n' )
         op4.close()
         
         CosmoParams.variance = [ numpy.std( CosmoParams.sdata[:, i] ) for i in range( Nparams )]
@@ -299,6 +300,7 @@ while var_flag < Nparams:
         op4.write( str( cont ) + '    ' )
         for iii in CosmoParams.sdata_weights:
             op4.write( str( iii ) + '    ' )
+        op4.write('\n')
         op4.close() 
         
         op1 = open(os.path.join( output_param_file_root + str( cont ) + '.dat'), 'w')
