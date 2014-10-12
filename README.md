@@ -20,3 +20,8 @@ Parallel version of the code include:
 catalog consider 'observed' is in:
  
     data_ABC_seed123.dat
+
+R scripts for plotting weighted PDF in 1 and 2 dimensions are:
+
+    weightedKD_1dim.R
+    weightedKD_2dim.R
