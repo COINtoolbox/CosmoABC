@@ -135,7 +135,8 @@ def summary_quantile( data, mass, q_list ):
     res = [ mquantiles( elem, prob=q_list ) if len( elem ) > 0  else [ 0 for jj in q_list]  for elem in data_bin ] 
  
     if sum( [ len( data_bin[ k ] ) for k in range( len( data_bin ) ) ] ) > 0:    
-        pop = [ float( len( data_bin[ i ] ) )/sum( [ len( data_bin[ k ] ) for k in range( len( data_bin ) ) ] )  for i in range( len( data_bin ) ) ]   
+        #pop = [ float( len( data_bin[ i ] ) )/sum( [ len( data_bin[ k ] ) for k in range( len( data_bin ) ) ] )  for i in range( len( data_bin ) ) ]  
+        pop = [ len( data_bin[ i ] )  for i in range( len( data_bin ) ) ]   
     else:
         pop = [ 0 for i in range( len( data_bin ) ) ] 
 
@@ -348,10 +349,11 @@ def choose_surv_par( summary_fid, mass_bin, quantile_list, tolerance, n_tries, C
            
            if ( d1 <=  tolerance[0] ) and sum( d[1] ) > 0:
 
-               pop_sim =  numpy.array( d[1] )
-               pop_fid = numpy.array( summary_fid[1] )
+               pop_sim =  sum( numpy.array( d[1] ) )
+               pop_fid = sum( numpy.array( summary_fid[1] ) )
 
-               d2 = sum(abs(pop_sim-pop_fid))
+               d2 = max(abs(1-float(pop_sim)/pop_fid), abs(1-float(pop_fid)/pop_sim))
+               
  
                if  d2 <= tolerance[1]:
 
