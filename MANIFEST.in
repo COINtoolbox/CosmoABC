@@ -1,5 +1,5 @@
 include README.rst
 include CHANGES.md
 include CosmoABC/data/simulated_GalCluster_sample.dat
-include CosmoABC/data/SPT_sample.dat
-include CosmoABC/examples/sample_input.dat
+include CosmoABC/data/SPT.dat
+include CosmoABC/examples/example_NumCosmo_input.dat

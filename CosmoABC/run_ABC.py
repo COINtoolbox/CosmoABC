@@ -41,9 +41,11 @@ __license__ = "GPL"
 
 
 
-from distances import *
-from priors import *
 import argparse
+import numpy
+from CosmoABC.distances import * 
+from CosmoABC.priors import *
+from CosmoABC.ABC_sampler import *
 
 def read_input( filename ):
     """
@@ -54,19 +56,21 @@ def read_input( filename ):
     output:   dictionary with formated user choices
     """
 
+    
+ 
     #read user input data
     op1 = open( filename, 'r')
-    lin1 = readlines()
+    lin1 = op1.readlines()
     op1.close()
 
     data1 = [ elem.split() for elem in lin1 ]     
 
     #store options in params dictionary
-    params_ini = dict( [ [ data1[0], data1[2:] ]  for line in data1 ] )
+    params_ini = dict( [ ( line[0], line[2:] )  for line in data1 if len( line ) > 1 ] )
     
 
     #read observed data
-    op2 = open( params_ini['path_to_obs'], 'r' )
+    op2 = open( params_ini['path_to_obs'][0], 'r' )
     lin2 = op2.readlines()
     op2.close()
 
@@ -74,12 +78,13 @@ def read_input( filename ):
 
 
     params = {}
+    params['path_to_obs'] = params_ini['path_to_obs'][0] 
     params['dataset1'] = numpy.array([ [ float( item ) for item in line ] for line in data2 ])  
     params['param_to_fit'] = [ params_ini['param_to_fit'][ i ] for i in xrange( params_ini['param_to_fit'].index('#') ) ]
  
     params['npar'] = len( params['param_to_fit'] )
-    params['prior_par'] = [ [ float( params_ini[ params[ 'param_to_fit' ] + '_prior_par' ][ j ] ) for j in xrange(2) ] for i in xrange( npar ) ]
-    params['param_lim'] = [ [ float( params_ini[ params[ 'param_to_fit' ] + '_lim' ][ j ] ) for j in xrange(2) ] for i in xrange( npar ) ]
+    params['prior_par'] = [ [ float( params_ini[ params[ 'param_to_fit' ][ i ] + '_prior_par' ][ j ] ) for j in xrange(2) ] for i in xrange( params['npar'] ) ]
+    params['param_lim'] = [ [ float( params_ini[ params[ 'param_to_fit' ][ i ] + '_lim' ][ j ] ) for j in xrange(2) ] for i in xrange( params['npar'] ) ]
     params['M'] = int( params_ini['M'][0] )
     params['epsilon1'] = float( params_ini[ 'epsilon1' ][0] )
     params['qthreshold'] = float( params_ini['qthreshold'][0])
@@ -87,11 +92,6 @@ def read_input( filename ):
     params['s'] =  float( params_ini['s'][0] )
     params['file_root'] = params_ini['file_root'][0]  
 
-    #functions
-    ###### Update this if you include any new functions!!!!!  ##############
-    dispatcher = {'NumCosmo_simulation': NumCosmo_simulation, 'flat_prior': flat_prior, 'gaussian_prior': gaussian_prior, 'distance_GRBF':distance_GRBF}
-    
-    params['simulation_func'] = dispatcher[ params_ini['simulation_func'][0] ]
     params['prior_func'] = dispatcher[ params_ini[ 'prior_func' ][0] ]
     params['distance_func'] = dispatcher[ params_ini[ 'distance_func' ][0] ]
 
@@ -99,7 +99,11 @@ def read_input( filename ):
     sim_par = {}  
     for item in params_ini.keys():
         if item not in params.keys():
-            sim_par[ item ] = float( params_ini[ item ][0] ) 
+            try:
+                float( params_ini[ item ][0] )
+                sim_par[ item ] = float( params_ini[ item ][0] )
+            except ValueError:
+                sim_par[ item ] = params_ini[ item ][0] 
 
     params['simulation_params'] = sim_par
 
@@ -108,8 +112,12 @@ def read_input( filename ):
 
 def main( args ):
 
+    from args.simulation import simulation
+
     user_input = read_input( args.input )
 
+    user_input['simulation_func'] = simulation
+            
     #initiate ABC construct
     sampler_ABC = ABC( dataset1=user_input['dataset1'], params=user_input, simulation_func=user_input['simulation_func'], prior_func=user_input['prior_func'], distance_func=user_input['distance_func']) 
 
@@ -125,7 +133,8 @@ if __name__=='__main__':
   
     #get user input file name
     parser = argparse.ArgumentParser(description='Approximate Bayesian Computation code.')
-    parser.add_argument('-i','--input', help='Input file name',required=True)
+    parser.add_argument('-i','--input', help='User input file name',required=True)
+    parser.add_argument('-s','--simulation', help='Simulation function file name', required=True)
     args = parser.parse_args()
    
     main( args )

@@ -26,11 +26,19 @@ def SumGRBF( dataset1, dataset2, s1, f1='gaussian'):
     #GRBF must be one in all points in the fixed basis sample
     one = [ 1 for j in range( len( dataset2 ) )  ]
 
-    rbf1 = Rbf( dataset2[:,0], dataset2[:,1], one, function=f1, epsilon=s1 )
+    if len( dataset2[0] ) == 2:
+        rbf1 = Rbf( dataset2[:,0], dataset2[:,1], one, function=f1, smooth=s1 )
     
-    #sum GRBF for all elements in data1 and centralize in the number of existing points in data2
-    sum1 = abs( numpy.nansum( [ numpy.log( rbf1( line[0], line[1] ) ) for line in dataset1 ]  ) - len( dataset2 ))
+        #sum GRBF for all elements in data1 and centralize in the number of existing points in data2
+        sum1 = abs( numpy.nansum( [ numpy.log( rbf1( line[0], line[1] ) ) for line in dataset1 ]  ) - len( dataset2 ))
     
+    elif len( dataset2[0] ) == 1:
+        rbf1 = Rbf( dataset2[:,0],  one, function=f1, smooth=s1 )
+    
+        #sum GRBF for all elements in data1 and centralize in the number of existing points in data2
+        sum1 = abs( numpy.nansum( [ numpy.log( rbf1( line[0] ) ) for line in dataset1 ]  ) - len( dataset2 ))
+            
+
     return sum1 
         
 
@@ -48,14 +56,14 @@ def distance_GRBF( dataset1, dataset2, s1, f='gaussian' ):
     output: scalar
     """
 
-    if sum( dataset2[0] ) == 0:
+    if sum( dataset2[0] ) == 0 or len( dataset2 ) > 5*len(dataset1):
         return 10**10
      
   
     else:
         #distance based on the logarithm of GRBF and normalized by results from data1
         if SumGRBF( dataset1, dataset2, s1 ) > 0:
-            d = abs( -2 * self.SumGRBF( dataset1, dataset2, s1, f1=f ) + 2 * self.SumGRBF( dataset1, dataset1, s1, f1=f ))
+            d = abs( -2 * SumGRBF( dataset1, dataset2, s1, f1=f ) + 2 * SumGRBF( dataset1, dataset1, s1, f1=f ))
             return d
 
         else:

@@ -16,10 +16,11 @@ setup(name='CosmoABC',
       packages=['CosmoABC'],
       install_requires=[
                       'numpy>=1.8.2',
-                      'scipy>=0.15.0',
+                      'scipy>=0.14.0',
                       'statsmodels>=0.5.0',
-                      'scipy.stats>=0.15.0'                    
+                      'matplotlib>=1.3.1'                   
       ],
+      scripts=['CosmoABC/run_ABC.py', 'CosmoABC/run_ABC_NumCosmo.py'],
       test_suite='nose.collector',
       tests_require=['nose', 'nose-cover3'],
       include_package_data=True,

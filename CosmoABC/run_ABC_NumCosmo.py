@@ -43,10 +43,17 @@ __license__ = "GPL"
 
 import argparse
 import numpy
-from CosmoABC.distances import * 
-from CosmoABC.simulations  import *
+from CosmoABC.distances import *
 from CosmoABC.priors import *
 from CosmoABC.ABC_sampler import *
+
+try: 
+    from CosmoABC.sim_NumCosmo  import *
+except ImportError:
+    raise ImportError( 'You must have NumCosmo running to use the sim_NumCosmo simulation! \n Please check your NumCosmo instalation.' )
+    
+
+
 
 def read_input( filename ):
     """

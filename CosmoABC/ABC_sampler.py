@@ -84,8 +84,14 @@ class ABC( object ):
         if isinstance( self.data, bool):
             raise IOError( 'No real data catalog provided.' )
 
-        if len( self.data ) < 0 or len( self.data[0] ) < 2:
-            raise IOError( 'Real data catalog must have at least 2 columns (features).' )
+        if len( self.data ) < 2 :
+            raise IOError( 'Real data catalog too short. Table must contain more than 1 element.' )
+
+        try:
+            len( self.data[0] )
+        except TypeError:
+            raise TypeError( 'Real data catalog must be at least 2 dimensional.' )
+                
 
         #check minimum keywords in params
         self.min_keys = ['simulation_params', 'param_to_fit', 'prior_par', 'param_lim', 'M', 'epsilon1', 'qthreshold', 'delta','s', 'file_root']  
@@ -187,6 +193,8 @@ class ABC( object ):
 		[1] integer -> total number of draws necessary to build the first particle system
         """
 
+        print 'Building first particle system:'
+
         #initiate variables to store total number of draws and surviving parameters
       
         theta = []    
@@ -202,7 +210,6 @@ class ABC( object ):
 
                 time1 = time.time()
                 dist = self.SetDistanceFromSimulation()
-                print ' K = ' + str( K ) + ',    dist = ' + str( dist ) + ',   time = ' + str( time.time()- time1 )
  
             theta_t = [ self.params[ item ] for item in self.params['param_to_fit'] ] 
 
@@ -215,7 +222,7 @@ class ABC( object ):
                 theta_t.append( total_time )
                 theta.append( theta_t  )
         
-            print '        J = ' + str( len( theta) )
+                print '        particle index = ' + str( len( theta) ) + ',  number of draws = ' + str( K )
 
         
 
