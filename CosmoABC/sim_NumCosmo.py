@@ -147,8 +147,7 @@ def NumCosmo_simulation( simul_params, save=False ):
         
         #generate simulation
         data_simul = numpy.array( ncount.simulation( simul_params.params['zmax'], simul_params.params,  simul_params.params['seed'] )[1] )
-        print 'len(data_simul)=' + str(len(data_simul))          
-
+        
         if len( data_simul ) == 0:
             data_simul = numpy.array([[0,0]])
             
