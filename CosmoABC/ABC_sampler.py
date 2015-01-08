@@ -26,6 +26,7 @@ import sys
 
 ################################################
 
+
 class ABC( object ):
 
     def __init__( self, dataset1=False, params=False, simulation_func=False, distance_func=False, prior_func=False ):
@@ -222,7 +223,7 @@ class ABC( object ):
                 theta_t.append( total_time )
                 theta.append( theta_t  )
         
-                print '        particle index = ' + str( len( theta) ) + ',  number of draws = ' + str( K )
+                print '        particle index = ' + str( len( theta) ) + ',  number of draws = ' + str( K ) + ',   distance=' + str( dist )
 
         
 
@@ -231,7 +232,7 @@ class ABC( object ):
             op = open( filename, 'w' )
             for item in self.params[ 'param_to_fit' ]:
                 op.write( item  + '    '  )
-            op.write(  'epsilon     NDraws    time        dist_threshold\n' )
+            op.write(  'distance     NDraws    time        dist_threshold\n' )
             for line in theta:
                 for elem in line:
                     op.write( str( elem )  + '    ' )
@@ -275,7 +276,7 @@ class ABC( object ):
   
             #draw model parameters to serve as mean 
             index_theta0 = numpy.random.choice( xrange( len( W ) ), p=W )
-            theta0 = previous_particle_system[ index_theta0 ][: len( self.params['param_to_fit']) ] 
+            theta0 = numpy.atleast_2d( previous_particle_system[ index_theta0 ][: len( self.params['param_to_fit']) ] )
   
 
             #initialize boolean parmeter vector
@@ -287,7 +288,13 @@ class ABC( object ):
                 cont = cont + 1
           
                 #draw model parameter values for simulation
-                theta_t_try = list( multivariate_normal.rvs( theta0, previous_cov_matrix ))
+                mvn = multivariate_normal.rvs( theta0, previous_cov_matrix )
+
+                try:
+                    len( mvn )
+                    theta_t_try = list( mvn )
+                except TypeError:
+                    theta_t_try = [ mvn ]
 
                 theta_t = []
                 
@@ -339,11 +346,12 @@ class ABC( object ):
         cov1 = ds.cov
 
 
-        #begin writing output file
-        op = open( filename, 'w' )
-        for item in self.params[ 'param_to_fit' ]:
-            op.write( item  + '    '  )
-        op.write(  'epsilon     NDraws    time    dist_threshold\n' )
+        if filename != None:
+            #begin writing output file
+            op = open( filename, 'w' )
+            for item in self.params[ 'param_to_fit' ]:
+                op.write( item  + '    '  )
+            op.write(  'distance     NDraws    time    dist_threshold\n' )
 
         particle_system = []
 
@@ -353,16 +361,18 @@ class ABC( object ):
 
             particle_system.append( surv_param )
 
-            print 'J = ' + str( j ) + ',    K = ' + str( surv_param[ len( self.params['param_to_fit' ]) + 1  ] ) + ',    epsilon=' + str( surv_param[len( self.params['param_to_fit' ])  ] )
+            print 'J = ' + str( j ) + ',    K = ' + str( surv_param[ len( self.params['param_to_fit' ]) + 1  ] ) + ',    distance=' + str( surv_param[len( self.params['param_to_fit' ])  ] )
             
             if str( surv_param[len( self.params['param_to_fit' ])  ] ) == 'nan':
                 raise ValueError( '"nan" is not an acceptable distance value!' )
 
-            for elem in surv_param:
-                op.write( str( elem ) + '    ' )
-            op.write( '\n' )
+            if filename != None:
+                for elem in surv_param:
+                    op.write( str( elem ) + '    ' )
+                op.write( '\n' )
 
-        op.close()
+        if filename != None:
+            op.close()
 
         return numpy.array( particle_system )
 
@@ -500,15 +510,15 @@ class ABC( object ):
         op.close()
 
         t1 = [ elem.split() for elem in lin[1:] ]
-
+        
         sys1 = numpy.array([ numpy.array([ float( line[ i1 ] ) for i1 in xrange( len( self.params['param_to_fit' ] ) + 1 ) ]) for line in t1 ])
-
+        
         #determine number of draws in previous particle system generation
-        K =  sum( int( line[ len( self.params['param_to_fit' ] ) + 2  ] ) for line in sys1 )
+        K =  sum( int( line[ len( self.params['param_to_fit' ] ) + 1 ] ) for line in t1 )
         print 'K = ' + str( K )
         
                 
-        W1 = numpy.loadtxt( root_file_name+str(t)+'weights.dat', 'r' )
+        W1 = numpy.loadtxt( root_file_name+str(t)+'weights.dat' )
 
         while float( self.M )/K > self.delta:
 
