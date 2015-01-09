@@ -46,10 +46,11 @@ import numpy
 from CosmoABC.distances import *
 from CosmoABC.priors import *
 from CosmoABC.ABC_sampler import *
-from CosmoABC.sim_NumCosmo  import *
+
 
 try: 
     from gi.repository import NumCosmo as Nc
+    from CosmoABC.sim_NumCosmo  import *
 except ImportError:
     raise ImportError( 'You must have NumCosmo running to use the sim_NumCosmo simulation! \n Please check your NumCosmo instalation.' )
     
@@ -77,14 +78,13 @@ def read_input( filename ):
     #store options in params dictionary
     params_ini = dict( [ ( line[0], line[2:] )  for line in data1 if len( line ) > 1 ] )
     
-
+    
     #read observed data
     op2 = open( params_ini['path_to_obs'][0], 'r' )
     lin2 = op2.readlines()
     op2.close()
 
     data2 = [ elem.split() for elem in lin2[1:] ]
-
 
     params = {}
     params['path_to_obs'] = params_ini['path_to_obs'][0] 
@@ -119,10 +119,10 @@ def read_input( filename ):
             except ValueError:
                 sim_par[ item ] = params_ini[ item ][0] 
 
-    params['simulation_params'] = sim_par
+    params['simulation_input'] = sim_par
+    
 
     return params
-    
 
 def main( args ):
 
@@ -130,14 +130,19 @@ def main( args ):
 
     #initiate NumCosmo object necessary for simulation
     Cosmo=ChooseParamsInput()
-    Cosmo.params = user_input['simulation_params']
+
+ 
+    Cosmo.params = user_input['simulation_input']
     Cosmo.params["OL"]  = 1.- Cosmo.params['Om']-Cosmo.params['Ob']
 
-    user_input['simulation_params'] = Cosmo
+    #assign input for simulation
+    user_input['simulation_params'] = Cosmo.params
+
 
     #initiate ABC construct
     sampler_ABC = ABC( dataset1=user_input['dataset1'], params=user_input, simulation_func=user_input['simulation_func'], prior_func=user_input['prior_func'], distance_func=user_input['distance_func']) 
 
+    
     #build first particle system
     sys1 = sampler_ABC.BuildFirstPSystem( filename=user_input['file_root'] + '0.dat' )
 

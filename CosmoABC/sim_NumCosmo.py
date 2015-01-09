@@ -141,12 +141,12 @@ def NumCosmo_simulation( simul_params, save=False ):
         """    
  
         #prepara simulation object
-        ncount=NCountSimul( simul_params.params['zmin'], simul_params.params['zmax'], simul_params.params['MinMass'] , simul_params.params['MaxMass'], simul_params.params['area'], simul_params.params['observable'] )
+        ncount=NCountSimul( simul_params['zmin'], simul_params['zmax'], simul_params['MinMass'] , simul_params['MaxMass'], simul_params['area'], simul_params['observable'] )
 
         data_simul = []
         
         #generate simulation
-        data_simul = numpy.array( ncount.simulation( simul_params.params['zmax'], simul_params.params,  simul_params.params['seed'] )[1] )
+        data_simul = numpy.array( ncount.simulation( simul_params['zmax'], simul_params,  simul_params['seed'] )[1] )
         
         if len( data_simul ) == 0:
             data_simul = numpy.array([[0,0]])

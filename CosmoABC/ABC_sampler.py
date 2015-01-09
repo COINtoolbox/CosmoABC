@@ -153,9 +153,9 @@ class ABC( object ):
         #draw parameters from prior
         ParTry = self.DrawAllParams()
 
-        #update parameter values in dictionary
         for i1 in range( len( self.params[ 'param_to_fit' ] ) ):
             self.params['simulation_params'][ self.params[ 'param_to_fit' ][ i1 ] ] = ParTry[ i1 ]
+
 
         #generate simulation
         DataSimul = self.simulation( self.params['simulation_params'] )
@@ -209,7 +209,7 @@ class ABC( object ):
 
                 time1 = time.time()
                 dist = self.SetDistanceFromSimulation()
- 
+  
             theta_t = [ self.params['simulation_params'][ item ] for item in self.params['param_to_fit'] ] 
 
             if dist > 0:
@@ -304,6 +304,7 @@ class ABC( object ):
 
                     else:
                         theta_t.append( False )          
+
 
             #update parameter values in dictionary
             for i1 in range( len( self.params[ 'param_to_fit' ] ) ):
