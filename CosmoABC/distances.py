@@ -17,7 +17,7 @@ def SumGRBF( dataset1, dataset2, s1, f1='gaussian'):
 
     input:	data1 -> first data matrix ( collumns -> features, lines -> objects )
    		data2 -> second data matrix, fixed basis (collumns -> features, lines -> objects )
- 		s -> epsilon in scipy notation (scalar)
+ 		s -> smooth parameter (scalar)
                 f1 (optional) -> kernel function implemented in scipy.interpolate.Rbf rotine (string)
 
     output: scalar
@@ -50,7 +50,7 @@ def distance_GRBF( dataset1, dataset2, s1, f='gaussian' ):
 
     input:	data1 -> first data matrix ( collumns -> features, lines -> objects )
    		data2 -> second data matrix, fixed basis (collumns -> features, lines -> objects )
- 		s -> scale parameter (scalar)
+ 		s -> smooth parameter (scalar)
                 f (optional) -> kernel function implemented for GRBF rotine (string)
               
     output: scalar
@@ -61,8 +61,11 @@ def distance_GRBF( dataset1, dataset2, s1, f='gaussian' ):
      
   
     else:
+ 
+        j1 = SumGRBF( dataset1, dataset2, s1 )
+
         #distance based on the logarithm of GRBF and normalized by results from data1
-        if SumGRBF( dataset1, dataset2, s1 ) > 0:
+        if j1 > 0 and str( j1 ) != 'nan' :
             d = abs( -2 * SumGRBF( dataset1, dataset2, s1, f1=f ) + 2 * SumGRBF( dataset1, dataset1, s1, f1=f ))
             return d
 

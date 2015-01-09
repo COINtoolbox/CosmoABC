@@ -46,9 +46,10 @@ import numpy
 from CosmoABC.distances import *
 from CosmoABC.priors import *
 from CosmoABC.ABC_sampler import *
+from CosmoABC.sim_NumCosmo  import *
 
 try: 
-    from CosmoABC.sim_NumCosmo  import *
+    from gi.repository import NumCosmo as Nc
 except ImportError:
     raise ImportError( 'You must have NumCosmo running to use the sim_NumCosmo simulation! \n Please check your NumCosmo instalation.' )
     

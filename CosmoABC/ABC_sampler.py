@@ -52,7 +52,7 @@ class ABC( object ):
 	prior		-	Prior distribution function.
 	distance	-	Distance function.
 	delta		-	Parameter for convergence criteria.
-	s		-	Scale parameter
+	s		-	Smooth parameter
 	M		-	Number of particles in each particle system.
         epsilon1	-	Distance threshold for first particle system.
 	qthreshold	-	Quantile for choosing subsequent distance thresholds.
@@ -116,7 +116,7 @@ class ABC( object ):
            
         #define parameters separately so inputed values are not changed       
         self.delta		= params['delta']		#convergence criteria 
-        self.s 		        = params['s']			#scale parameter (scalar)
+        self.s 		        = params['s']			#smooth parameter (scalar)
         self.M		        = params['M']			#number of elements in each particle system
         self.epsilon1    	= params['epsilon1']		#distance threshold for first particle system
         self.qthreshold		= params['qthreshold']		#quantile to define the distance threshold for subsequent particle system
@@ -153,14 +153,12 @@ class ABC( object ):
         #draw parameters from prior
         ParTry = self.DrawAllParams()
 
-        #update cosmological parameter values in dictionary
+        #update parameter values in dictionary
         for i1 in range( len( self.params[ 'param_to_fit' ] ) ):
-            self.params[ self.params[ 'param_to_fit' ][ i1 ] ] = ParTry[ i1 ]
+            self.params['simulation_params'][ self.params[ 'param_to_fit' ][ i1 ] ] = ParTry[ i1 ]
 
         #generate simulation
         DataSimul = self.simulation( self.params['simulation_params'] )
-             
-
 
         #calculate distance
         dist = self.distance( self.data, DataSimul, self.s )
@@ -212,7 +210,7 @@ class ABC( object ):
                 time1 = time.time()
                 dist = self.SetDistanceFromSimulation()
  
-            theta_t = [ self.params[ item ] for item in self.params['param_to_fit'] ] 
+            theta_t = [ self.params['simulation_params'][ item ] for item in self.params['param_to_fit'] ] 
 
             if dist > 0:
 
@@ -224,6 +222,7 @@ class ABC( object ):
                 theta.append( theta_t  )
         
                 print '        particle index = ' + str( len( theta) ) + ',  number of draws = ' + str( K ) + ',   distance=' + str( dist )
+               
 
         
 
@@ -308,7 +307,7 @@ class ABC( object ):
 
             #update parameter values in dictionary
             for i1 in range( len( self.params[ 'param_to_fit' ] ) ):
-                self.params[ self.params[ 'param_to_fit' ][ i1 ] ] = theta_t_try[ i1 ]
+                self.params[ 'simulation_params' ][ self.params[ 'param_to_fit' ][ i1 ] ] = theta_t_try[ i1 ]
 
             #generate simulation
             DataSimul = self.simulation( self.params['simulation_params'] )
@@ -325,7 +324,7 @@ class ABC( object ):
         return theta_t_try
 
 
-    def BuildPSystem( self, previous_particle_system, W, t, filename='system.dat'  ):
+    def BuildPSystem( self, previous_particle_system, W, t, filename='system.dat', screen=True  ):
         """
         Build particle system. 
 
@@ -360,12 +359,12 @@ class ABC( object ):
             surv_param = self.SelectParamInnerLoop( previous_particle_system,  W, cov1 )
 
             particle_system.append( surv_param )
+  
+            if screen == True:
+                print 'J = ' + str( j ) + ',    K = ' + str( surv_param[ len( self.params['param_to_fit' ]) + 1  ] ) + ',    distance=' + str( surv_param[len( self.params['param_to_fit' ])  ] )
 
-            print 'J = ' + str( j ) + ',    K = ' + str( surv_param[ len( self.params['param_to_fit' ]) + 1  ] ) + ',    distance=' + str( surv_param[len( self.params['param_to_fit' ])  ] )
             
-            if str( surv_param[len( self.params['param_to_fit' ])  ] ) == 'nan':
-                raise ValueError( '"nan" is not an acceptable distance value!' )
-
+         
             if filename != None:
                 for elem in surv_param:
                     op.write( str( elem ) + '    ' )
@@ -489,6 +488,9 @@ class ABC( object ):
 
             print ' T = ' + str( t ) + ',    convergence = ' + str( float( self.M )/K )
 
+        if t == 0:
+            raise ValueError('Algorthim converged in the first particle system! Choose a lower value for the convergence parameter "delta". ')
+
         self.T = t
         
 
@@ -524,7 +526,7 @@ class ABC( object ):
 
             t = t + 1
 
-            sys_new = self.BuildPSystem( sys1, W1, t, filename=root_file_name + '_' + str( t ) + '.dat'  )
+            sys_new = self.BuildPSystem( sys1, W1, t, filename=root_file_name + str( t ) + '.dat'  )
         
             W2 = self.UpdateWeights( W1, sys1, sys_new, filename=root_file_name + '_' + str( t ) + 'weights.dat' )
 
@@ -537,6 +539,7 @@ class ABC( object ):
             W1 = W2
 
             del sys_new, W2 
+
 
             print ' T = ' + str( t ) + ',    convergence = ' + str( float( self.M )/K )
         
