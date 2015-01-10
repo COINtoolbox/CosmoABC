@@ -1,16 +1,11 @@
-path_to_obs		= ~CosmoABC/data/simulated_GalCluster_sample.dat   	   # path to observed data 
+path_to_obs		= /home/emille/Dropbox/WGC/ABC/github/ABC_repository/CosmoABC/data/simulated_GalCluster_sample.dat   	   # path to observed data 
 
-param_to_fit 		= Om sigma8 w									   # parameters to fit
+param_to_fit 		= Om 									   # parameters to fit
 param_to_sim    	= zmin zmax H0 Om  Ob Tgamma  ns sigma8 w observable area seed MinMass MaxMass	   # parameters needed for simulation
 
-Om_lim			= 0.0 0.8		# extreme limits for parametes
-sigma8_lim		= 0.5  1.0		#
-w_lim			= -3.0  1.0		#
-
+Om_lim			= 0.001 0.6		# extreme limits for parametes
 
 Om_prior_par 		= 0.01  0.6		# parameters for prior distribution
-sigma8_prior_par	=  0.5	1.0		#	
-w_prior_par		= -2.5  0.5		#
 
 
 zmin 		= 0.3              		# minimum redshift
@@ -29,12 +24,12 @@ MinMass		= 10**14.3			# minimum cluster mass considered
 MaxMass 	= 10**16			# maximum cluster mass considered
 
 s		= 0.15				# scale parameter for Gaussian Radial Basis Function
-epsilon1 	= 400				# initial distance threshold for building first particle system
-M 		= 10000				# number of particle in each particle system
+epsilon1 	= 1500				# initial distance threshold for building first particle system
+M 		= 100				# number of particle in each particle system
 delta 		= 0.005				# convergence criteria
 qthreshold 	= 0.75				# quantile in distance threshold used to define epsilon in the construction of subsequent particle system
 
-file_root 	= '10thous_PS'			# root to output file name for subsequent particle systems
+file_root 	= 10thous_PS			# root to output file name for subsequent particle systems
  
 
 simulation_func = NumCosmo_simulation

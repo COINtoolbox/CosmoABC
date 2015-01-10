@@ -276,7 +276,7 @@ class ABC( object ):
             #draw model parameters to serve as mean 
             index_theta0 = numpy.random.choice( xrange( len( W ) ), p=W )
             theta0 = numpy.atleast_2d( previous_particle_system[ index_theta0 ][: len( self.params['param_to_fit']) ] )
-  
+ 
 
             #initialize boolean parmeter vector
             theta_t = [ False for i in xrange( len( self.params['param_to_fit']) ) ]
@@ -287,7 +287,7 @@ class ABC( object ):
                 cont = cont + 1
           
                 #draw model parameter values for simulation
-                mvn = multivariate_normal.rvs( theta0, previous_cov_matrix )
+                mvn = multivariate_normal.rvs( theta0.flatten() , previous_cov_matrix )
 
                 try:
                     len( mvn )
@@ -393,7 +393,7 @@ class ABC( object ):
                  
         """
 
-
+        print 'update weights'
         #calculate weighted covariance matrix from previous particle system
         ds = DescrStatsW( previous_particle_system[:,:len(self.params['param_to_fit'])], weights=W )
         cov1 = ds.cov
@@ -410,6 +410,8 @@ class ABC( object ):
             denominator = sum( W[ i3 ]*multivariate_normal.pdf( current_particle_system[ i4 ][:len(self.params['param_to_fit'])], previous_particle_system[ i3 ][:len(self.params['param_to_fit'])], cov=cov1 ) for i3 in xrange( len( W ) ) )
 
             new_weights.append( nominator/denominator )
+
+            print 'update weights = ' + str( len( new_weights ) )
 
         final_weights = [ item/sum( new_weights ) for item in new_weights ]
 
