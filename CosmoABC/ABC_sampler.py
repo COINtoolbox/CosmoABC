@@ -411,8 +411,6 @@ class ABC( object ):
 
             new_weights.append( nominator/denominator )
 
-            print 'update weights = ' + str( len( new_weights ) )
-
         final_weights = [ item/sum( new_weights ) for item in new_weights ]
 
         if output == True:
