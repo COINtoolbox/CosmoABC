@@ -148,10 +148,11 @@ def NumCosmo_simulation( simul_params, save=False ):
         #generate simulation
         data_simul = numpy.array( ncount.simulation( simul_params['zmax'], simul_params,  simul_params['seed'] )[1] )
         
+       
         if len( data_simul ) == 0:
             data_simul = numpy.array([[0,0]])
-            
 
+       
         if save == True:
             op1 = open( 'simulation.dat', 'w' )
             for line in data_simul:
@@ -159,8 +160,7 @@ def NumCosmo_simulation( simul_params, save=False ):
                     op1.write( str( item ) + '    ' )
                 op1.write( '\n' )
             op1.close()
-
-        
+     
         return data_simul
 
 ############################################################################

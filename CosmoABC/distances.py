@@ -56,7 +56,7 @@ def distance_GRBF( dataset1, dataset2, s1, f='gaussian' ):
     output: scalar
     """
 
-    if sum( dataset2[0] ) == 0 or len( dataset2 ) > 5*len(dataset1):
+    if sum( dataset2[0] ) == 0 or len( dataset2 ) > 5*len(dataset1) or dataset2.shape[0] == 1:
         return 10**10
      
   
