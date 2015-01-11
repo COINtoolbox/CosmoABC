@@ -1,12 +1,13 @@
-path_to_obs		= /home/emille/Dropbox/WGC/ABC/github/ABC_repository/CosmoABC/data/simulated_GalCluster_sample.dat   	   # path to observed data 
+path_to_obs		= ~/CosmoABC/data/simulated_GalCluster_sample.dat   	   # path to observed data 
 
-param_to_fit 		= Om 									   # parameters to fit
+param_to_fit 		= Om w 									   # parameters to fit
 param_to_sim    	= zmin zmax H0 Om  Ob Tgamma  ns sigma8 w observable area seed MinMass MaxMass	   # parameters needed for simulation
 
 Om_lim			= 0.001 0.6		# extreme limits for parametes
+w_lim 			= -2.5  -0.5
 
 Om_prior_par 		= 0.01  0.6		# parameters for prior distribution
-
+w_prior_par		= -2.0  0.0
 
 zmin 		= 0.3              		# minimum redshift
 zmax 		= 1.32             		# maximum redshift

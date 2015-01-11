@@ -46,6 +46,7 @@ import numpy
 from CosmoABC.distances import *
 from CosmoABC.priors import *
 from CosmoABC.ABC_sampler import *
+from CosmoABC.plots import *
 
 
 try: 
@@ -148,6 +149,9 @@ def main( args ):
 
     #update particle system until convergence
     sampler_ABC.fullABC(  user_input['file_root'] )
+
+    #plot results
+    plot_1D( sampler_ABC.T, 'results.pdf', user_input)
         
          
 

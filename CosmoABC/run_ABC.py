@@ -92,8 +92,6 @@ def read_input( filename ):
     params['s'] =  float( params_ini['s'][0] )
     params['file_root'] = params_ini['file_root'][0]  
 
-    params['prior_func'] = dispatcher[ params_ini[ 'prior_func' ][0] ]
-    params['distance_func'] = dispatcher[ params_ini[ 'distance_func' ][0] ]
 
     #fiducial extra parameters
     sim_par = {}  
@@ -112,11 +110,12 @@ def read_input( filename ):
 
 def main( args ):
 
-    from args.simulation import simulation
+    from args.functions import *
 
     user_input = read_input( args.input )
 
     user_input['simulation_func'] = simulation
+    user_input['distance_func'] = distance
             
     #initiate ABC construct
     sampler_ABC = ABC( dataset1=user_input['dataset1'], params=user_input, simulation_func=user_input['simulation_func'], prior_func=user_input['prior_func'], distance_func=user_input['distance_func']) 
@@ -133,8 +132,8 @@ if __name__=='__main__':
   
     #get user input file name
     parser = argparse.ArgumentParser(description='Approximate Bayesian Computation code.')
-    parser.add_argument('-i','--input', help='User input file name',required=True)
-    parser.add_argument('-s','--simulation', help='Simulation function file name', required=True)
+    parser.add_argument('-i','--input', help='User input file name.',required=True)
+    parser.add_argument('-f','--functions', help='File name for user defined functions.', required=True)
     args = parser.parse_args()
    
     main( args )
