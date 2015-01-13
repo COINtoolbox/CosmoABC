@@ -79,7 +79,7 @@ class ABC( object ):
         self.simulation		= simulation_func		#function which performs the simulation
         self.params		= params			#all parameters 
         self.distance		= distance_func                 #distance function
-        self.prior		= prior_func                    #prior distribution function
+        self.prior		= prior_func                    #list of prior distribution functions
 
         #check length of observed data
         if isinstance( self.data, bool):
@@ -106,7 +106,7 @@ class ABC( object ):
 
         #check prior function
         if not self.prior:
-            raise IOError( 'Please provide a valid prior distribution function. \n "See file priors.py"' )
+            raise IOError( 'Please provide a valid prior distribution function for each variable parameter. \n "See file priors.py"' )
 
         #check distance function
         if not self.distance:
@@ -134,7 +134,7 @@ class ABC( object ):
         for j in range( len( self.params[ 'param_to_fit' ] ) ):
 
             
-            p1 = self.prior(  self.params[ 'prior_par' ][ j ], self.params[ 'param_lim' ][ j ] )   
+            p1 = self.prior[ j ](  self.params[ 'prior_par' ][ j ], self.params[ 'param_lim' ][ j ] )   
 
             pars.append( p1 )
 
@@ -394,6 +394,7 @@ class ABC( object ):
         """
 
         print 'update weights'
+
         #calculate weighted covariance matrix from previous particle system
         ds = DescrStatsW( previous_particle_system[:,:len(self.params['param_to_fit'])], weights=W )
         cov1 = ds.cov
@@ -401,7 +402,7 @@ class ABC( object ):
         new_weights = []
 
         #determine prior distributions
-        distributions = [ self.prior( self.params['prior_par'][ i1 ], self.params['param_lim'][ i1 ], func=True) for i1 in xrange( len( self.params[ 'param_to_fit' ] ) ) ]
+        distributions = [ self.prior[ i1 ]( self.params['prior_par'][ i1 ], self.params['param_lim'][ i1 ], func=True) for i1 in xrange( len( self.params[ 'param_to_fit' ] ) ) ]
 
         for i4 in range( len( current_particle_system ) ):
               
@@ -529,7 +530,7 @@ class ABC( object ):
 
             sys_new = self.BuildPSystem( sys1, W1, t, filename=root_file_name + str( t ) + '.dat'  )
         
-            W2 = self.UpdateWeights( W1, sys1, sys_new, filename=root_file_name + '_' + str( t ) + 'weights.dat' )
+            W2 = self.UpdateWeights( W1, sys1, sys_new, filename=root_file_name + str( t ) + 'weights.dat' )
 
  
             K = sum( sys_new[:, len( self.params['param_to_fit' ] ) + 1 ] )

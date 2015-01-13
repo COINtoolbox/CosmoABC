@@ -47,6 +47,7 @@ from CosmoABC.distances import *
 from CosmoABC.priors import *
 from CosmoABC.ABC_sampler import *
 from CosmoABC.plots import *
+import imp
 
 
 try: 
@@ -104,11 +105,14 @@ def read_input( filename ):
 
     #functions
     ###### Update this if you include any new functions!!!!!  ##############
-    dispatcher = {'NumCosmo_simulation': NumCosmo_simulation, 'flat_prior': flat_prior, 'gaussian_prior': gaussian_prior, 'distance_GRBF':distance_GRBF}
+    dispatcher = {'NumCosmo_simulation': NumCosmo_simulation, 'flat_prior': flat_prior, 'gaussian_prior': gaussian_prior, 'beta_prior':beta_prior,  'distance_GRBF':distance_GRBF}
     
     params['simulation_func'] = dispatcher[ params_ini['simulation_func'][0] ]
-    params['prior_func'] = dispatcher[ params_ini[ 'prior_func' ][0] ]
-    params['distance_func'] = dispatcher[ params_ini[ 'distance_func' ][0] ]
+    params['prior_func'] = [ dispatcher[ params_ini[ 'prior_func' ][ k ] ] if params_ini[ 'prior_func' ][ k ] in dispatcher.keys() else params_ini[ 'prior_func' ][ k ] for k in xrange( params['npar'] ) ]
+
+    if params_ini[ 'distance_func' ][0] in dispatcher.keys():
+        params['distance_func'] = dispatcher[ params_ini[ 'distance_func' ][0] ]
+
 
     #fiducial extra parameters
     sim_par = {}  
@@ -139,6 +143,16 @@ def main( args ):
     #assign input for simulation
     user_input['simulation_params'] = Cosmo.params
 
+    if args.functions != None:
+        m1 = imp.load_source( args.functions[:-3], args.functions )
+
+        if 'distance_func' not in user_input.keys():
+            user_input['distance_func'] = m1.distance
+    
+    for l1 in range( user_input['npar'] ):
+        if isinstance( user_input['prior_func'][ l1 ], str):            
+            user_input['prior_func'][ l1 ] = getattr( m1, user_input['prior_func'][ l1 ] )
+
 
     #initiate ABC construct
     sampler_ABC = ABC( dataset1=user_input['dataset1'], params=user_input, simulation_func=user_input['simulation_func'], prior_func=user_input['prior_func'], distance_func=user_input['distance_func']) 
@@ -160,6 +174,7 @@ if __name__=='__main__':
     #get user input file name
     parser = argparse.ArgumentParser(description='Approximate Bayesian Computation code.')
     parser.add_argument('-i','--input', help='Input file name',required=True)
+    parser.add_argument('-f', '--functions', help='User defined functions', required=False, default=None)
     args = parser.parse_args()
    
     main( args )

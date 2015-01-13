@@ -16,14 +16,12 @@ To run the complete ABC sampler + NumCosmo cluster simulations from the command 
 
     run_ABC_NumCosmo.py -i example_NumCosmo_input.dat
 
+This will run the complete analysis presented in Ishida *et al.*, 2015 as well as produce
+plots with the corresponding results.
+
 .. warning::
     
-    This might take a while!
-
-
-
-
-
+    This might take a while! 
 
 
 

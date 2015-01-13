@@ -46,6 +46,10 @@ import numpy
 from CosmoABC.distances import * 
 from CosmoABC.priors import *
 from CosmoABC.ABC_sampler import *
+from CosmoABC.plots import *
+import imp
+
+
 
 def read_input( filename ):
     """
@@ -110,30 +114,50 @@ def read_input( filename ):
 
 def main( args ):
 
-    from args.functions import *
 
     user_input = read_input( args.input )
 
-    user_input['simulation_func'] = simulation
-    user_input['distance_func'] = distance
+    m1 = imp.load_source( args.functions[:-3], args.functions )
+
+    user_input['simulation_func'] = m1.simulation
+
+    if 'distance_func' not in user_input.keys():
+        user_input['distance_func'] = m1.distance
+    
+    for l1 in range( user_input['npar'] ):
+        if isinstance( user_input['prior_func'][ l1 ], str):            
+            user_input['prior_func'][ l1 ] = getattr( m1, user_input['prior_func'][ l1 ] )
             
     #initiate ABC construct
     sampler_ABC = ABC( dataset1=user_input['dataset1'], params=user_input, simulation_func=user_input['simulation_func'], prior_func=user_input['prior_func'], distance_func=user_input['distance_func']) 
 
-    #build first particle system
-    sys1 = sampler_ABC.BuildFirstPSystem( filename=user_input['file_root'] + '0.dat' )
+    #define finished particle system index
+    sampler_ABC.T = int( args.PS )
+    
+    #continue from previous run
+    sampler_ABC.ContinueStoppedRun( sampler_ABC.T , user_input['file_root'] )
 
-    #update particle system until convergence
-    sampler_ABC.fullABC(  user_input['file_root'] )
-        
-         
+    #plot results
+    user_input['param_lim']=[ [ item/2.0 for item in line] for line in user_input['param_lim']]
+    if len( user_input['param_to_fit'] ) == 1 :
+        plot_1D( sampler_ABC.T, 'results.pdf', user_input)
+
+    elif len( user_input['param_to_fit'] ) == 2 :
+        plot_2D( sampler_ABC.T, 'results.pdf', user_input )   
+
+    elif len( user_input['param_to_fit'] ) == 3 :
+        plot_3D( sampler_ABC.T, 'results.pdf', user_input )       
+
+    else:
+        raise ValueError('Only 1, 2 and 3 dimensional plots are implemented so far!')
 
 if __name__=='__main__':
   
     #get user input file name
     parser = argparse.ArgumentParser(description='Approximate Bayesian Computation code.')
-    parser.add_argument('-i','--input', help='User input file name.',required=True)
-    parser.add_argument('-f','--functions', help='File name for user defined functions.', required=True)
+    parser.add_argument('-i','--input', dest='input', help='User input file name.',required=True)
+    parser.add_argument('-f','--functions',  dest='functions', help='File name for user defined functions.', required=True)
+    parser.add_argument('-p','--PS', dest='PS', help='Last particle system index completed.', required=True)
     args = parser.parse_args()
    
     main( args )

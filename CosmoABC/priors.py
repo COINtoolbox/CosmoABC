@@ -14,6 +14,7 @@ There must also be an optional variable regulating the output (rather a draw or 
 import numpy
 from scipy.stats import norm
 from scipy.stats import uniform
+from scipy.stats import beta
 
 def gaussian_prior( par, par_lim, func=False ):
     """
@@ -66,6 +67,8 @@ def flat_prior( par, par_lim, func=False ):
                 par_lim      -> physical reasonable limits for the cosmological parameters
                                 2-dimensional vector with [min_value, max_value] for each parameter  
 
+                func (optional)	->   return the pdf random variable (boolean). Default is False.
+
     output:     scalar	     -> draw number or 1
     """
 
@@ -81,6 +84,38 @@ def flat_prior( par, par_lim, func=False ):
         return draw
     else:
         return uniform( loc=par_lim[0], scale=par_lim[1]-par_lim[0])
+
+def beta_prior( par, par_lim, func=False):
+    """
+    Draw a parameter value from a beta prior.
+  
+    input: 	par          -> vector of parameter required by the corresponding distribution family.
+                                format: [ lower_bound, upper_bound]
+
+                par_lim      -> physical reasonable limits for the cosmological parameters
+                                2-dimensional vector with [min_value, max_value] for each parameter  
+
+                func (optional)	->   return the pdf random variable (boolean). Default is False.
+
+    output:     scalar	     -> draw number or 1
+    """
+
+    #check dimension of feature vector  defining prior distribution 
+    if len( par ) == 2:
+
+        rv = beta(par[0], par[1])
+        draw = beta.rvs( par[0], par[1]) 
+
+    else:
+        raise ValueError("Beta distribution requires 2-dimensional parameter vector: [mean, standard_deviation].")
+
+
+    if func == False:
+        return draw
+    else:
+        return rv
+  
+
 
 
 def main():
