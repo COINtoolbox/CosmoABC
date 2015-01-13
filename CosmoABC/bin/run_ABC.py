@@ -31,7 +31,7 @@ Optional external dependences:
 """
 
 
-__author__ = "E. E. O. Ishida, S. D. P. Vitenti, M. Penna-Lima"
+__author__ = "E. E. O. Ishida, S. D. P. Vitenti, M. Penna-Lima, R. S. de Souza, J. Cisewski, E. Cameron, V. C. Busti"
 __maintainer__ = "E. E. O. Ishida"
 __copyright__ = "Copyright 2015"
 __version__ = "0.1"

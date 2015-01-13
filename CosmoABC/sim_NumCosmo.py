@@ -1,12 +1,5 @@
 """
-Functions for catalog simulations. 
-
-***
-In order to insert a new distance function, add it to this file.
-Simulation functions can be anything as long as they give an array catalog as output.
-
->> after implementing your function do not forget to update the dispatcher in file 'run_ABC.py'
-***
+Functions for catalog simulations using NumCosmo. 
 """
 
 
