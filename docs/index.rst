@@ -11,17 +11,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-.. automodule:: ABC_sampler
- 
-.. autoclass:: ABC
-    :members:  DrawAllParams
-    :members:  SetDistanceFromSimulation
-    :members:  BuildFirstPSystem
-    :members:  SelectParamInnerLoop
-    :members:  BuildPSystem
-    :members:  UpdateWeights
-    :members:  fullABC
-    :members:  ContinueStoppedRun
+   CosmoABC
+
 
 
 Indices and tables

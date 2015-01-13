@@ -1,0 +1,26 @@
+path_to_obs		= data.dat   	   # path to observed data 
+
+param_to_fit 		= mean 	std								   # parameters to fit
+param_to_sim    	= mean  std  n	   # parameters needed for simulation
+
+mean_lim		= -10.0  10.0		# extreme limits for parametes
+std_lim               = 0.001   3.0
+
+
+mean_prior_par 		= -1.0  3.0		# parameters for prior distribution
+std_prior_par		= 0.001  2.0            
+
+mean		= 1.0				#fiducial parameters for simulation
+std		= 0.1
+n		= 1000
+
+s		= 0				# extra parameter
+epsilon1 	= 100				# initial distance threshold for building first particle system
+M 		= 100				# number of particle in each particle system
+delta 		= 0.1				# convergence criteria
+qthreshold 	= 0.75				# quantile in distance threshold used to define epsilon in the construction of subsequent particle system
+
+file_root 	= example_1par_PS		# root to output file name for subsequent particle systems
+ 
+
+

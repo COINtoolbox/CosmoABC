@@ -127,7 +127,7 @@ class ABC( object ):
         """
         Draw complete set of  parameters from prior.
 
-        output: array of parameters sampled from the prior
+        :returns: array of parameters sampled from the prior
         """
 
         pars = []
@@ -146,7 +146,7 @@ class ABC( object ):
         Draw cosmological parameter values from prior, generate simulation and calculate distance from a given comparison  catalog. 
         In the context of Ishida et al., 2015 that translates into calculating the distance from the real to the simulated cataloges.
 
-        output: scalar (distance between dataset1 and dataset2)
+        :returns: scalar (distance between dataset1 and dataset2)
     
         """
 
@@ -182,14 +182,14 @@ class ABC( object ):
         """
         Build the first particle system, storing the parameter values satisfying distance threshold. 
 
-        input:	output (optional) -> boolean (choose to write output data file, default is True)
-    		filename (optional) -> string (name for output file, default is 'PS_0.dat')
+        :param 	output: optional, boolean (choose to write output data file, default is True)
+    	:param	filename: optional, string (name for output file, default is 'PS_0.dat')
                  
 
-        output:	[0] array containing first particle system
-		    collumns -> [ param_to_fit[0], param_to_fit[1], .., param_to_fit[n], distance_from_dataset1 ] 	
+        :returns:	[0] array containing first particle system
+	                collumns -> [ param_to_fit[0], param_to_fit[1], .., param_to_fit[n], distance_from_dataset1 ] 	
 
-		[1] integer -> total number of draws necessary to build the first particle system
+		        [1] integer -> total number of draws necessary to build the first particle system
         """
 
         print 'Building first particle system:'
@@ -245,18 +245,18 @@ class ABC( object ):
         """
         Draw model parameters based on previous particle system and return those satisfying distance threshold.
 
-        input:	previous_particle_system -> model parameters surviving previous distance threshold
+        :param	previous_particle_system:  model parameters surviving previous distance threshold
 		collumns -> [ param_to_fit[0], param_to_fit[1], .., param_to_fit[n], distance_from_dataset1 ] 	
 
-		W -> vector of weights 
+	:param	W:  vector of weights 
 
-		previous_cov_matrix -> covariance matrix based on previous particle system results
-		cosmological_parameters -> dictionary of necessary cosmological parameters
+	:param	previous_cov_matrix: covariance matrix based on previous particle system results
+	:param	cosmological_parameters: dictionary of necessary cosmological parameters
 		keys must include: [H0, Omegab, Omegam, Tgamma0, ns, sigma8, w]	
 
-		epsilon -> distance threshold to be satisfied	
+	:param	epsilon: distance threshold to be satisfied	
 
-        output: vector -> [ surviving_model_parameters, distance, number_necessary_draws, computational_time (s), distance_threshold ]
+        :returns: vector -> [ surviving_model_parameters, distance, number_necessary_draws, computational_time (s), distance_threshold ]
         """
 
         dist = 10**10
