@@ -153,7 +153,7 @@ It is also possible to use it interactively::
 
      
     #define fiducial model parameters
-    mean = 0.0
+    mean = 1.0
     std  = 0.1
     v1 = {'mean': mean, 'std': std, 'n':1000 }
 
@@ -163,8 +163,8 @@ It is also possible to use it interactively::
     #create dictionary of required parameter values
     params = {}
     params['param_to_fit']=['mean', 'std' ]			# parameters to fit					
-    params['param_lim']=[[-10**10, 10**10], [0, 2.0]]		# extreme limits for parameters
-    params['prior_par'] = [[-50.0, 50.0], [0,1.0]]		# parameters for prior distribution
+    params['param_lim']=[[-10, 10], [0.001, 3.0]]		# extreme limits for parameters
+    params['prior_par'] = [[-1.0, 3.0], [0.001,2.0]]		# parameters for prior distribution
     params['simulation_params'] = v1				# parameters needed for simulation
 
     params['mean'] = mean					# fiducial parameter value
@@ -192,7 +192,7 @@ It is also possible to use it interactively::
     #plot results
     #update parameter limits for plotting
 
-    params['param_lim'] = [[-2.0,2.0],[0.0001,0.5]]
+    params['param_lim'] = [[-1.0,3.0],[0.0001,0.2]]
     plot_2D( sampler_ABC.T, 'results.pdf' , params)
 
 
@@ -201,7 +201,7 @@ NumCosmo simulations
 --------------------
 
 In order to reproduce the results of Ishida *et al.* 2015, first you need to make sure the NumCosmo library is running smoothly. 
-Instructions for complete instalation and tests can be found in `[LINK]<http://www.nongnu.org/numcosmo/>`.
+Instructions for complete instalation and tests can be found in `[LINK] <http://www.nongnu.org/numcosmo/>`.
 
 
 
@@ -226,7 +226,7 @@ If we want to run the NumCosmo simulation with a different prior or distance fun
 Documentation
 =============
 
-The complete documentation can be found in `[LINK]<http://www.nongnu.org/numcosmo/>`.
+The complete documentation can be found in `[LINK] <http://www.nongnu.org/numcosmo/>`.
 
 
 Requirements
