@@ -33,7 +33,6 @@ setup(name='CosmoABC',
         'Environment :: X11 Applications',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: GNU General Public License (GPL)',
-        'Operating System :: Linux',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Scientific/Engineering :: Astronomy',
         ])
