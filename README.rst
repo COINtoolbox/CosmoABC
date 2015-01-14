@@ -201,7 +201,7 @@ NumCosmo simulations
 --------------------
 
 In order to reproduce the results of Ishida *et al.* 2015, first you need to make sure the NumCosmo library is running smoothly. 
-Instructions for complete instalation and tests can be found in [LINK].
+Instructions for complete instalation and tests can be found in `[LINK]<http://www.nongnu.org/numcosmo/>`.
 
 
 
@@ -226,7 +226,7 @@ If we want to run the NumCosmo simulation with a different prior or distance fun
 Documentation
 =============
 
-The complete documentation can be found in [LINK].
+The complete documentation can be found in `[LINK]<http://www.nongnu.org/numcosmo/>`.
 
 
 Requirements
