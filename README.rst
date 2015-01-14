@@ -27,7 +27,7 @@ Sample input in can be found in ~CosmoABC/examples. All example files mentioned 
 
 The user input file should contain all necessary variables for simulation as well as for the ABC sampler.
 
-A simple example of user input file, using a simulator which takes 3 parameters as input (::mean::, ::std::, ::n::) but only two of them are considered free would look like this ::
+A simple example of user input file, using a simulator which takes 3 parameters as input (mean, std, n) but only two of them are considered free would look like this ::
 
     path_to_obs		= data.dat   	   # path to observed data 
 
@@ -80,7 +80,34 @@ Built-in options for priors PDF are:
 
 
 
-Supposing that the user defined functions for distance and simulation are all in one python source file, the ABC sampler can be called from the command line::
+Supposing that the user defined functions for distance and simulation are all in file containing::
+
+    import numpy
+
+    def simulation( v ):
+        """
+        Generates a Gaussian distributed catalog.
+        """
+
+        l1 = numpy.random.normal( loc=v['mean'], scale=v['std'], size=v['n'] )
+    
+        return numpy.atleast_2d( l1 ).T 
+
+
+    def distance( dataset1, dataset2, s1=0 ):
+        """
+        Calculates distance between dataset1 and dataset2.        
+        """  
+
+        t1 = abs( numpy.mean( dataset1 ) - numpy.mean( dataset2 ) )
+        t2 = abs( numpy.std( dataset1 ) - numpy.std( dataset2 ) )
+
+        return t1 + t2
+
+
+
+
+The ABC sampler can be called from the command line::
 
     $ run_ABC.py -i <user_input_file>  -f <user_function_file>
 
@@ -102,6 +129,7 @@ It is also possible to use it interactively::
     from CosmoABC.priors import flat_prior
     from CosmoABC.ABC_sampler import ABC
     from CosmoABC.plots import plot_2D
+    import numpy
 
     def simulation( v ):
         """
@@ -148,10 +176,11 @@ It is also possible to use it interactively::
     params['qthreshold'] = 0.75					# quantile in distance threshold
 
     params['file_root'] = 'example_PS'				# root to output file names
-
+    params['prior_func'] = [ flat_prior, flat_prior]		# prior functions
+    params['distance_func'] = distance  			# distance functions
 
     #initiate ABC sampler
-    sampler_ABC = ABC( dataset1=data, params=params, simulation_func=simulation, prior_func=flat_prior, distance_func=distance) 
+    sampler_ABC = ABC( dataset1=data, params=params, simulation_func=simulation, prior_func=params['prior_func'], distance_func=params['distance_func']) 
 
     #build first particle system
     sys1 = sampler_ABC.BuildFirstPSystem( filename=params['file_root'] + '0.dat' )
