@@ -1,1 +1,3 @@
-v0.1dev, Jan 04 2015 -- Initial release.
+v0.1.2, Jan 14 2015 -- Include working tests
+v0.1.1, Jan 13 2015 -- Fixed import issues 	
+v0.1.0, Jan 04 2015 -- Initial release.

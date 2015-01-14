@@ -9,9 +9,9 @@ from statsmodels.stats.weightstats import DescrStatsW
 
 def ysim( v ):
 
-    l1 = [ [ numpy.random.normal( loc=v['mu'], scale=0.025 ) ] for j in xrange( 20 ) ]
-
-    return numpy.array( l1 ) 
+    l1 = numpy.random.normal( loc=v['mu'], scale=0.1, size=100 )
+    
+    return numpy.atleast_2d( l1 ).T 
 
 
 mu = 2.5
@@ -36,7 +36,7 @@ params['file_root'] = 'example_PS'			#root to output file name for subsequent pa
 success = 0
 
 #initiate ABC sampler
-sampler_ABC = ABC( dataset1=data, params=params, simulation_func=ysim, prior_func=flat_prior, distance_func=distance_GRBF) 
+sampler_ABC = ABC( dataset1=data, params=params, simulation_func=ysim, prior_func=[ flat_prior ], distance_func=distance_GRBF) 
 
 success = success + 1
 

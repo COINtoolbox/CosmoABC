@@ -9,7 +9,7 @@ Use this as an example to implement your own functions.
     -  **simulation** function **must be called *'simulation'* and take a dictionary as input
 
     - the **distance function **must be called *'distance'* and take 2 data sets 
-       and an extra input parameter as input**
+       and an extra optional input parameter as input**
 
     - the **prior** function **must take 2 arrays and 1 bool as input**:
           first input: list of prior parameters (one vector for each parameter being fitted)
@@ -48,7 +48,7 @@ def simulation( v ):
     return numpy.atleast_2d( l1 ).T 
 
 
-def distance( dataset1, dataset2, s ):
+def distance( dataset1, dataset2, s1=1.0 ):
     """
     Simple distance function from 2 independent data catalogs generated with function my_sim.simulatio.
 
