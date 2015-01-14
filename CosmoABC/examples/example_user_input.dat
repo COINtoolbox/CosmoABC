@@ -21,6 +21,9 @@ delta 		= 0.1				# convergence criteria
 qthreshold 	= 0.75				# quantile in distance threshold used to define epsilon in the construction of subsequent particle system
 
 file_root 	= example_1par_PS		# root to output file name for subsequent particle systems
- 
+
+simulation_func = simulation
+prior_func	= flat_prior  flat_prior
+distance_func	= distance_GRBF 
 
 

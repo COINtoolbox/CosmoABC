@@ -11,7 +11,7 @@ Use this as an example to implement your own functions.
     - the **distance function **must be called *'distance'* and take 2 data sets 
        and an extra input parameter as input**
 
-    - the **prior** function **must be called *'prior'* and take 2 arrays and 1 bool as input**:
+    - the **prior** function **must take 2 arrays and 1 bool as input**:
           first input: list of prior parameters (one vector for each parameter being fitted)
           second input: list of extreme limits, defining the interval where the prior is 
                         expected to be valid (this was included to avoid unecessary and 
