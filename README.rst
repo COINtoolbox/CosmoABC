@@ -19,6 +19,11 @@ Or if the tarball or repository is downloaded, in the CosmoABC directory::
 
     $ pyton setup.py install
 
+In order to test consistency of the package elements do::
+
+    $ python setup.py test
+
+
 
 Examples
 ========
@@ -176,7 +181,7 @@ It is also possible to use it interactively.
     params['s']=0						# extra parameter for distance function
     params['epsilon1'] = 50.0					# initial distance threshold
     params['M'] = 100						# number of particles in each particle system
-    params['delta'] =0.5					# convergence criteria
+    params['delta'] =0.1					# convergence criteria
     params['qthreshold'] = 0.75					# quantile in distance threshold
 
     params['file_root'] = 'example_PS'				# root to output file names
