@@ -1,0 +1,348 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>CosmoABC - Likelihood free parameter estimation for cosmology &mdash; CosmoABC 0.1.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="CosmoABC 0.1.2 documentation" href="#" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="#">CosmoABC 0.1.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="cosmoabc-likelihood-free-parameter-estimation-for-cosmology">
+<h1>CosmoABC - Likelihood free parameter estimation for cosmology<a class="headerlink" href="#cosmoabc-likelihood-free-parameter-estimation-for-cosmology" title="Permalink to this headline">¶</a></h1>
+<p><cite>CosmoABC</cite> is a package which enables parameter inference using an Approximate Bayesian Computation (ABC) algorithm, as described in Ishida et al., 2015 [LINK].
+The code was originally designed for cosmological parameter inference from galaxy clusters number counts based on Sunyaev-Zel&#8217;dovich measurements. In this context, the cosmological simulations were performed using the NumCosmo library.</p>
+<p>Nevertheless, the user can easily take advantadge of the ABC sampler along with his/her own simulator, as well as  test personalized summary statistics and distance functions.</p>
+<div class="section" id="get-it-now">
+<h2>Get it now!<a class="headerlink" href="#get-it-now" title="Permalink to this headline">¶</a></h2>
+<p>The package can be installed using the PyPI and pip:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ pip install CosmoABC
+</pre></div>
+</div>
+<p>Or if the tarball or repository is downloaded, in the CosmoABC directory you can install and test it:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ pyton setup.py install
+$ python setup.py test
+</pre></div>
+</div>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>Sample input in can be found in ~CosmoABC/examples. All example files mentioned in this section are available in that directory.</p>
+<p>The user input file should contain all necessary variables for simulation as well as for the ABC sampler.</p>
+<p>A simple example of user input file, using a simulator which takes 3 parameters as input (mean, std, n) but only two of them are considered free would look like this</p>
+<div class="highlight-python"><div class="highlight"><pre>path_to_obs         = data.dat         # path to observed data
+
+param_to_fit        = mean  std        # parameters to fit
+param_to_sim        = mean  std  n     # parameters needed for simulation
+
+mean_lim            = -10.0  10.0      # extreme limits for parameters
+std_lim             = 0.001   3.0
+
+
+mean_prior_par      = -1.0  3.0         # parameters for prior distribution
+std_prior_par       = 0.001  2.0
+
+mean        = 1.0                       #fiducial parameters for simulation
+std         = 0.1
+n           = 1000
+
+s           = 0                         # extra parameter for distance function
+epsilon1    = 100                       # initial distance threshold for building first particle system
+M           = 100                       # number of particles in each particle system
+delta       = 0.2                       # convergence criteria
+qthreshold  = 0.75                      # quantile in distance threshold
+file_root   = example_2par_PS           # root to output file names
+
+simulation_func   = simulation              # simulation function provided by the user
+prior_func        = flat_prior  flat_prior  # list of prior PDF, one for each fitted parameter
+distance_func     = distance                # distance function
+</pre></div>
+</div>
+<div class="section" id="user-defined-simulation-distance-and-prior-functions">
+<h3>User defined simulation, distance and prior functions<a class="headerlink" href="#user-defined-simulation-distance-and-prior-functions" title="Permalink to this headline">¶</a></h3>
+<p>The most important ingredients in an ABC analysis are:</p>
+<ul class="simple">
+<li>the prior probability distributions (PDF)</li>
+<li>the simulator</li>
+<li>the distance function</li>
+</ul>
+<p>CosmoABC is able to handdle user defined functions for all three elements.
+You will find example files in the corresponding directory which will help you to taylor your functions for the ABC sampler.</p>
+<p>Built-in options for priors PDF are:</p>
+<ul class="simple">
+<li>Gaussian</li>
+<li>flat</li>
+<li>beta</li>
+</ul>
+<p>Supposing that the user defined functions for distance and simulation are all in file containing</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="k">def</span> <span class="nf">simulation</span><span class="p">(</span> <span class="n">v</span> <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a Gaussian distributed catalog.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">l1</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span> <span class="n">loc</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="s">&#39;mean&#39;</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="s">&#39;std&#39;</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="s">&#39;n&#39;</span><span class="p">]</span> <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span> <span class="n">l1</span> <span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+
+<span class="k">def</span> <span class="nf">distance</span><span class="p">(</span> <span class="n">dataset1</span><span class="p">,</span> <span class="n">dataset2</span><span class="p">,</span> <span class="n">s1</span><span class="o">=</span><span class="mi">0</span> <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates distance between dataset1 and dataset2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">t1</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span> <span class="n">dataset1</span> <span class="p">)</span> <span class="o">-</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span> <span class="n">dataset2</span> <span class="p">)</span> <span class="p">)</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span> <span class="n">numpy</span><span class="o">.</span><span class="n">std</span><span class="p">(</span> <span class="n">dataset1</span> <span class="p">)</span> <span class="o">-</span> <span class="n">numpy</span><span class="o">.</span><span class="n">std</span><span class="p">(</span> <span class="n">dataset2</span> <span class="p">)</span> <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">t1</span> <span class="o">+</span> <span class="n">t2</span>
+</pre></div>
+</div>
+<p>The ABC sampler can be called from the command line:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ run_ABC.py -i &lt;user_input_file&gt;  -f &lt;user_function_file&gt;
+</pre></div>
+</div>
+<p>This will run the ABC sampler until the convergence criteria is reached. A pdf file containing graphical representation of the results for each particle system is
+given as output.</p>
+<p>If the achieved result is not satisfactory and we want torun the ABC sampler beginning from the last completed particle system <em>N</em>, this can be done in the command line as well:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ continue_ABC.py -i &lt;user_input_file&gt; -f &lt;user_function&gt; -p N
+</pre></div>
+</div>
+<p>If the sampler is running and we wish to take a look in the already calculated particle systems, we can generate the corresponding plots:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ plot_ABC.py -i &lt;user_input_file&gt; -p N
+</pre></div>
+</div>
+<p>It is also possible to use it interactively.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">CosmoABC.priors</span> <span class="kn">import</span> <span class="n">flat_prior</span>
+<span class="kn">from</span> <span class="nn">CosmoABC.ABC_sampler</span> <span class="kn">import</span> <span class="n">ABC</span>
+<span class="kn">from</span> <span class="nn">CosmoABC.plots</span> <span class="kn">import</span> <span class="n">plot_2D</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="k">def</span> <span class="nf">simulation</span><span class="p">(</span> <span class="n">v</span> <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a Gaussian distributed catalog.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">l1</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span> <span class="n">loc</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="s">&#39;mean&#39;</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="s">&#39;std&#39;</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="s">&#39;n&#39;</span><span class="p">]</span> <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span> <span class="n">l1</span> <span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+
+<span class="k">def</span> <span class="nf">distance</span><span class="p">(</span> <span class="n">dataset1</span><span class="p">,</span> <span class="n">dataset2</span><span class="p">,</span> <span class="n">s1</span><span class="o">=</span><span class="mi">0</span> <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates distance between dataset1 and dataset2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">t1</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span> <span class="n">dataset1</span> <span class="p">)</span> <span class="o">-</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span> <span class="n">dataset2</span> <span class="p">)</span> <span class="p">)</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span> <span class="n">numpy</span><span class="o">.</span><span class="n">std</span><span class="p">(</span> <span class="n">dataset1</span> <span class="p">)</span> <span class="o">-</span> <span class="n">numpy</span><span class="o">.</span><span class="n">std</span><span class="p">(</span> <span class="n">dataset2</span> <span class="p">)</span> <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">t1</span> <span class="o">+</span> <span class="n">t2</span>
+
+
+<span class="c">#define fiducial model parameters</span>
+<span class="n">mean</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">std</span>  <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">v1</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;mean&#39;</span><span class="p">:</span> <span class="n">mean</span><span class="p">,</span> <span class="s">&#39;std&#39;</span><span class="p">:</span> <span class="n">std</span><span class="p">,</span> <span class="s">&#39;n&#39;</span><span class="p">:</span><span class="mi">1000</span> <span class="p">}</span>
+
+<span class="c">#generate &#39;observed&#39; catalog</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">simulation</span><span class="p">(</span> <span class="n">v1</span> <span class="p">)</span>
+
+<span class="c">#create dictionary of required parameter values</span>
+<span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">params</span><span class="p">[</span><span class="s">&#39;param_to_fit&#39;</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;mean&#39;</span><span class="p">,</span> <span class="s">&#39;std&#39;</span> <span class="p">]</span>                     <span class="c"># parameters to fit</span>
+<span class="n">params</span><span class="p">[</span><span class="s">&#39;param_lim&#39;</span><span class="p">]</span><span class="o">=</span><span class="p">[[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]]</span>               <span class="c"># extreme limits for parameters</span>
+<span class="n">params</span><span class="p">[</span><span class="s">&#39;prior_par&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span><span class="mf">2.0</span><span class="p">]]</span>            <span class="c"># parameters for prior distribution</span>
+<span class="n">params</span><span class="p">[</span><span class="s">&#39;simulation_params&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">v1</span>                            <span class="c"># parameters needed for simulation</span>
+
+<span class="n">params</span><span class="p">[</span><span class="s">&#39;mean&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean</span>                                       <span class="c"># fiducial parameter value</span>
+<span class="n">params</span><span class="p">[</span><span class="s">&#39;std&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">std</span>                                        <span class="c"># fiducial parameter value</span>
+<span class="n">params</span><span class="p">[</span><span class="s">&#39;s&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>                                               <span class="c"># extra parameter for distance function</span>
+<span class="n">params</span><span class="p">[</span><span class="s">&#39;epsilon1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">50.0</span>                                   <span class="c"># initial distance threshold</span>
+<span class="n">params</span><span class="p">[</span><span class="s">&#39;M&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>                                           <span class="c"># number of particles in each particle system</span>
+<span class="n">params</span><span class="p">[</span><span class="s">&#39;delta&#39;</span><span class="p">]</span> <span class="o">=</span><span class="mf">0.2</span>                                        <span class="c"># convergence criteria</span>
+<span class="n">params</span><span class="p">[</span><span class="s">&#39;qthreshold&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.75</span>                                 <span class="c"># quantile in distance threshold</span>
+
+<span class="n">params</span><span class="p">[</span><span class="s">&#39;file_root&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;example_PS&#39;</span>                          <span class="c"># root to output file names</span>
+<span class="n">params</span><span class="p">[</span><span class="s">&#39;prior_func&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="n">flat_prior</span><span class="p">,</span> <span class="n">flat_prior</span><span class="p">]</span>            <span class="c"># prior functions</span>
+<span class="n">params</span><span class="p">[</span><span class="s">&#39;distance_func&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">distance</span>                          <span class="c"># distance functions</span>
+
+<span class="c">#initiate ABC sampler</span>
+<span class="n">sampler_ABC</span> <span class="o">=</span> <span class="n">ABC</span><span class="p">(</span> <span class="n">dataset1</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">simulation_func</span><span class="o">=</span><span class="n">simulation</span><span class="p">,</span> <span class="n">prior_func</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;prior_func&#39;</span><span class="p">],</span> <span class="n">distance_func</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;distance_func&#39;</span><span class="p">])</span>
+
+<span class="c">#build first particle system</span>
+<span class="n">sys1</span> <span class="o">=</span> <span class="n">sampler_ABC</span><span class="o">.</span><span class="n">BuildFirstPSystem</span><span class="p">(</span> <span class="n">filename</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;file_root&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;0.dat&#39;</span> <span class="p">)</span>
+
+<span class="c">#update particle system until convergence</span>
+<span class="n">sampler_ABC</span><span class="o">.</span><span class="n">fullABC</span><span class="p">(</span>  <span class="n">params</span><span class="p">[</span><span class="s">&#39;file_root&#39;</span><span class="p">]</span> <span class="p">)</span>
+
+
+<span class="c">#plot results</span>
+<span class="c">#update parameter limits for plotting</span>
+
+<span class="n">params</span><span class="p">[</span><span class="s">&#39;param_lim&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">3.0</span><span class="p">],[</span><span class="mf">0.0001</span><span class="p">,</span><span class="mf">0.2</span><span class="p">]]</span>
+<span class="n">plot_2D</span><span class="p">(</span> <span class="n">sampler_ABC</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="s">&#39;results.pdf&#39;</span> <span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="numcosmo-simulations">
+<h3>NumCosmo simulations<a class="headerlink" href="#numcosmo-simulations" title="Permalink to this headline">¶</a></h3>
+<p>In order to reproduce the results of Ishida <em>et al.</em> 2015, first you need to make sure the NumCosmo library is running smoothly.
+Instructions for complete instalation and tests can be found in <cite>&lt;http://www.nongnu.org/numcosmo/&gt;</cite>.</p>
+<p>Once the simulator is installed run the complete ABC sampler + NumCosmo cluster simulations from the command line</p>
+<div class="highlight-python"><div class="highlight"><pre>$ run_ABC_NumCosmo.py -i &lt;user_input_file&gt;
+</pre></div>
+</div>
+<p>This will run the complete analysis presented in Ishida <em>et al.</em>, 2015 as well as produce
+plots with the corresponding results.</p>
+<p>** WARNING**  :  This might take a while! Be patient!</p>
+<p>Analogously to what is available for the user defined simulations, we can also continue a NumCosmo calculation from particle system <em>N</em> with:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ continue_ABC_NumCosmo.py -i &lt;user_input_file&gt; -p N
+</pre></div>
+</div>
+<p>If we want to run the NumCosmo simulation with a different prior or distance function, we should define it in a separated file and run:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ run_ABC_NumCosmo.py -i &lt;user_input_file&gt; -f &lt;user_function_file&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<p>The complete documentation can be found in [LINK].</p>
+</div>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Python 2.7</li>
+<li>numpy &gt;=1.8.2</li>
+<li>scipy &gt;= 0.14.0</li>
+<li>statsmodels &gt;= 0.5.0</li>
+<li>matplotlib &gt;= 1.3.1</li>
+<li>argparse &gt;= 1.1</li>
+<li>imp</li>
+<li>math</li>
+<li>argparse</li>
+</ul>
+<div class="section" id="optional">
+<h3>Optional<a class="headerlink" href="#optional" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>NumCosmo  <cite>&lt;http://www.nongnu.org/numcosmo/&gt;</cite></li>
+</ul>
+</div>
+</div>
+<div class="section" id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>GNU General Public License (GPL&gt;=3)</li>
+</ul>
+<p>Contents:</p>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
+<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
+<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">CosmoABC - Likelihood free parameter estimation for cosmology</a><ul>
+<li><a class="reference internal" href="#get-it-now">Get it now!</a></li>
+<li><a class="reference internal" href="#examples">Examples</a><ul>
+<li><a class="reference internal" href="#user-defined-simulation-distance-and-prior-functions">User defined simulation, distance and prior functions</a></li>
+<li><a class="reference internal" href="#numcosmo-simulations">NumCosmo simulations</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#documentation">Documentation</a></li>
+<li><a class="reference internal" href="#requirements">Requirements</a><ul>
+<li><a class="reference internal" href="#optional">Optional</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#license">License</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="#">CosmoABC 0.1.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, Emille E.O.Ishida.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>
