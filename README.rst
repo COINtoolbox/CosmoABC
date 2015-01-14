@@ -53,7 +53,7 @@ A simple example of user input file, using a simulator which takes 3 parameters 
     s		= 0			    # extra parameter for distance function
     epsilon1 	= 100			    # initial distance threshold for building first particle system
     M 		= 100			    # number of particles in each particle system
-    delta 	= 0.1		            # convergence criteria
+    delta 	= 0.2		            # convergence criteria
     qthreshold 	= 0.75			    # quantile in distance threshold 
     file_root 	= example_2par_PS	    # root to output file names 
 
@@ -181,7 +181,7 @@ It is also possible to use it interactively.
     params['s']=0						# extra parameter for distance function
     params['epsilon1'] = 50.0					# initial distance threshold
     params['M'] = 100						# number of particles in each particle system
-    params['delta'] =0.1					# convergence criteria
+    params['delta'] =0.2					# convergence criteria
     params['qthreshold'] = 0.75					# quantile in distance threshold
 
     params['file_root'] = 'example_PS'				# root to output file names
