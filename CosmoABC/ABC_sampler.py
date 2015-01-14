@@ -7,7 +7,7 @@ Approximate Bayesian Computation library.
 __author__ = "E. E. O. Ishida, S. D. P. Vitenti, M. Penna-Lima,  R. S. de Souza, J. Cisewski, E. Cameron, V. C. Busti"
 __maintainer__ = "E. E. O. Ishida"
 __copyright__ = "Copyright 2015"
-__version__ = "0.1"
+__version__ = "0.1.2"
 __email__ = "emilleishida@gmail.com"
 __status__ = "Prototype"
 __license__ = "GPL"
@@ -161,7 +161,7 @@ class ABC( object ):
         DataSimul = self.simulation( self.params['simulation_params'] )
 
         #calculate distance
-        dist = self.distance( self.data, DataSimul, self.s )
+        dist = self.distance( self.data, DataSimul, s1=self.s )
 
         if dist > 0:
             return dist
@@ -314,7 +314,7 @@ class ABC( object ):
             DataSimul = self.simulation( self.params['simulation_params'] )
       
             #calculate distance
-            dist = self.distance( self.data, DataSimul, self.s )
+            dist = self.distance( self.data, DataSimul, s1=self.s )
  
 
         theta_t_try.append( dist )

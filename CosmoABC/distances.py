@@ -10,14 +10,14 @@ In order to insert a new distance function, add it to this file.
 import numpy
 from scipy.interpolate import Rbf
 
-def SumGRBF( dataset1, dataset2, s1, f1='gaussian'):
+def SumGRBF( dataset1, dataset2, s1=0, f1='gaussian'):
     """
     Compute the sum of Gaussian Radial Basis Function (GRBF) for all points in data1 having data2 as a fixed reference basis.
     Following equation 18 notation of Ishida et al., 2015: \mathcal{D} -> data1 and Y-> data2.  
 
     input:	data1 -> first data matrix ( collumns -> features, lines -> objects )
    		data2 -> second data matrix, fixed basis (collumns -> features, lines -> objects )
- 		s -> smooth parameter (scalar)
+ 		s  (optional)-> smooth parameter (scalar)
                 f1 (optional) -> kernel function implemented in scipy.interpolate.Rbf rotine (string)
 
     output: scalar
@@ -43,14 +43,14 @@ def SumGRBF( dataset1, dataset2, s1, f1='gaussian'):
         
 
 
-def distance_GRBF( dataset1, dataset2, s1, f='gaussian' ):
+def distance_GRBF( dataset1, dataset2, s1=0, f='gaussian' ):
     """
-    Compute the distance between two samples (equation 19).
+    Compute the distance between two samples.
     Following equation 19 notation of Ishida et al., 2015: \mathcal{D} -> data1 and Y-> data2.  
 
     input:	data1 -> first data matrix ( collumns -> features, lines -> objects )
    		data2 -> second data matrix, fixed basis (collumns -> features, lines -> objects )
- 		s -> smooth parameter (scalar)
+ 		s (optional) -> smooth parameter (scalar)
                 f (optional) -> kernel function implemented for GRBF rotine (string)
               
     output: scalar

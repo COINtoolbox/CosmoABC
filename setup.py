@@ -18,7 +18,12 @@ setup(name='CosmoABC',
                       'numpy>=1.8.2',
                       'scipy>=0.14.0',
                       'statsmodels>=0.5.0',
-                      'matplotlib>=1.3.1'                   
+                      'matplotlib>=1.3.1',
+                      'distribute',
+                      'imp',
+                      'math',
+                      'datetime',
+                      'time'                   
       ],
       scripts=['CosmoABC/bin/run_ABC.py', 'CosmoABC/bin/run_ABC_NumCosmo.py','CosmoABC/bin/continue_ABC.py', 'CosmoABC/bin/continue_ABC_NumCosmo.py','CosmoABC/bin/plot_ABC.py'],
       test_suite='nose.collector',

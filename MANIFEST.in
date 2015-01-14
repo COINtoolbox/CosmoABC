@@ -3,3 +3,5 @@ include CHANGES.md
 include CosmoABC/data/SPT.dat
 include CosmoABC/examples/example_NumCosmo_input.dat
 include CosmoABC/examples/example_data_format_SZ.dat
+include CosmoABC/examples/example_user_input.dat
+include CosmoABC/examples/example_user_functions.dat
