@@ -15,12 +15,9 @@ The package can be installed using the PyPI and pip::
 
     $ pip install CosmoABC
 
-Or if the tarball or repository is downloaded, in the CosmoABC directory::
+Or if the tarball or repository is downloaded, in the CosmoABC directory you can install and test it::
 
     $ pyton setup.py install
-
-In order to test consistency of the package elements do::
-
     $ python setup.py test
 
 
