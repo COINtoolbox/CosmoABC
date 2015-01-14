@@ -82,7 +82,7 @@ Built-in options for priors PDF are:
 
 Supposing that the user defined functions for distance and simulation are all in one python source file, the ABC sampler can be called from the command line::
 
-    run_ABC.py -i <user_input_file>  -f <user_function_file>
+    $ run_ABC.py -i <user_input_file>  -f <user_function_file>
 
 This will run the ABC sampler until the convergence criteria is reached. A pdf file containing graphical representation of the results for each particle system is 
 given as output. 
