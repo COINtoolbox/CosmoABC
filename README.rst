@@ -80,7 +80,9 @@ Built-in options for priors PDF are:
 
 
 
-Supposing that the user defined functions for distance and simulation are all in file containing::
+Supposing that the user defined functions for distance and simulation are all in file containing
+
+.. code-block:: python 
 
     import numpy
 
@@ -124,7 +126,9 @@ If the sampler is running and we wish to take a look in the already calculated p
     $ plot_ABC.py -i <user_input_file> -p N
 
 
-It is also possible to use it interactively::
+It is also possible to use it interactively.
+
+.. code-block:: python 
 
     from CosmoABC.priors import flat_prior
     from CosmoABC.ABC_sampler import ABC
