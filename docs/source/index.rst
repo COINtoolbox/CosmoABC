@@ -7,6 +7,7 @@ CosmoABC - Likelihood free parameter estimation for cosmology
 =============================================================
 
 `CosmoABC` is a package which enables parameter inference using an Approximate Bayesian Computation (ABC) algorithm, as described in Ishida et al., 2015 [LINK].
+
 The code was originally designed for cosmological parameter inference from galaxy clusters number counts based on Sunyaev-Zel'dovich measurements. In this context, the cosmological simulations were performed using the NumCosmo library.
 
 Nevertheless, the user can easily take advantadge of the ABC sampler along with his/her own simulator, as well as  test personalized summary statistics and distance functions. 
@@ -32,7 +33,7 @@ Sample input in can be found in ~CosmoABC/examples. All example files mentioned 
 
 The user input file should contain all necessary variables for simulation as well as for the ABC sampler.
 
-A simple example of user input file, using a simulator which takes 3 parameters as input (mean, std, n) but only two of them are considered free would look like this ::
+A simple example of user input file, using a simulator which takes 3 parameters as input (mean, std, n) from which we want to fit only two (mean, std), would look like this ::
 
     path_to_obs		= data.dat   	   # path to observed data 
 
@@ -82,8 +83,7 @@ Built-in options for priors PDF are:
 * beta
 
 
-
-Supposing that the user defined functions for distance and simulation are all in file containing
+Consider the <user_function_file> containing,
 
 .. code-block:: python 
 
@@ -116,12 +116,12 @@ The ABC sampler can be called from the command line::
 
     $ run_ABC.py -i <user_input_file>  -f <user_function_file>
 
-This will run the ABC sampler until the convergence criteria is reached. A pdf file containing graphical representation of the results for each particle system is 
+This will run the algorithm until the convergence criteria is reached. A pdf file containing graphical representation of the results for each particle system is 
 given as output. 
 
-If the achieved result is not satisfactory and we want torun the ABC sampler beginning from the last completed particle system *N*, this can be done in the command line as well::
+If the achieved result is not satisfactory and we want to run the ABC sampler beginning from the last completed particle system *N*,  we should decrese the convergene criteria `delta` in the <user_input_file> and continue the calculations from where it was stopped.  This can also be done in the command line::
 
-    $ continue_ABC.py -i <user_input_file> -f <user_function> -p N
+    $ continue_ABC.py -i <user_input_file> -f <user_function_file> -p N
 
 
 If the sampler is running and we wish to take a look in the already calculated particle systems, we can generate the corresponding plots::
