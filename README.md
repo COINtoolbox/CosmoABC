@@ -1,8 +1,3 @@
-.. CosmoABC documentation master file, created by
-   sphinx-quickstart on Thu Jan 15 00:36:37 2015.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 CosmoABC - Likelihood free parameter estimation for cosmology
 =============================================================
 
