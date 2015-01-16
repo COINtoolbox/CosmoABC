@@ -233,7 +233,7 @@ If we want to run the NumCosmo simulation with a different prior or distance fun
 Documentation
 *************
 
-The complete documentation can be found in ` readthedocs http://cosmoabc.readthedocs.org/en/latest/#`.
+The complete documentation can be found in `http://cosmoabc.readthedocs.org/en/latest/`.
 
 
 Requirements
