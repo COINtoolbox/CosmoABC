@@ -19,7 +19,11 @@ The package can be installed using the PyPI and pip::
 
     $ pip install CosmoABC
 
+<<<<<<< HEAD:docs/build/html/_sources/index.txt
 Or if the tarball or repository is downloaded, in the CosmoABC directory you can install and test it::
+=======
+Or if the tarball or repository is downloaded, in the CosmoABC directory you can install and test the package::
+>>>>>>> master:README.rst
 
     $ pyton setup.py install
     $ python setup.py test
