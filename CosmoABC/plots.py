@@ -32,11 +32,32 @@ def plot_1D( T, file_output, Parameters):
 
     sampling = numpy.array( [ [ i for i in numpy.arange( Parameters['param_lim'][ j ][0], Parameters['param_lim'][ j ][1], (Parameters['param_lim'][ j ][1]-Parameters['param_lim'][ j ][0])/1000) ] for j in range( len( Parameters['param_to_fit'] ) )] )
 
+    y0 = [ Parameters['prior_func'][0]( Parameters['prior_par'], Parameters['prior_lim'] ) for x in xrange( Parameters['M'] ) ]
+    w0 = [ 1.0/len(y0) for i in y0 ]
+
+    kde0 = gaussian_kde(y0 , weights=w0)
+    y00 = kde0( sampling[0] )
+
+    epsilon_ev = []
+    time_ev = []
+    ndraws_ev = []
+
+
     with PdfPages( file_output ) as pdf:
 
-        epsilon_ev = []
-        time_ev = []
-        ndraws_ev = []
+   
+        plt.figure()
+        plt.title( 'Particle System: 0' , fontsize=15 )
+        plt.plot( sampling[0], y00, color='blue')
+        plt.xlabel( Parameters['param_to_fit'][0] )
+        plt.ylabel( 'density', fontsize=12 )
+        plt.tick_params(axis='both', which='major', labelsize=12)
+        plt.xlim( Parameters['param_lim'][0][0], Parameters['param_lim'][0][1])
+        pdf.savefig()
+        plt.close()
+
+        
+       
 
         for i in range( T ):
            

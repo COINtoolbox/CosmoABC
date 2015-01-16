@@ -27,6 +27,8 @@ def gaussian_prior( par, par_lim, func=False ):
                                 2-dimensional vector with [min_value, max_value] for each parameter
 
 		func (optional)	->   return the pdf random variable (boolean). Default is False.
+ 
+                
 
     output: scalar	-> one random draw
             or
