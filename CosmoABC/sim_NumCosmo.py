@@ -18,7 +18,7 @@ import math
 
 class NCountSimul:
 
-  def __init__ (self, z_min, z_max, lnM_min, lnM_max, area, observable):
+  def __init__ (self, z_min, z_max, z_sigma, lnM_min, lnM_max, area, observable):
     Ncm.cfg_init ()
     self.cosmo = Nc.HICosmo.new_from_name (Nc.HICosmo, "NcHICosmoDEXcdm")
     dist = Nc.Distance.new (z_max * 1.5)
@@ -38,7 +38,7 @@ class NCountSimul:
         
     
     
-    cluster_z = Nc.ClusterRedshift.new_from_name ("NcClusterPhotozGaussGlobal{'pz-min':<%f>, 'pz-max':<%f>, 'z-bias':<0.0>, 'sigma0':<0.05>}" % (z_min, z_max))
+    cluster_z = Nc.ClusterRedshift.new_from_name ("NcClusterPhotozGaussGlobal{'pz-min':<%f>, 'pz-max':<%f>, 'z-bias':<0.0>, 'sigma0':<%f>}" % (z_min, z_max, z_sigma))
     cad = Nc.ClusterAbundance.new (mf, None, cluster_z, cluster_m)
 
     self.ncdata = Nc.DataClusterNCount.new (cad)
@@ -70,6 +70,7 @@ class NCountSimul:
     self.cosmo.props.ns      = CP["ns"]
     self.cosmo.props.sigma8  = CP["sigma8"]
     self.cosmo.props.w       = CP["w"]
+    
 
     if seed == False:
         self.rng.set_random_seed( False )
@@ -134,7 +135,7 @@ def NumCosmo_simulation( simul_params, save=False ):
         """    
  
         #prepara simulation object
-        ncount=NCountSimul( simul_params['zmin'], simul_params['zmax'], simul_params['MinMass'] , simul_params['MaxMass'], simul_params['area'], simul_params['observable'] )
+        ncount=NCountSimul( simul_params['zmin'], simul_params['zmax'], simul_params['zsigma'], simul_params['MinMass'] , simul_params['MaxMass'], simul_params['area'], simul_params['observable'] )
 
         data_simul = []
         

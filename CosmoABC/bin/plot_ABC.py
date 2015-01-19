@@ -97,6 +97,15 @@ def read_input( filename ):
     params['file_root'] = params_ini['file_root'][0]  
 
 
+    dispatcher = {'flat_prior': flat_prior, 'gaussian_prior': gaussian_prior, 'beta_prior':beta_prior,  'distance_GRBF':distance_GRBF}
+
+    if params_ini['distance_func'][0] in dispatcher.keys():
+        params['distance_func'] = dispatcher[ params_ini['distance_func'][0] ]
+    
+   
+    params[ 'prior_func' ] = [ dispatcher[ params_ini['prior_func'][ k ] ] if params_ini['prior_func'][ k ] in dispatcher.keys() else params_ini['prior_func'][ k ] for k in xrange( params['npar'] ) ]
+    
+
     #fiducial extra parameters
     sim_par = {}  
     for item in params_ini.keys():
@@ -115,6 +124,14 @@ def read_input( filename ):
 def main( args ):
 
     user_input = read_input( args.input )
+
+    if args.functions:
+        m1 = imp.load_source( args.functions[:-3], args.functions )
+
+        for l1 in range( user_input['npar'] ):
+            if isinstance( user_input['prior_func'][ l1 ], str):            
+                user_input['prior_func'][ l1 ] = getattr( m1, user_input['prior_func'][ l1 ] )
+     
             
 
     #plot results
@@ -136,6 +153,7 @@ if __name__=='__main__':
     parser = argparse.ArgumentParser(description='Approximate Bayesian Computation code.')
     parser.add_argument('-i','--input', dest='input', help='User input file name.',required=True)
     parser.add_argument('-p','--PS', dest='PS', help='Last particle system index completed.', required=True)
+    parser.add_argument('-f','--functions',  dest='functions', help='File name for user defined functions.', required=False)
     args = parser.parse_args()
    
     main( args )

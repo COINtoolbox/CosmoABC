@@ -115,7 +115,7 @@ def read_input( filename ):
     dispatcher = {'flat_prior': flat_prior, 'gaussian_prior': gaussian_prior, 'beta_prior':beta_prior,  'distance_GRBF':distance_GRBF}
 
     if params_ini['distance_func'][0] in dispatcher.keys():
-        params['distance_func'] = dispatcher[ params_ini['distance_func'] ]
+        params['distance_func'] = dispatcher[ params_ini['distance_func'][0] ]
     
    
     params[ 'prior_func' ] = [ dispatcher[ params_ini['prior_func'][ k ] ] if params_ini['prior_func'][ k ] in dispatcher.keys() else params_ini['prior_func'][ k ] for k in xrange( params['npar'] ) ]

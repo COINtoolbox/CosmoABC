@@ -469,6 +469,7 @@ class ABC( object ):
 
         #initiate iteration counter
         t = 0
+        K = self.M
 
         while float( self.M )/K > self.delta:
 
@@ -489,9 +490,7 @@ class ABC( object ):
             del sys_new, W2 
 
             print ' T = ' + str( t ) + ',    convergence = ' + str( float( self.M )/K )
-
-        if t == 0:
-            raise ValueError('Algorthim converged in the first particle system! Choose a lower value for the convergence parameter "delta". ')
+           
 
         self.T = t
         
