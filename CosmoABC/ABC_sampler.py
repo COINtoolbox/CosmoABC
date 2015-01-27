@@ -118,7 +118,7 @@ class ABC( object ):
         self.delta		= params['delta']		#convergence criteria 
         self.s 		        = params['s']			#smooth parameter (scalar)
         self.M		        = params['M']			#number of elements in each particle system
-        self.epsilon1    	= params['epsilon1']		#distance threshold for first particle system
+        self.epsilon1    	= params['epsilon1']		#list distance threshold for first particle system
         self.qthreshold		= params['qthreshold']		#quantile to define the distance threshold for subsequent particle system
     
 
@@ -133,7 +133,6 @@ class ABC( object ):
         pars = []
         for j in range( len( self.params[ 'param_to_fit' ] ) ):
 
-            
             p1 = self.prior[ j ](  self.params[ 'prior_par' ][ j ], self.params[ 'param_lim' ][ j ] )   
 
             pars.append( p1 )
@@ -161,7 +160,7 @@ class ABC( object ):
         DataSimul = self.simulation( self.params['simulation_params'] )
 
         #calculate distance
-        dist = self.distance( self.data, DataSimul, s1=self.s )
+        dist = self.distance( DataSimul, self.params )
 
         if dist > 0:
             return dist
@@ -198,47 +197,62 @@ class ABC( object ):
       
         theta = []    
    
-        while len( theta ) < self.M:
+        while len( theta ) < self.params['Mini']:
  
-            dist = 10**10
-            time0 = time.time()
-            K = 0
-
-            while dist > self.epsilon1: 
-                K = K + 1 
-
-                time1 = time.time()
-                dist = self.SetDistanceFromSimulation()
+            dist = [10**10]
+        
+            time1 = time.time()
+            dist = self.SetDistanceFromSimulation()
   
             theta_t = [ self.params['simulation_params'][ item ] for item in self.params['param_to_fit'] ] 
 
-            if dist > 0:
+            if dist[0] > 0:
 
                 total_time = time.time() - time1
 
-                theta_t.append( dist )
-                theta_t.append( str( K ) )
+                for item in dist:  
+                    theta_t.append( item )
+                theta_t.append( str( self.params['Mini']/self.M ) )
                 theta_t.append( total_time )
                 theta.append( theta_t  )
         
-                print '        particle index = ' + str( len( theta) ) + ',  number of draws = ' + str( K ) + ',   distance=' + str( dist )
+                print '        particle index = ' + str( len( theta) ) 
+                for ii in xrange( len( dist ) ) :
+                    print '          distance' + str( ii ) + '=' + str( dist[ ii ] )
                
+        #choose smaller distance 
+        d1 = numpy.array( theta )[:, len( self.params['param_to_fit'] ) ]   
+        d1B = list( d1 ) 
+        d1.sort()
 
-        
+        indx = [ d1B.index( item ) for item in d1 ]
+
+        theta_new = [ theta[ elem ] for elem in indx[ : self.M ] ]    
 
         #write particle system to file
         if output:
             op = open( filename, 'w' )
             for item in self.params[ 'param_to_fit' ]:
                 op.write( item  + '    '  )
-            op.write(  'distance     NDraws    time        dist_threshold\n' )
-            for line in theta:
+
+            for i2 in xrange( len( self.params[ 'epsilon1' ] ) ):
+                op.write(  'distance' + str( i2 ) + '    ' )    
+ 
+            op.write(  'NDraws    time       ')
+
+            for i2 in xrange( len( self.params[ 'epsilon1' ] ) ):
+                op.write( 'dist_threshold' + str( i2 + 1 ) + '    ' )
+            op.write( '\n' )
+
+            for line in theta_new:
                 for elem in line:
                     op.write( str( elem )  + '    ' )
-                op.write( str( self.epsilon1 ) + '\n' )
+                for d in self.epsilon1:
+                    op.write( str( d ) + '    ' )
+                op.write( '\n' )
             op.close()
  
-        return numpy.array( theta ), K
+        return numpy.array( theta_new ), self.params['Mini']
 
 
     def SelectParamInnerLoop( self, previous_particle_system, W, previous_cov_matrix ):
@@ -254,21 +268,23 @@ class ABC( object ):
 	:param	cosmological_parameters: dictionary of necessary cosmological parameters
 		keys must include: [H0, Omegab, Omegam, Tgamma0, ns, sigma8, w]	
 
-	:param	epsilon: distance threshold to be satisfied	
+	:param	epsilon: list of distance threshold to be satisfied	
 
         :returns: vector -> [ surviving_model_parameters, distance, number_necessary_draws, computational_time (s), distance_threshold ]
         """
 
-        dist = 10**10
+        dist = [10**10 for i in xrange( len( self.params['epsilon1'] ) )]
         K = 0
 
         #time marker
         time_start = time.time()
 
         #determine distance threshold
-        epsilon = mquantiles( previous_particle_system[:,len(self.params['param_to_fit'])], prob=self.qthreshold )[0]
+        epsilon = [ mquantiles( previous_particle_system[:, kk ], prob=self.qthreshold )[0] for kk in xrange( len(self.params['param_to_fit']), len(self.params['param_to_fit']) + len( self.params['epsilon1']))]
 
-        while dist > epsilon:
+        flag = [ False for ii in xrange( len( self.params['epsilon1'] ) ) ]
+
+        while False in flag:               
  
             #update counter
             K = K + 1 
@@ -314,13 +330,23 @@ class ABC( object ):
             DataSimul = self.simulation( self.params['simulation_params'] )
       
             #calculate distance
-            dist = self.distance( self.data, DataSimul, s1=self.s )
+            dist = self.distance( DataSimul, self.params )
  
+            flag = [] 
+            for ll in xrange( len( dist ) ):
+                if dist[ ll ] > epsilon[ ll ]:
+                    flag.append( False )
+                else:
+                    flag.append( True )
 
-        theta_t_try.append( dist )
+
+        for d2 in dist:
+            theta_t_try.append( d2 )
         theta_t_try.append( K )    
         theta_t_try.append( time.time() - time_start )
-        theta_t_try.append( epsilon )
+
+        for d3 in epsilon:
+            theta_t_try.append( d3 )
 
         return theta_t_try
 
@@ -351,7 +377,12 @@ class ABC( object ):
             op = open( filename, 'w' )
             for item in self.params[ 'param_to_fit' ]:
                 op.write( item  + '    '  )
-            op.write(  'distance     NDraws    time    dist_threshold\n' )
+            for jj in xrange( len( self.params['epsilon1'] ) ):
+                op.write(  'distance' + str( jj ) + '    ' )     
+            op.write( 'NDraws    time    ' )
+            for kk in xrange( len( self.params['epsilon1'] )): 
+                op.write( 'dist_threshold' + str( kk + 1 ) + '    ' )
+            op.write( '\n' )
 
         particle_system = []
 
@@ -362,7 +393,9 @@ class ABC( object ):
             particle_system.append( surv_param )
   
             if screen == True:
-                print 'J = ' + str( j ) + ',    K = ' + str( surv_param[ len( self.params['param_to_fit' ]) + 1  ] ) + ',    distance=' + str( surv_param[len( self.params['param_to_fit' ])  ] )
+                print 'J = ' + str( j ) + ',    K = ' + str( surv_param[ len( self.params['param_to_fit' ]) + len( self.params['epsilon1'] ) ] ) 
+                for thr in xrange( len( self.epsilon1 ) ):
+                    ',    distance' + str( thr ) + '=' + str( surv_param[len( self.params['param_to_fit' ]) + thr ] )
 
             
          
@@ -458,10 +491,10 @@ class ABC( object ):
 
             t1 = [ elem.split() for elem in lin[1:] ]
 
-            sys1 = numpy.array([ numpy.array([ float( line[ i1 ] ) for i1 in xrange( len( self.params['param_to_fit' ] ) + 1 ) ]) for line in t1 ])
+            sys1 = numpy.array([ numpy.array([ float( line[ i1 ] ) for i1 in xrange( len( self.params['param_to_fit' ] ) + len( self.params['epsilon1'] ) ) ]) for line in t1 ])
 
         #determine number of draws in previous particle system generation
-        K =  sum( int( line[ len( self.params['param_to_fit' ] ) + 1  ] ) for line in t1 )
+        K =  sum( int( line[ len( self.params['param_to_fit' ] ) + len( self.params['epsilon1'] )  ] ) for line in t1 )
         print 'K = ' + str( K )
 
         #determine initial weights
@@ -480,7 +513,7 @@ class ABC( object ):
             W2 = self.UpdateWeights( W1, sys1, sys_new, filename=root_file_name + str( t ) + 'weights.dat' )
 
  
-            K = sum( sys_new[:, len( self.params['param_to_fit' ] ) + 1 ] )
+            K = sum( sys_new[:, len( self.params['param_to_fit' ] ) + len( self.params['epsilon1'] ) ] )
 
             del sys1, W1
 
@@ -514,14 +547,17 @@ class ABC( object ):
 
         t1 = [ elem.split() for elem in lin[1:] ]
         
-        sys1 = numpy.array([ numpy.array([ float( line[ i1 ] ) for i1 in xrange( len( self.params['param_to_fit' ] ) + 1 ) ]) for line in t1 ])
+        sys1 = numpy.array([ numpy.array([ float( line[ i1 ] ) for i1 in xrange( len( self.params['param_to_fit' ] ) + len( self.params['epsilon1'] ) ) ]) for line in t1 ])
         
         #determine number of draws in previous particle system generation
-        K =  sum( int( line[ len( self.params['param_to_fit' ] ) + 1 ] ) for line in t1 )
+        K =  sum( int( line[ len( self.params['param_to_fit' ] ) + len( self.params['epsilon1'] ) ] ) for line in t1 )
         print 'K = ' + str( K )
         
-                
-        W1 = numpy.loadtxt( root_file_name+str(t)+'weights.dat' )
+        if t > 0:        
+            W1 = numpy.loadtxt( root_file_name+str(t)+'weights.dat' )
+        elif t == 0:
+            W1 = [ 1.0/self.M for i2 in xrange( self.M ) ]
+    
 
         while float( self.M )/K > self.delta:
 
@@ -532,7 +568,7 @@ class ABC( object ):
             W2 = self.UpdateWeights( W1, sys1, sys_new, filename=root_file_name + str( t ) + 'weights.dat' )
 
  
-            K = sum( sys_new[:, len( self.params['param_to_fit' ] ) + 1 ] )
+            K = sum( sys_new[:, len( self.params['param_to_fit' ] ) + len( self.params['epsilon1'] ) ] )
 
             del sys1, W1
 

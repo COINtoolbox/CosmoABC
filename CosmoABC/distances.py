@@ -9,6 +9,7 @@ In order to insert a new distance function, add it to this file.
 
 import numpy
 from scipy.interpolate import Rbf
+from scipy.stats.mstats import mquantiles
 
 def SumGRBF( dataset1, dataset2, s1=0, f1='gaussian'):
     """
@@ -43,7 +44,7 @@ def SumGRBF( dataset1, dataset2, s1=0, f1='gaussian'):
         
 
 
-def distance_GRBF( dataset1, dataset2, s1=0, f='gaussian' ):
+def distance_GRBF( dataset2, Parameters ):
     """
     Compute the distance between two samples.
     Following equation 19 notation of Ishida et al., 2015: \mathcal{D} -> data1 and Y-> data2.  
@@ -56,18 +57,18 @@ def distance_GRBF( dataset1, dataset2, s1=0, f='gaussian' ):
     output: scalar
     """
 
-    if sum( dataset2[0] ) == 0 or len( dataset2 ) > 5*len(dataset1) or dataset2.shape[0] == 1:
+    if sum( dataset2[0] ) == 0 or len( dataset2 ) > 5*len(Parameters['dataset1']) or dataset2.shape[0] == 1:
         return 10**10
      
   
     else:
  
-        j1 = SumGRBF( dataset1, dataset2, s1 )
+        j1 = SumGRBF( Parameters['dataset1'], dataset2, Parameters['s'] )
 
         #distance based on the logarithm of GRBF and normalized by results from data1
         if j1 > 0 and str( j1 ) != 'nan' :
-            d = abs( -2 * SumGRBF( dataset1, dataset2, s1, f1=f ) + 2 * SumGRBF( dataset1, dataset1, s1, f1=f ))
-            return d
+            d = abs( -2 * j1 + 2 * Parameters['extra1'])
+            return [ d ]
 
         else:
             op1 = open( 'dataset2_error_source.dat', 'w' )
@@ -79,6 +80,46 @@ def distance_GRBF( dataset1, dataset2, s1=0, f='gaussian' ):
                
             raise ValueError('ERROR in function SumGRBF!!  Corresponding simulation is stored in file "dataset2_error.dat" ' )
 
+
+
+def  summ_quantiles( dataset1, Parameters ):
+
+    
+    qlist = numpy.arange( 0.05, 1.0, 0.05 )
+
+    Parameters['extra1'] = numpy.array([ mquantiles( dataset1[:,0], prob=item ) for item in qlist ])
+    Parameters['extra2'] = numpy.array([ mquantiles( dataset1[:,1], prob=item ) for item in qlist ])
+ 
+    return Parameters
+
+
+def distance_quantiles( dataset2, Parameters ):
+    """
+    Compute the distance between two samples based on quantiles of the 2 first features.
+    Following equation 19 notation of Ishida et al., 2015: \mathcal{D} -> data1 and Y-> data2.  
+
+    input:	data1 -> first data matrix ( collumns -> features, lines -> objects )
+   		data2 -> second data matrix, fixed basis (collumns -> features, lines -> objects )
+                s -> extra parameter
+               
+              
+    output: scalar
+    """
+
+
+    qlist = numpy.arange( 0.05, 1.0, 0.05 )
+
+    qd2x = numpy.array([ mquantiles( dataset2[:,0], prob=item ) for item in qlist ])
+    qd2y = numpy.array([ mquantiles( dataset2[:,1], prob=item ) for item in qlist ])
+
+    l1 = len( Parameters['dataset1'] )
+    l2 = len( dataset2 )
+
+    d1 = numpy.linalg.norm( Parameters['extra1'] - qd2x )
+    d2 = numpy.linalg.norm( Parameters['extra2'] - qd2y )
+    d3 = max(abs(1-float(l1)/l2), abs(1-float(l2)/l1))
+
+    return [ d2, d1, d3]
 
 
 def main():

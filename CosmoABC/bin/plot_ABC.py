@@ -90,7 +90,7 @@ def read_input( filename ):
     params['prior_par'] = [ [ float( params_ini[ params[ 'param_to_fit' ][ i ] + '_prior_par' ][ j ] ) for j in xrange(2) ] for i in xrange( params['npar'] ) ]
     params['param_lim'] = [ [ float( params_ini[ params[ 'param_to_fit' ][ i ] + '_lim' ][ j ] ) for j in xrange(2) ] for i in xrange( params['npar'] ) ]
     params['M'] = int( params_ini['M'][0] )
-    params['epsilon1'] = float( params_ini[ 'epsilon1' ][0] )
+    params['epsilon1'] = [ float( params_ini[ 'epsilon1' ][0] ) for i in xrange( params_ini['epsilon1'].index('#') ) ]
     params['qthreshold'] = float( params_ini['qthreshold'][0])
     params['delta'] = float( params_ini['delta'][0] )
     params['s'] =  float( params_ini['s'][0] )

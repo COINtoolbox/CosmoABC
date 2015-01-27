@@ -42,6 +42,8 @@ def plot_1D( T, file_output, Parameters):
     time_ev = []
     ndraws_ev = []
 
+    marker = ['*','+','x','o','^','d','<']
+    color = ['red', 'green','blue','brown', 'gray', 'purple']
 
     with PdfPages( file_output ) as pdf:
 
@@ -69,7 +71,7 @@ def plot_1D( T, file_output, Parameters):
             d1 = numpy.array([ [ float( item ) for item in line ] for line in d[1:] ])
      
 
-            epsilon_ev.append( float( d[1][ d[0].index( 'dist_threshold' ) ] ) )
+            epsilon_ev.append( [ float( d[1][ d[0].index( 'dist_threshold' + str( jj + 1 ) ) ] ) for jj in xrange( len( Parameters['epsilon1'] ) ) ] )
             time_ev.append( sum( float( line[ d[0].index('time') ] ) for line in d1[1:]) )
             ndraws_ev.append( sum( float( line[ d[0].index('NDraws') ] ) for line in d1[1:]) )
 
@@ -99,7 +101,8 @@ def plot_1D( T, file_output, Parameters):
         #Plot epsilon evolution
         plt.figure()
         plt.title('Distance threshold evolution')
-        plt.scatter( range( T ), numpy.array(epsilon_ev), color='red', marker='*', label='distance threshold' )
+        for kk in xrange( len(Parameters['epsilon1'] ) ):
+            plt.scatter( range( T ), numpy.array(epsilon_ev)[:,kk]/max(numpy.array(epsilon_ev)[:,kk]), color=color[ kk ], marker=marker[ kk ], label='distance threshold' + str( kk ) )
         plt.legend()
         plt.xlabel( 'Particle System' )
         plt.ylabel( r'$\epsilon$' )
@@ -108,7 +111,7 @@ def plot_1D( T, file_output, Parameters):
 
         plt.figure()
         plt.title( 'Computational time evolution' )
-        plt.scatter( range( T ), numpy.array(time_ev), color='blue', marker='o', label='time' )
+        plt.scatter( range( T ), numpy.array(time_ev), color=color[ len( Parameters['epsilon1'] ) ], marker=marker[len( Parameters['epsilon1'] )], label='time' )
         plt.legend(loc='upper left')
         plt.xlabel( 'Particle System' )
         plt.ylabel( 'time (s)' )
@@ -117,7 +120,7 @@ def plot_1D( T, file_output, Parameters):
 
         plt.figure()
         plt.title('Convergence criteria evolution')
-        plt.scatter( range( T ), convergence, color='green', marker='x', label='convergence' )
+        plt.scatter( range( T ), convergence, color=color[len( Parameters['epsilon1'] )+1], marker=marker[len( Parameters['epsilon1'] )+1], label='convergence' )
         plt.legend()
         plt.xlabel( 'Particle System' )
         plt.ylabel( 'convergence criteria(M/K)' )
@@ -173,6 +176,8 @@ def plot_2D( T, file_output, Parameters):
     time_ev = []
     ndraws_ev = []
    
+    marker = ['*','+','x','o','^','d','<']
+    color = ['red', 'green','blue','brown', 'gray', 'purple']
 
     with PdfPages( file_output ) as pdf:
 
@@ -226,7 +231,7 @@ def plot_2D( T, file_output, Parameters):
             d1 = numpy.array([ [ float( item ) for item in line ] for line in d[1:] ])
      
 
-            epsilon_ev.append( float( d[1][ d[0].index( 'dist_threshold' ) ] ) )
+            epsilon_ev.append( [ float( d[1][ d[0].index( 'dist_threshold' + str( jj + 1) ) ] ) for jj in xrange( len( Parameters['epsilon1'] ) )] )
             time_ev.append( sum( float( line[ d[0].index('time') ] ) for line in d1[1:]) )
             ndraws_ev.append( sum( float( line[ d[0].index('NDraws') ] ) for line in d1[1:]) )
 
@@ -294,7 +299,8 @@ def plot_2D( T, file_output, Parameters):
         #Plot epsilon evolution
         plt.figure()
         plt.title('Distance threshold evolution')
-        plt.scatter( range( T ), numpy.array(epsilon_ev), color='red', marker='*', label='distance threshold' )
+        for jj in xrange( len( Parameters['epsilon1'] ) ):
+            plt.scatter( range( T ), numpy.array(epsilon_ev)[:,jj]/max(numpy.array(epsilon_ev)[:,jj]), color=color[ jj ], marker=marker[ jj ], label='distance threshold' + str( jj ) )
         plt.legend()
         plt.xlabel( 'Particle System' )
         plt.ylabel( r'$\epsilon$' )
@@ -303,7 +309,7 @@ def plot_2D( T, file_output, Parameters):
 
         plt.figure()
         plt.title('Computational time evolution')
-        plt.scatter( range( T ), numpy.array(time_ev), color='blue', marker='o', label='time' )
+        plt.scatter( range( T ), numpy.array(time_ev), color=color[len( Parameters['epsilon1'] )], marker=marker[len( Parameters['epsilon1'] )], label='time' )
         plt.legend(loc='upper left')
         plt.xlabel( 'Particle System' )
         plt.ylabel( 'time' )
@@ -312,7 +318,7 @@ def plot_2D( T, file_output, Parameters):
 
         plt.figure()
         plt.title('Convergene criteria evolution')
-        plt.scatter( range( T ), convergence, color='green', marker='x', label='convergence' )
+        plt.scatter( range( T ), convergence, color=color[ len( Parameters['epsilon1'] ) + 1], marker=marker[len( Parameters['epsilon1'] )+1], label='convergence' )
         plt.legend()
         plt.xlabel( 'Particle System' )
         plt.ylabel( 'convergence criteria(M/K)' )
@@ -388,6 +394,9 @@ def plot_3D( T, file_output, Parameters):
     time_ev = []
     ndraws_ev = []
    
+    marker = ['*','+','x','o','^','d','<']
+    color = ['red', 'green','blue','brown', 'gray', 'purple']
+
     with PdfPages( file_output ) as pdf:
 
 
@@ -470,7 +479,7 @@ def plot_3D( T, file_output, Parameters):
             d1 = numpy.array([ [ float( item ) for item in line ] for line in d[1:] ])
      
 
-            epsilon_ev.append( float( d[1][ d[0].index( 'dist_threshold' ) ] ) )
+            epsilon_ev.append( [ float( d[1][ d[0].index( 'dist_threshold' + str( jj + 1 ) ) ] )  for jj in xrange( len( Parameters['epsilon1'] ) ) ] )
             time_ev.append( sum( float( line[ d[0].index('time') ] ) for line in d1[1:]) )
             ndraws_ev.append( sum( float( line[ d[0].index('NDraws') ] ) for line in d1[1:]) )
 
@@ -585,7 +594,8 @@ def plot_3D( T, file_output, Parameters):
     
         #Plot epsilon evolution
         plt.figure()
-        plt.scatter( range( T ), numpy.array(epsilon_ev), color='red', marker='*', label='distance threshold' )
+        for jj in xrange( len( Parameters['epsilon1'] ) ):
+            plt.scatter( range( T ), numpy.array(epsilon_ev)[:, jj ]/max(numpy.array(epsilon_ev)[:,jj]), color=color[ jj ], marker=marker[ jj ], label='distance threshold' + str( jj ) )
         plt.legend()
         plt.xlabel( 'Particle System' )
         plt.ylabel( r'$\epsilon$' )
@@ -593,7 +603,7 @@ def plot_3D( T, file_output, Parameters):
         plt.close()
 
         plt.figure()
-        plt.scatter( range( T ), numpy.array(time_ev), color='blue', marker='o', label='time' )
+        plt.scatter( range( T ), numpy.array(time_ev), color=color[len( Parameters['epsilon1'] )], marker=marker[ len( Parameters['epsilon1'] ) ], label='time' )
         plt.legend(loc='upper left')
         plt.xlabel( 'Particle System' )
         plt.ylabel( 'time' )
@@ -601,7 +611,7 @@ def plot_3D( T, file_output, Parameters):
         plt.close()
 
         plt.figure()
-        plt.scatter( range( T ), convergence, color='green', marker='x', label='convergence' )
+        plt.scatter( range( T ), convergence, color=color[len( Parameters['epsilon1'] ) + 1], marker=marker[len( Parameters['epsilon1'] ) + 1 ], label='convergence' )
         plt.legend()
         plt.xlabel( 'Particle System' )
         plt.ylabel( 'convergence criteria(M/K)' )
