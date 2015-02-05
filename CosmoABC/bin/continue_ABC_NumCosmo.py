@@ -171,21 +171,7 @@ def main( args ):
     sampler_ABC.ContinueStoppedRun( sampler_ABC.T , user_input['file_root'] )
 
 
-    ##plot results
-    user_input['param_lim']=[ [ item/2.0 for item in line] for line in user_input['param_lim']]
-    if len( user_input['param_to_fit'] ) == 1 :
-        plot_1D( sampler_ABC.T, 'results.pdf', user_input)
-
-    elif len( user_input['param_to_fit'] ) == 2 :
-        plot_2D( sampler_ABC.T, 'results.pdf', user_input )
-
-    elif  len( user_input['param_to_fit'] ) == 3 :
-        plot_3D( sampler_ABC.T, 'results.pdf', user_input )        
-
-    else:
-        raise ValueError('Only 1, 2 and 3 dimensional plots are implemented so far!')
-        
-         
+           
 
 if __name__=='__main__':
   

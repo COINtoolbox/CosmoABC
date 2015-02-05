@@ -142,10 +142,13 @@ def main( args ):
         plot_2D( int( args.PS ), 'results.pdf', user_input )    
 
     elif len( user_input['param_to_fit'] ) == 3 :
-        plot_3D( int( args.PS ), 'results.pdf', user_input )         
+        plot_3D( int( args.PS ), 'results.pdf', user_input )    
+
+    elif len( user_input['param_to_fit'] ) == 4 :
+        plot_4D( int( args.PS ), 'results.pdf', user_input )     
 
     else:
-        raise ValueError('Only 1, 2 and 3 dimensional plots are implemented so far!')
+        raise ValueError('Only 1, 2, 3 and 4 dimensional plots are implemented so far!')
 
 if __name__=='__main__':
   

@@ -236,7 +236,7 @@ class ABC( object ):
                 op.write( item  + '    '  )
 
             for i2 in xrange( len( self.params[ 'epsilon1' ] ) ):
-                op.write(  'distance' + str( i2 ) + '    ' )    
+                op.write(  'distance' + str( i2 + 1 ) + '    ' )    
  
             op.write(  'NDraws    time       ')
 
@@ -247,8 +247,8 @@ class ABC( object ):
             for line in theta_new:
                 for elem in line:
                     op.write( str( elem )  + '    ' )
-                for d in self.epsilon1:
-                    op.write( str( d ) + '    ' )
+                for i3 in xrange( len( self.epsilon1 ) ):
+                    op.write( str( max( numpy.array( theta_new )[:,-len( self.epsilon1 ) + i3] ) ) + '    ' )
                 op.write( '\n' )
             op.close()
  
@@ -292,15 +292,11 @@ class ABC( object ):
             #draw model parameters to serve as mean 
             index_theta0 = numpy.random.choice( xrange( len( W ) ), p=W )
             theta0 = numpy.atleast_2d( previous_particle_system[ index_theta0 ][: len( self.params['param_to_fit']) ] )
- 
 
             #initialize boolean parmeter vector
             theta_t = [ False for i in xrange( len( self.params['param_to_fit']) ) ]
-            
-            cont = 0
+           
             while False in theta_t:
-
-                cont = cont + 1
           
                 #draw model parameter values for simulation
                 mvn = multivariate_normal.rvs( theta0.flatten() , previous_cov_matrix )
@@ -332,6 +328,7 @@ class ABC( object ):
             #calculate distance
             dist = self.distance( DataSimul, self.params )
  
+            #check if it satisfies distance thresholds 
             flag = [] 
             for ll in xrange( len( dist ) ):
                 if dist[ ll ] > epsilon[ ll ]:
@@ -339,7 +336,7 @@ class ABC( object ):
                 else:
                     flag.append( True )
 
-
+        #store results
         for d2 in dist:
             theta_t_try.append( d2 )
         theta_t_try.append( K )    
