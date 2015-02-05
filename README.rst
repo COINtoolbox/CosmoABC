@@ -1,17 +1,12 @@
 CosmoABC - Likelihood free parameter estimation for cosmology
 =============================================================
 
-.. image:: https://readthedocs.org.projects/cosmoabc/badge/?version=latest
-     :target: http://cosmoabc.readthedocs.org/en/latest
-     :alt: Latest version
-
-
 
 `CosmoABC` is a package which enables parameter inference using an Approximate Bayesian Computation (ABC) algorithm, as described in Ishida et al., 2015 [LINK].
 
 The code was originally designed for cosmological parameter inference from galaxy clusters number counts based on Sunyaev-Zel'dovich measurements. In this context, the cosmological simulations were performed using the NumCosmo library.
 
-Nevertheless, the user can easily take advantadge of the ABC sampler along with his/her own simulator, as well as  test personalized summary statistics and distance functions. 
+Nevertheless, the user can easily take advantadge of the ABC sampler along with his/her own simulator, as well as  test personalized prior distributions, summary statistics and distance functions. 
 
 
 Get it now!
@@ -234,7 +229,7 @@ If we want to run the NumCosmo simulation with a different prior or distance fun
 Documentation
 *************
 
-The complete documentation can be found in `http://cosmoabc.readthedocs.org/en/latest/`.
+The complete documentation can be found in `Read the Docs http://cosmoabc.readthedocs.org/en/latest/`_ .
 
 
 Requirements
@@ -254,7 +249,7 @@ Requirements
 Optional
 --------
 
-* NumCosmo  `<http://www.nongnu.org/numcosmo/>`
+* `NumCosmo <http://www.nongnu.org/numcosmo/>`_
 
 
 License
