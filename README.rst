@@ -1,10 +1,11 @@
-.. CosmoABC documentation master file, created by
-   sphinx-quickstart on Thu Jan 15 00:36:37 2015.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 CosmoABC - Likelihood free parameter estimation for cosmology
 =============================================================
+
+.. image:: https://readthedocs.org.projects/cosmoabc/badge/?version=latest
+     :target: http://cosmoabc.readthedocs.org/en/latest
+     :alt: Latest version
+
+
 
 `CosmoABC` is a package which enables parameter inference using an Approximate Bayesian Computation (ABC) algorithm, as described in Ishida et al., 2015 [LINK].
 
