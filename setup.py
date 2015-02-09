@@ -20,9 +20,9 @@ setup(name='CosmoABC',
                       'statsmodels>=0.5.0',
                       'matplotlib>=1.3.1',
                       'distribute',
-                      'datetime'                 
+                      'datetime'               
       ],
-      scripts=['CosmoABC/bin/run_ABC.py', 'CosmoABC/bin/run_ABC_NumCosmo.py','CosmoABC/bin/continue_ABC.py', 'CosmoABC/bin/continue_ABC_NumCosmo.py','CosmoABC/bin/plot_ABC.py'],
+      scripts=['CosmoABC/bin/run_ABC.py', 'CosmoABC/bin/run_ABC_NumCosmo.py','CosmoABC/bin/continue_ABC.py', 'CosmoABC/bin/continue_ABC_NumCosmo.py','CosmoABC/bin/plot_ABC.py', 'CosmoABC/tests/test_ABC.py'],
       test_suite='nose.collector',
       tests_require=['nose', 'nose-cover3'],
       include_package_data=True,

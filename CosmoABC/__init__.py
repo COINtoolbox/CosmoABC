@@ -2,8 +2,16 @@
 CosmoABC: Likelihood-free parameter estimation for cosmology
 ============================================================
 
-Documentation is available in the docstrings and online at
-https://github.com/COINtoolbox/CosmoABC
+.. module:: useful_1
+   :platform: Unix, Mac
+   :synopsis: An Approximate Bayesian Computation sampler.
+
+.. moduleauthor:: Emille Ishida <emilleishida@gmail.com>
+
+Documentation is available in the docstrings and online in the corresponding 
+`GitHub <https://github.com/COINtoolbox/CosmoABC>`_   and 
+`Read the Docs <http://cosmoabc.readthedocs.org/en/latest/>`_
+
 
 Contents
 --------
@@ -26,3 +34,5 @@ Using any of these subpackages requires an explicit import.  For example,
  weighted_gaussian_kde        --- rotines for plotting
 
 """
+
+

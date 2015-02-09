@@ -116,6 +116,12 @@ def read_input( filename ):
 
     if params_ini['distance_func'][0] in dispatcher.keys():
         params['distance_func'] = dispatcher[ params_ini['distance_func'][0] ]
+
+        if params['distance_func'] == distance_GRBF:
+            params['extra'] =  SumGRBF( params['dataset1'], params['dataset1'], s1=params['s'] )
+
+        elif params['distance_func'] == distance_quantiles:
+            params = summ_quantiles( params['dataset1'], params )
     
    
     params[ 'prior_func' ] = [ dispatcher[ params_ini['prior_func'][ k ] ] if params_ini['prior_func'][ k ] in dispatcher.keys() else params_ini['prior_func'][ k ] for k in xrange( params['npar'] ) ]
@@ -141,7 +147,7 @@ def main( args ):
             user_input['prior_func'][ l1 ] = getattr( m1, user_input['prior_func'][ l1 ] )
             
     #initiate ABC construct
-    sampler_ABC = ABC( dataset1=user_input['dataset1'], params=user_input, simulation_func=user_input['simulation_func'], prior_func=user_input['prior_func'], distance_func=user_input['distance_func']) 
+    sampler_ABC = ABC( params=user_input ) 
 
     #build first particle system
     sys1 = sampler_ABC.BuildFirstPSystem( filename=user_input['file_root'] + '0.dat' )

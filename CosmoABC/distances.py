@@ -87,8 +87,11 @@ def  summ_quantiles( dataset1, Parameters ):
     
     qlist = numpy.arange( 0.05, 1.0, 0.05 )
 
-    Parameters['extra1'] = numpy.array([ mquantiles( dataset1[:,0], prob=item ) for item in qlist ])
-    Parameters['extra2'] = numpy.array([ mquantiles( dataset1[:,1], prob=item ) for item in qlist ])
+    Parameters['extra'] = []
+    for i1 in xrange( len( dataset1[0] ) ):
+
+        Parameters['extra'].append( numpy.array([ mquantiles( dataset1[:, i1], prob=item ) for item in qlist ]) )
+    
  
     return Parameters
 
@@ -109,17 +112,23 @@ def distance_quantiles( dataset2, Parameters ):
 
     qlist = numpy.arange( 0.05, 1.0, 0.05 )
 
-    qd2x = numpy.array([ mquantiles( dataset2[:,0], prob=item ) for item in qlist ])
-    qd2y = numpy.array([ mquantiles( dataset2[:,1], prob=item ) for item in qlist ])
+
+    qd = []
+    for j1 in xrange( len( dataset2[0] ) ):
+        qd.append( numpy.array([ mquantiles( dataset2[:, j1 ], prob=item ) for item in qlist ]) )
+        
 
     l1 = len( Parameters['dataset1'] )
     l2 = len( dataset2 )
 
-    d1 = numpy.linalg.norm( Parameters['extra1'] - qd2x )
-    d2 = numpy.linalg.norm( Parameters['extra2'] - qd2y )
-    d3 = max(abs(1-float(l1)/l2), abs(1-float(l2)/l1))
+    d = []
+    for j2 in xrange( len( dataset2[0] ) ):
+        d.append( numpy.linalg.norm( Parameters['extra'][ j2] - qd[ j2 ] ) )
 
-    return [ d2, d1, d3]
+    
+    d.append( max(abs(1-float(l1)/l2), abs(1-float(l2)/l1)) )
+
+    return d
 
 
 def main():

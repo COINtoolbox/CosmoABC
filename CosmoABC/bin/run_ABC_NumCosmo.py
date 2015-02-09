@@ -48,6 +48,7 @@ from CosmoABC.priors import *
 from CosmoABC.ABC_sampler import *
 from CosmoABC.plots import *
 import imp
+import os
 
 
 try: 
@@ -103,6 +104,7 @@ def read_input( filename ):
     params['delta'] = float( params_ini['delta'][0] )
     params['s'] =  float( params_ini['s'][0] )
     params['file_root'] = params_ini['file_root'][0]  
+    params['screen'] = bool( params_ini['screen'][0]  )
 
     #functions
     ###### Update this if you include any new functions!!!!!  ##############
@@ -116,7 +118,7 @@ def read_input( filename ):
         params['distance_func'] = dispatcher[ params_ini[ 'distance_func' ][0] ]
 
         if params['distance_func'] == distance_GRBF:
-            params['extra1'] =  SumGRBF( params['dataset1'], params['dataset1'], s1=params['s'] )
+            params['extra'] =  SumGRBF( params['dataset1'], params['dataset1'], s1=params['s'] )
 
         elif params['distance_func'] == distance_quantiles:
             params = summ_quantiles( params['dataset1'], params )
@@ -163,7 +165,7 @@ def main( args ):
 
 
     #initiate ABC construct
-    sampler_ABC = ABC( dataset1=user_input['dataset1'], params=user_input, simulation_func=user_input['simulation_func'], prior_func=user_input['prior_func'], distance_func=user_input['distance_func']) 
+    sampler_ABC = ABC(  params=user_input ) 
 
     
     #build first particle system

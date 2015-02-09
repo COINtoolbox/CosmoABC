@@ -129,7 +129,7 @@ def main( args ):
             user_input['prior_func'][ l1 ] = getattr( m1, user_input['prior_func'][ l1 ] )
             
     #initiate ABC construct
-    sampler_ABC = ABC( dataset1=user_input['dataset1'], params=user_input, simulation_func=user_input['simulation_func'], prior_func=user_input['prior_func'], distance_func=user_input['distance_func']) 
+    sampler_ABC = ABC( params=user_input ) 
 
     #define finished particle system index
     sampler_ABC.T = int( args.PS )

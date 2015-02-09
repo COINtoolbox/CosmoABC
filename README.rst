@@ -4,7 +4,7 @@ CosmoABC - Likelihood free parameter estimation for cosmology
 
 `CosmoABC` is a package which enables parameter inference using an Approximate Bayesian Computation (ABC) algorithm, as described in Ishida et al., 2015 [LINK].
 
-The code was originally designed for cosmological parameter inference from galaxy clusters number counts based on Sunyaev-Zel'dovich measurements. In this context, the cosmological simulations were performed using the NumCosmo library.
+The code was originally designed for cosmological parameter inference from galaxy clusters number counts based on Sunyaev-Zel'dovich measurements. In this context, the cosmological simulations were performed using the `NumCosmo library <http://www.nongnu.org/numcosmo/>`_ .
 
 Nevertheless, the user can easily take advantadge of the ABC sampler along with his/her own simulator, as well as  test personalized prior distributions, summary statistics and distance functions. 
 
@@ -204,7 +204,7 @@ NumCosmo simulations
 --------------------
 
 In order to reproduce the results of Ishida *et al.* 2015, first you need to make sure the NumCosmo library is running smoothly. 
-Instructions for complete instalation and tests can be found in `<http://www.nongnu.org/numcosmo/>`.
+Instructions for complete instalation and tests can be found at the  `NumCosmo website <http://www.nongnu.org/numcosmo/>`_ .
 
 
 
@@ -215,7 +215,8 @@ Once the simulator is installed run the complete ABC sampler + NumCosmo cluster 
 This will run the complete analysis presented in Ishida *et al.*, 2015 as well as produce
 plots with the corresponding results.
 
-** WARNING**  :  This might take a while! Be patient!
+.. warning::  
+       This might take a while! Be patient!
 
 Analogously to what is available for the user defined simulations, we can also continue a NumCosmo calculation from particle system *N* with::
 
@@ -229,7 +230,7 @@ If we want to run the NumCosmo simulation with a different prior or distance fun
 Documentation
 *************
 
-The complete documentation can be found in `Read the Docs http://cosmoabc.readthedocs.org/en/latest/`_ .
+The complete documentation can be found in `Read the Docs <http://cosmoabc.readthedocs.org/en/latest/>`_ .
 
 
 Requirements
@@ -241,9 +242,7 @@ Requirements
 * statsmodels >= 0.5.0
 * matplotlib >= 1.3.1     
 * argparse >= 1.1
-* imp
-* math
-* argparse
+
 
 
 Optional
@@ -258,17 +257,4 @@ License
 * GNU General Public License (GPL>=3)
 
 
-Contents:
-
-.. toctree::
-   :maxdepth: 2
-
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
