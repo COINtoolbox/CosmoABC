@@ -102,6 +102,8 @@ def read_input( filename ):
     params['delta'] = float( params_ini['delta'][0] )
     params['s'] =  float( params_ini['s'][0] )
     params['file_root'] = params_ini['file_root'][0]  
+    params['screen'] = bool(int(params_ini['screen'][0]))
+    
 
     #functions
     ###### Update this if you include any new functions!!!!!  ##############
@@ -168,7 +170,7 @@ def main( args ):
     sampler_ABC.T = int( args.PS )
 
     #continue from previous run
-    sampler_ABC.ContinueStoppedRun( sampler_ABC.T , user_input['file_root'] )
+    sampler_ABC.ContinueStoppedRun( sampler_ABC.T )
 
 
            

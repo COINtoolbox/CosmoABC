@@ -140,9 +140,6 @@ class TestABC(unittest.TestCase):
         elif len(self.params['param_to_fit']) == 4:
             plot_4D(self.sampler_ABC.T, 'results.pdf', self.params) 
     
-    def test_continueStoppedRun(self):
-
-        self.sampler_ABC.ContinueStoppedRun(2) 
 
 if __name__ == '__main__':
     unittest.main()

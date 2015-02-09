@@ -385,7 +385,7 @@ class ABC( object ):
   
             if self.params['screen'] == True:
                 print 'particle index = ' + str(j) + ',    number of draws = ' + \
-                       str(surv_param[len(self.params['param_to_fit']) + len(qself.params['epsilon1'])])
+                       str(surv_param[len(self.params['param_to_fit']) + len(self.params['epsilon1'])])
  
                 for thr in xrange(len(self.epsilon1)):
                     ',    distance' + str(thr) + '=' + str(surv_param[len(self.params['param_to_fit']) + thr])
