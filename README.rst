@@ -231,7 +231,7 @@ Here is an example from using the built-in tool to check the suitability of dist
 
 The output file will contain a plot like this:
 
-.. figure:: examples/test_distance_mean_std_n.pdf
+.. figure:: CosmoABC/examples/test_distance_mean_std_n.pdf
  
 
 
