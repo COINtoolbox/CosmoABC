@@ -29,6 +29,10 @@ You can run a few tests with::
     This was chosen to facilitate the identification of errors. 
     Make sure to run the tests in their own directory. 
 
+The test outputs a pdf file illustrating the evolution of the posterior.
+
+`Test results <https://github.com/COINtoolbox/CosmoABC/blob/emille_dev/CosmoABC/examples/results_gaussian_sim.gif>`_
+
 Examples
 ********
 
