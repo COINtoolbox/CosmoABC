@@ -32,7 +32,7 @@ You can run a few tests with::
 Examples
 ********
 
-Sample input in can be found in ~CosmoABC/examples. All example files mentioned in this section are available in that directory. 
+Sample input in can be found in ``~CosmoABC/examples``. All example files mentioned in this section are available in that directory. 
 
 The user input file should contain all necessary variables for simulation as well as for the ABC sampler.
 
@@ -55,8 +55,8 @@ A simple example of user input file, using a simulator which takes 3 parameters 
     n		        = 1000
 
     M 	        	= 100			   # number of particle in each particle system
-    Mini                = 200
-    delta 		= 0.1		   # convergence criteria
+    Mini                = 200                      # size of initial round
+    delta 		= 0.1		           # convergence criteria
     qthreshold 	        = 0.75			   # quantile in distance threshold used to define epsilon in the construction of subsequent particle system
 
     file_root    	= example_1par_PS	   # root to output file name for subsequent particle systems
@@ -130,7 +130,7 @@ The ABC sampler can be called from the command line::
 This will run the algorithm until the convergence criteria is reached. A pdf file containing graphical representation of the results for each particle system is 
 given as output. 
 
-If the achieved result is not satisfactory, or if for some reason the calculation was stopped before reaching the convergence criteria, it is possible to run the ABC sampler beginning from the last completed particle system *N*. 
+If the achieved result is not satisfactory, or if for some reason the calculation was stopped before reaching the convergence criteria, it is possible to run the ABC sampler beginning from the last completed particle system ``N``. 
 
 In case the convergence criteria was achieved but you wish to continue the run, remember to decrease the convergene criteria `delta` in the <user_input_file> before continuing. 
 
@@ -189,7 +189,7 @@ This will run the complete analysis presented in Ishida *et al.*, 2015.
 
 .. warning::  This might take a while! Be patient!
 
-Analogously to what is available for the user defined simulations, we can also continue a NumCosmo calculation from particle system *N* with::
+Analogously to what is available for the user defined simulations, we can also continue a NumCosmo calculation from particle system ``N`` with::
 
     $ continue_ABC_NumCosmo.py -i <user_input_file> -p N
 
@@ -231,7 +231,7 @@ Here is an example from using the built-in tool to check the suitability of dist
 
 The output file will contain a plot like this:
 
-![Example distance test](https://github.com/COINtoolbox/CosmoABC/blob/emille_dev/CosmoABC/examples/test_distance_mean_std_n.jpeg)
+`Example distance test <https://github.com/COINtoolbox/CosmoABC/blob/emille_dev/CosmoABC/examples/test_distance_mean_std_n.jpeg>`_
  
 
 
