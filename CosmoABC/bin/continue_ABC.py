@@ -39,81 +39,16 @@ __email__ = "emilleishida@gmail.com"
 __status__ = "Prototype"
 __license__ = "GPL"
 
-
-
 import argparse
-import numpy
-from CosmoABC.distances import * 
-from CosmoABC.priors import *
-from CosmoABC.ABC_sampler import *
-from CosmoABC.plots import *
 import imp
 
-
-
-def read_input( filename ):
-    """
-    Read user input from file and construct initial dictionary parameter. 
-
-    input:    filename (string) -> user input file parameter 
-
-    output:   dictionary with formated user choices
-    """
-
-    
- 
-    #read user input data
-    op1 = open( filename, 'r')
-    lin1 = op1.readlines()
-    op1.close()
-
-    data1 = [ elem.split() for elem in lin1 ]     
-
-    #store options in params dictionary
-    params_ini = dict( [ ( line[0], line[2:] )  for line in data1 if len( line ) > 1 ] )
-    
-
-    #read observed data
-    op2 = open( params_ini['path_to_obs'][0], 'r' )
-    lin2 = op2.readlines()
-    op2.close()
-
-    data2 = [ elem.split() for elem in lin2[1:] ]
-
-
-    params = {}
-    params['path_to_obs'] = params_ini['path_to_obs'][0] 
-    params['dataset1'] = numpy.array([ [ float( item ) for item in line ] for line in data2 ])  
-    params['param_to_fit'] = [ params_ini['param_to_fit'][ i ] for i in xrange( params_ini['param_to_fit'].index('#') ) ]
- 
-    params['npar'] = len( params['param_to_fit'] )
-    params['prior_par'] = [ [ float( params_ini[ params[ 'param_to_fit' ][ i ] + '_prior_par' ][ j ] ) for j in xrange(2) ] for i in xrange( params['npar'] ) ]
-    params['param_lim'] = [ [ float( params_ini[ params[ 'param_to_fit' ][ i ] + '_lim' ][ j ] ) for j in xrange(2) ] for i in xrange( params['npar'] ) ]
-    params['M'] = int( params_ini['M'][0] )
-    params['epsilon1'] = float( params_ini[ 'epsilon1' ][0] )
-    params['qthreshold'] = float( params_ini['qthreshold'][0])
-    params['delta'] = float( params_ini['delta'][0] )
-    params['s'] =  float( params_ini['s'][0] )
-    params['file_root'] = params_ini['file_root'][0]  
-
-
-    #fiducial extra parameters
-    sim_par = {}  
-    for item in params_ini.keys():
-        if item not in params.keys():
-            try:
-                float( params_ini[ item ][0] )
-                sim_par[ item ] = float( params_ini[ item ][0] )
-            except ValueError:
-                sim_par[ item ] = params_ini[ item ][0] 
-
-    params['simulation_params'] = sim_par
-
-    return params
-    
+from CosmoABC.distances import distance_quantiles, summ_quantiles, distance_GRBF, SumGRBF 
+from CosmoABC.priors import flat_prior, gaussian_prior, beta_prior
+from CosmoABC.ABC_sampler import ABC
+from CosmoABC.plots import plot_1D, plot_2D, plot_3D, plot_4D
+from CosmoABC.ABC_functions import SelectParamInnerLoop, DrawAllParams, SetDistanceFromSimulation, read_input 
 
 def main( args ):
-
 
     user_input = read_input( args.input )
 
@@ -140,8 +75,7 @@ def main( args ):
 
 
 if __name__=='__main__':
-  
-    #get user input file name
+
     parser = argparse.ArgumentParser(description='Approximate Bayesian Computation code.')
     parser.add_argument('-i','--input', dest='input', help='User input file name.',required=True)
     parser.add_argument('-f','--functions',  dest='functions', help='File name for user defined functions.', required=True)

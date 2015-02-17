@@ -1,16 +1,19 @@
-path_to_obs		= ~/CosmoABC/data/simulated_GalCluster_sample.dat   	   # path to observed data 
+path_to_obs		= /home/emille/Dropbox/WGC/ABC/github/ABC_repository/CosmoABC/examples/example_data_format_SZ.dat    	   # path to observed data 
 
-param_to_fit 		= Om w 									   # parameters to fit
-param_to_sim    	= zmin zmax H0 Om  Ob Tgamma  ns sigma8 w observable area seed MinMass MaxMass	   # parameters needed for simulation
+param_to_fit 		= Om w sigma8									   # parameters to fit
+param_to_sim    	= zmin zmax zsigma H0 Om  Ob Tgamma  ns sigma8 w observable area seed MinMass MaxMass	   # parameters needed for simulation
 
-Om_lim			= 0.001 0.6		# extreme limits for parametes
-w_lim 			= -2.5  -0.5
+sigma8_lim		= 0.5  1.0		# extreme limits for parametes
+w_lim		        = -2.5  1.0
+Om_lim                  = 0.001  0.6
 
-Om_prior_par 		= 0.01  0.6		# parameters for prior distribution
-w_prior_par		= -2.0  0.0
+sigma8_prior_par 	= 0.55  0.9		# parameters for prior distribution
+w_prior_par        = -2.0  0.0
+Om_prior_par         = 0.1  0.5
 
 zmin 		= 0.3              		# minimum redshift
 zmax 		= 1.32             		# maximum redshift
+zsigma	        = 0.05				# error in photo-z
 H0 		= 71.15       	        	# Hubble constant
 Om 		= 0.262   	        	# Dark matter density
 Ob 		= 0.044   		       	# Baryon density
@@ -20,19 +23,19 @@ sigma8 		= 0.807   	        	# sigma8
 w 		= -1.01       			# DE equation of state parameter
 observable 	= SZ				# observable in the data set: options are 'SZ' or 'true_mass'  ***Only SZ is working at this point, check NumCosmo***
 area 		= 2500				# sky area covered by telescope
-seed 		= 0				# control of random number generation seed. Use non-zero only for consistence checks.
+seed 		= 123				# control of random number generation seed. Use non-zero only for consistence checks.
 MinMass		= 10**14.3			# minimum cluster mass considered
 MaxMass 	= 10**16			# maximum cluster mass considered
 
-s		= 0.15				# scale parameter for Gaussian Radial Basis Function
-epsilon1 	= 1500				# initial distance threshold for building first particle system
-M 		= 100				# number of particle in each particle system
-delta 		= 0.005				# convergence criteria
+M 		= 1000				# number of particle in each particle system
+Mini            = 25000				# number of draws to build first particle system
+delta 		= 0.001				# convergence criteria
 qthreshold 	= 0.75				# quantile in distance threshold used to define epsilon in the construction of subsequent particle system
 
-file_root 	= 10thous_PS			# root to output file name for subsequent particle systems
- 
+file_root 	= flat_om_PSB			# root to output file name for subsequent particle systems
+screen          = 1                                     # rather or not to display outputs on screen
+ncores          = 2                                     # number of cores
 
-simulation_func = NumCosmo_simulation
-prior_func	= flat_prior
-distance_func	= distance_GRBF
+simulation_func = numcosmo_simulation                   #
+prior_func	= flat_prior   flat_prior flat_prior		#
+distance_func	= distance_quantiles                    #

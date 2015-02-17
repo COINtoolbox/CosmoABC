@@ -43,101 +43,22 @@ __license__ = "GPL"
 
 import argparse
 import numpy
-from CosmoABC.distances import *
-from CosmoABC.priors import *
-from CosmoABC.ABC_sampler import *
-from CosmoABC.plots import *
 import imp
 import os
+
+from CosmoABC.distances import distance_quantiles, summ_quantiles, distance_GRBF, SumGRBF 
+from CosmoABC.priors import flat_prior, gaussian_prior, beta_prior
+from CosmoABC.ABC_sampler import ABC
+from CosmoABC.plots import plot_1D, plot_2D, plot_3D, plot_4D
+from CosmoABC.ABC_functions import SelectParamInnerLoop, DrawAllParams, SetDistanceFromSimulation, read_input 
 
 
 try: 
     from gi.repository import NumCosmo as Nc
-    from CosmoABC.sim_NumCosmo  import *
+    from CosmoABC.sim_NumCosmo  import NCountSimul, ChooseParamsInput, NumCosmo_simulation
 except ImportError:
-    raise ImportError( 'You must have NumCosmo running to use the sim_NumCosmo simulation! \n Please check your NumCosmo instalation.' )
-    
-
-
-
-def read_input( filename ):
-    """
-    Read user input from file and construct initial dictionary parameter. 
-
-    input:    filename (string) -> user input file parameter 
-
-    output:   dictionary with formated user choices
-    """
-
-    
- 
-    #read user input data
-    op1 = open( filename, 'r')
-    lin1 = op1.readlines()
-    op1.close()
-
-    data1 = [ elem.split() for elem in lin1 ]     
-
-    #store options in params dictionary
-    params_ini = dict( [ ( line[0], line[2:] )  for line in data1 if len( line ) > 1 ] )
-    
-    
-    #read observed data
-    op2 = open( params_ini['path_to_obs'][0], 'r' )
-    lin2 = op2.readlines()
-    op2.close()
-
-    data2 = [ elem.split() for elem in lin2[1:] ]
-
-    params = {}
-    params['path_to_obs'] = params_ini['path_to_obs'][0] 
-    params['dataset1'] = numpy.array([ [ float( item ) for item in line ] for line in data2 ])  
-    params['param_to_fit'] = [ params_ini['param_to_fit'][ i ] for i in xrange( params_ini['param_to_fit'].index('#') ) ]
- 
-    params['npar'] = len( params['param_to_fit'] )
-    params['prior_par'] = [ [ float( params_ini[ params[ 'param_to_fit' ][ i ] + '_prior_par' ][ j ] ) for j in xrange(2) ] for i in xrange( params['npar'] ) ]
-    params['param_lim'] = [ [ float( params_ini[ params[ 'param_to_fit' ][ i ] + '_lim' ][ j ] ) for j in xrange(2) ] for i in xrange( params['npar'] ) ]
-    params['M'] = int( params_ini['M'][0] )
-    params['Mini'] = int( params_ini['Mini'][0] )
-    params['epsilon1'] = [ float(params_ini[ 'epsilon1' ][i] ) for i in xrange( params_ini['epsilon1'].index('#') )  ]
-    params['qthreshold'] = float( params_ini['qthreshold'][0])
-    params['delta'] = float( params_ini['delta'][0] )
-    params['s'] =  float( params_ini['s'][0] )
-    params['file_root'] = params_ini['file_root'][0]  
-    params['screen'] = bool( params_ini['screen'][0]  )
-
-    #functions
-    ###### Update this if you include any new functions!!!!!  ##############
-    dispatcher = {'NumCosmo_simulation': NumCosmo_simulation, 'flat_prior': flat_prior, 'gaussian_prior': gaussian_prior, 'beta_prior':beta_prior,  'distance_GRBF':distance_GRBF, 'distance_quantiles': distance_quantiles }
-    
-    params['simulation_func'] = dispatcher[ params_ini['simulation_func'][0] ]
-
-    params['prior_func'] = [ dispatcher[ params_ini[ 'prior_func' ][ k ] ] if params_ini[ 'prior_func' ][ k ] in dispatcher.keys() else params_ini[ 'prior_func' ][ k ] for k in xrange( params['npar'] ) ]
-
-    if params_ini[ 'distance_func' ][0] in dispatcher.keys():
-        params['distance_func'] = dispatcher[ params_ini[ 'distance_func' ][0] ]
-
-        if params['distance_func'] == distance_GRBF:
-            params['extra'] =  SumGRBF( params['dataset1'], params['dataset1'], s1=params['s'] )
-
-        elif params['distance_func'] == distance_quantiles:
-            params = summ_quantiles( params['dataset1'], params )
-
-
-    #fiducial extra parameters
-    sim_par = {}  
-    for item in params_ini.keys():
-        if item not in params.keys():
-            try:
-                float( params_ini[ item ][0] )
-                sim_par[ item ] = float( params_ini[ item ][0] )
-            except ValueError:
-                sim_par[ item ] = params_ini[ item ][0] 
-
-    params['simulation_input'] = sim_par
-    
-
-    return params
+    raise ImportError('You must have NumCosmo running to use the sim_NumCosmo simulation!' + 
+                      '\n Please check your NumCosmo instalation.')
 
 def main( args ):
 
@@ -165,14 +86,14 @@ def main( args ):
 
 
     #initiate ABC construct
-    sampler_ABC = ABC(  params=user_input ) 
+    sampler_ABC = ABC(params=user_input) 
 
     
     #build first particle system
-    sys1 = sampler_ABC.BuildFirstPSystem( filename=user_input['file_root'] + '0.dat' )
+    sys1 = sampler_ABC.BuildFirstPSystem()
 
     #update particle system until convergence
-    sampler_ABC.fullABC(  user_input['file_root'] )
+    sampler_ABC.fullABC()
      
          
 

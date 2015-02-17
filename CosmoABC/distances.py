@@ -7,11 +7,12 @@ In order to insert a new distance function, add it to this file.
 """ 
 
 
-import numpy
+import numpy as np
+
 from scipy.interpolate import Rbf
 from scipy.stats.mstats import mquantiles
 
-def SumGRBF( dataset1, dataset2, s1=0, f1='gaussian'):
+def SumGRBF( dataset1, dataset2, Parameters):
     """
     Compute the sum of Gaussian Radial Basis Function (GRBF) for all points in data1 having data2 as a fixed reference basis.
     Following equation 18 notation of Ishida et al., 2015: \mathcal{D} -> data1 and Y-> data2.  
@@ -25,26 +26,28 @@ def SumGRBF( dataset1, dataset2, s1=0, f1='gaussian'):
     """
 
     #GRBF must be one in all points in the fixed basis sample
-    one = [ 1 for j in range( len( dataset2 ) )  ]
+    one = [1 for j in range(len(dataset2))]
 
+    if len( dataset2[0] ) == 1:
+
+        rbf1 = Rbf( dataset2,  one, function=Parameters['kernel_func'], smooth=Parameters['s'] )
+    
+        #sum GRBF for all elements in data1 and centralize in the number of existing points in data2
+        sum1 = abs( np.nansum( [ np.log( rbf1( line[0] ) ) for line in dataset1 ]  ) - len( dataset2 ))
+    
     if len( dataset2[0] ) == 2:
-        rbf1 = Rbf( dataset2[:,0], dataset2[:,1], one, function=f1, smooth=s1 )
+
+        rbf1 = Rbf( dataset2[:,0], dataset2[:,1], one, function=Parameters['kernel_func'], smooth=Parameters['s'] )
     
         #sum GRBF for all elements in data1 and centralize in the number of existing points in data2
-        sum1 = abs( numpy.nansum( [ numpy.log( rbf1( line[0], line[1] ) ) for line in dataset1 ]  ) - len( dataset2 ))
-    
-    elif len( dataset2[0] ) == 1:
-        rbf1 = Rbf( dataset2[:,0],  one, function=f1, smooth=s1 )
-    
-        #sum GRBF for all elements in data1 and centralize in the number of existing points in data2
-        sum1 = abs( numpy.nansum( [ numpy.log( rbf1( line[0] ) ) for line in dataset1 ]  ) - len( dataset2 ))
+        sum1 = abs( np.nansum( [ np.log( rbf1( line[0], line[1] ) ) for line in dataset1 ]  ) - len( dataset2 ))
             
 
     return sum1 
         
 
 
-def distance_GRBF( dataset2, Parameters ):
+def distance_grbf( dataset2, Parameters ):
     """
     Compute the distance between two samples.
     Following equation 19 notation of Ishida et al., 2015: \mathcal{D} -> data1 and Y-> data2.  
@@ -63,11 +66,11 @@ def distance_GRBF( dataset2, Parameters ):
   
     else:
  
-        j1 = SumGRBF( Parameters['dataset1'], dataset2, Parameters['s'] )
+        j1 = SumGRBF( Parameters['dataset1'], dataset2, Parameters)
 
         #distance based on the logarithm of GRBF and normalized by results from data1
         if j1 > 0 and str( j1 ) != 'nan' :
-            d = abs( -2 * j1 + 2 * Parameters['extra1'])
+            d = abs( -2 * j1 + 2 * Parameters['extra'])
             return [ d ]
 
         else:
@@ -82,15 +85,17 @@ def distance_GRBF( dataset2, Parameters ):
 
 
 
-def  summ_quantiles( dataset1, Parameters ):
+def summ_quantiles( dataset1, Parameters ):
 
     
-    qlist = numpy.arange( 0.05, 1.0, 0.05 )
+    Parameters['dist_dim'] = len(dataset1[0]) + 1
+ 
+    qlist = np.arange( 0.05, 1.0, 0.05 )
 
     Parameters['extra'] = []
     for i1 in xrange( len( dataset1[0] ) ):
 
-        Parameters['extra'].append( numpy.array([ mquantiles( dataset1[:, i1], prob=item ) for item in qlist ]) )
+        Parameters['extra'].append( np.array([ mquantiles( dataset1[:, i1], prob=item ) for item in qlist ]) )
     
  
     return Parameters
@@ -110,12 +115,12 @@ def distance_quantiles( dataset2, Parameters ):
     """
 
 
-    qlist = numpy.arange( 0.05, 1.0, 0.05 )
+    qlist = np.arange( 0.05, 1.0, 0.05 )
 
 
     qd = []
     for j1 in xrange( len( dataset2[0] ) ):
-        qd.append( numpy.array([ mquantiles( dataset2[:, j1 ], prob=item ) for item in qlist ]) )
+        qd.append( np.array([ mquantiles( dataset2[:, j1 ], prob=item ) for item in qlist ]) )
         
 
     l1 = len( Parameters['dataset1'] )
@@ -123,7 +128,7 @@ def distance_quantiles( dataset2, Parameters ):
 
     d = []
     for j2 in xrange( len( dataset2[0] ) ):
-        d.append( numpy.linalg.norm( Parameters['extra'][ j2] - qd[ j2 ] ) )
+        d.append( np.linalg.norm( Parameters['extra'][ j2] - qd[ j2 ] ) )
 
     
     d.append( max(abs(1-float(l1)/l2), abs(1-float(l2)/l1)) )

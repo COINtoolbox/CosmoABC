@@ -11,7 +11,8 @@ There must also be an optional variable regulating the output (rather a draw or 
 
 """
 
-import numpy
+import numpy as np
+
 from scipy.stats import norm
 from scipy.stats import uniform
 from scipy.stats import beta
@@ -44,7 +45,7 @@ def gaussian_prior( par, par_lim, func=False ):
 
         #draw a parameter value physically meaningfull
         while flag == False:
-            draw = numpy.random.normal( loc=par[0], scale=par[1] ) 
+            draw = np.random.normal( loc=par[0], scale=par[1] ) 
                 
             if par_lim[0] <= draw and draw < par_lim[1]:
                 flag = True
@@ -78,7 +79,7 @@ def flat_prior( par, par_lim, func=False ):
     #check dimensional of feature vector defining distribution
     #if distribution is flat there is no need to check the bounderies
     if len( par ) == 2 and par[0] < par[1]:
-        draw = numpy.random.uniform( low=par[0], high=par[1] )
+        draw = np.random.uniform( low=par[0], high=par[1] )
     else:
         raise ValueError("Flat distribution requires 2-dimensional parameter vector: [lower_bound, upper_bound].")
                

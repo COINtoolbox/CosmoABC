@@ -3,7 +3,7 @@ Functions for plotting.
 """
 
 import datetime
-import numpy
+import numpy as np
 
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.pyplot as plt
@@ -31,7 +31,7 @@ def plot_1D(T, file_output, Parameters):
         raise NameError('Name file for figure output must be a pdf!')       
 
   
-    sampling = numpy.array([[i1 for i1 in numpy.arange(Parameters['param_lim'][j][0], 
+    sampling = np.array([[i1 for i1 in np.arange(Parameters['param_lim'][j][0], 
                     Parameters['param_lim'][j][1], 
                    (Parameters['param_lim'][j][1]-Parameters['param_lim'][j][0])/1000) ] 
                               for j in range(len(Parameters['param_to_fit']))])
@@ -70,17 +70,17 @@ def plot_1D(T, file_output, Parameters):
             op1.close()
 
             d = [elem.split() for elem in lin1]
-            d1 = numpy.array([[float(item) for item in line] for line in d[1:]])
+            d1 = np.array([[float(item) for item in line] for line in d[1:]])
      
             epsilon_ev.append([float(d[1][d[0].index('dist_threshold' + str(jj + 1))]) 
-                                               for jj in xrange(len(Parameters['epsilon1']))])
+                                               for jj in xrange(Parameters['dist_dim'])])
             time_ev.append(sum(float(line[d[0].index('time')]) for line in d1[1:]))
             ndraws_ev.append(sum(float(line[d[0].index('NDraws')]) for line in d1[1:]))
 
             if i > 0:
-                w1 = numpy.loadtxt(Parameters['file_root'] + str(i) + 'weights.dat')
+                w1 = np.loadtxt(Parameters['file_root'] + str(i) + 'weights.dat')
             else:
-                w1 = numpy.array([1.0/len(d1) for k in range(len(d1))])
+                w1 = np.array([1.0/len(d1) for k in range(len(d1))])
 
             kde1 = gaussian_kde(d1[:,0] , weights=w1)
             y1 = kde1(sampling[0])
@@ -96,13 +96,13 @@ def plot_1D(T, file_output, Parameters):
             pdf.savefig()
             plt.close()
 
-        convergence = numpy.array([float(Parameters['M'])/item  for item in ndraws_ev])
+        convergence = np.array([float(Parameters['M'])/item  for item in ndraws_ev])
     
         #Plot epsilon evolution
         plt.figure()
         plt.title('Distance threshold evolution')
-        for kk in xrange(len(Parameters['epsilon1'])):
-            plt.scatter(range(1,  T + 1), numpy.array(epsilon_ev)[:,kk]/max(numpy.array(epsilon_ev)[:,kk]), 
+        for kk in xrange(Parameters['dist_dim']):
+            plt.scatter(range(1,  T + 1), np.array(epsilon_ev)[:,kk]/max(np.array(epsilon_ev)[:,kk]), 
                         color=color[kk], marker=marker[kk], label='distance threshold' + str(kk + 1))
         plt.legend()
         plt.xlabel('Particle System')
@@ -112,8 +112,8 @@ def plot_1D(T, file_output, Parameters):
 
         plt.figure()
         plt.title('Computational time evolution')
-        plt.scatter(range(1, T + 1), numpy.array(time_ev), 
-                   color=color[len(Parameters['epsilon1'])], marker=marker[len(Parameters['epsilon1'])], 
+        plt.scatter(range(1, T + 1), np.array(time_ev), 
+                   color=color[Parameters['dist_dim']], marker=marker[Parameters['dist_dim']], 
                    label='time' )
         plt.legend(loc='upper left')
         plt.xlabel('Particle System')
@@ -123,8 +123,8 @@ def plot_1D(T, file_output, Parameters):
 
         plt.figure()
         plt.title('Convergence criteria evolution')
-        plt.scatter(range(1, T + 1), convergence, color=color[len(Parameters['epsilon1']) + 1], 
-                    marker=marker[len(Parameters['epsilon1']) + 1], label='convergence')
+        plt.scatter(range(1, T + 1), convergence, color=color[Parameters['dist_dim'] + 1], 
+                    marker=marker[Parameters['dist_dim'] + 1], label='convergence')
         plt.legend()
         plt.xlabel('Particle System')
         plt.ylabel('convergence criteria(M/K)')
@@ -151,17 +151,17 @@ def plot_2D(T, file_output, Parameters):
     if file_output[-3:] != 'pdf':
         raise NameError('Name file for figure output must be a pdf!')       
 
-    sampling = numpy.array([[i for i in numpy.arange(Parameters['param_lim'][j][0], 
+    sampling = np.array([[i for i in np.arange(Parameters['param_lim'][j][0], 
                           Parameters['param_lim'][j][1], (Parameters['param_lim'][j][1] -
                           Parameters['param_lim'][j][0])/1000)] 
                                     for j in range(len(Parameters['param_to_fit']))])
    
-    sampling2 = numpy.array([[i for i in numpy.arange(Parameters['param_lim'][j][0], 
+    sampling2 = np.array([[i for i in np.arange(Parameters['param_lim'][j][0], 
                            Parameters['param_lim'][j][1], (Parameters['param_lim'][j][1] - 
                            Parameters['param_lim'][j][0])/100)] 
                                      for j in range(len(Parameters['param_to_fit']))])
 
-    y0 = numpy.array([[Parameters['prior_func'][0](Parameters['prior_par'][0], Parameters['param_lim'][0]), 
+    y0 = np.array([[Parameters['prior_func'][0](Parameters['prior_par'][0], Parameters['param_lim'][0]), 
                        Parameters['prior_func'][1](Parameters['prior_par'][1], Parameters['param_lim'][1])] 
                                  for x in xrange(Parameters['M'])])
     
@@ -173,11 +173,11 @@ def plot_2D(T, file_output, Parameters):
     kde02 = gaussian_kde(y0[:,1], weights=w0)
     y02 = kde02(sampling[1])
 
-    d20 = numpy.array(y0) 
+    d20 = np.array(y0) 
     kde30 = gaussian_kde(d20.transpose())
-    xx, yy = numpy.meshgrid(sampling2[0], sampling2[1])
-    y30 = kde30((numpy.ravel(xx), numpy.ravel(yy)))
-    zz0 = numpy.reshape(y30, xx.shape) 
+    xx, yy = np.meshgrid(sampling2[0], sampling2[1])
+    y30 = kde30((np.ravel(xx), np.ravel(yy)))
+    zz0 = np.reshape(y30, xx.shape) 
 
     kwargs = dict(extent=(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1], 
                           Parameters['param_lim'][1][0], Parameters['param_lim'][1][1]), 
@@ -238,18 +238,18 @@ def plot_2D(T, file_output, Parameters):
             op1.close()
 
             d = [elem.split() for elem in lin1]
-            d1 = numpy.array([[float(item) for item in line] for line in d[1:]])
+            d1 = np.array([[float(item) for item in line] for line in d[1:]])
      
             epsilon_ev.append([float(d[1][d[0].index('dist_threshold' + str(jj + 1))])       
-                              for jj in xrange(len(Parameters['epsilon1']))])
+                              for jj in xrange(Parameters['dist_dim'])])
 
             time_ev.append(sum(float(line[d[0].index('time')]) for line in d1[1:]))
             ndraws_ev.append(sum(float(line[d[0].index('NDraws')]) for line in d1[1:]))
 
             if i > 0:
-                w1 = numpy.loadtxt(Parameters['file_root'] + str(i) + 'weights.dat')
+                w1 = np.loadtxt(Parameters['file_root'] + str(i) + 'weights.dat')
             else:
-                w1 = numpy.array([1.0/len(d1) for k in range(len(d1))])
+                w1 = np.array([1.0/len(d1) for k in range(len(d1))])
 
             kde1 = gaussian_kde(d1[:,0] , weights=w1)
             y1 = kde1(sampling[0])
@@ -257,10 +257,10 @@ def plot_2D(T, file_output, Parameters):
             kde2 = gaussian_kde(d1[:,1], weights=w1)
             y2 = kde2(sampling[1])
  
-            d2 = numpy.array(d1[:,:len(Parameters['param_to_fit'])]) 
+            d2 = np.array(d1[:,:len(Parameters['param_to_fit'])]) 
             kde3 = gaussian_kde(d2.transpose())
-            y3 = kde3((numpy.ravel(xx), numpy.ravel(yy)))
-            zz = numpy.reshape(y3, xx.shape)    
+            y3 = kde3((np.ravel(xx), np.ravel(yy)))
+            zz = np.reshape(y3, xx.shape)    
 
             #### Plot posteriors
             f = plt.figure()
@@ -302,13 +302,13 @@ def plot_2D(T, file_output, Parameters):
             print 'Finished plotting particle system T=' +str(i + 1)
 
     
-        convergence = numpy.array([float(Parameters['M'])/item  for item in ndraws_ev])
+        convergence = np.array([float(Parameters['M'])/item  for item in ndraws_ev])
     
         #Plot epsilon evolution
         plt.figure()
         plt.title('Distance threshold evolution')
-        for jj in xrange(len(Parameters['epsilon1'])):
-            plt.scatter(range(1, T + 1), numpy.array(epsilon_ev)[:,jj]/max(numpy.array(epsilon_ev)[:,jj]), 
+        for jj in xrange(Parameters['dist_dim']):
+            plt.scatter(range(1, T + 1), np.array(epsilon_ev)[:,jj]/max(np.array(epsilon_ev)[:,jj]), 
                         color=color[jj], marker=marker[jj], label='distance threshold' + str(jj + 1))
         plt.legend()
         plt.xlabel('Particle System')
@@ -318,20 +318,20 @@ def plot_2D(T, file_output, Parameters):
 
         plt.figure()
         plt.title('Computational time evolution')
-        plt.scatter(range(1, T + 1), numpy.array(time_ev), 
-                   color=color[len(Parameters['epsilon1'])], 
-                   marker=marker[len(Parameters['epsilon1'])], label='time')
+        plt.scatter(range(1, T + 1), np.array(time_ev), 
+                   color=color[Parameters['dist_dim']], 
+                   marker=marker[Parameters['dist_dim']], label='time')
         plt.legend(loc='upper left')
         plt.xlabel('Particle System')
-        plt.ylabel('time')
+        plt.ylabel('time(s)')
         pdf.savefig()
         plt.close()
 
         plt.figure()
         plt.title('Convergene criteria evolution')
         plt.scatter(range(1, T + 1), convergence, 
-                    color=color[len(Parameters['epsilon1']) + 1], 
-                    marker=marker[len(Parameters['epsilon1']) + 1], label='convergence')
+                    color=color[Parameters['dist_dim'] + 1], 
+                    marker=marker[Parameters['dist_dim'] + 1], label='convergence')
         plt.legend()
         plt.xlabel('Particle System')
         plt.ylabel('convergence criteria(M/K)')
@@ -357,21 +357,21 @@ def plot_3D(T, file_output, Parameters):
         raise NameError('Name file for figure output must be a pdf!')       
 
     #sampling for 1D plots
-    sampling = numpy.array([[i for i in numpy.arange(Parameters['param_lim'][j][0], 
+    sampling = np.array([[i for i in np.arange(Parameters['param_lim'][j][0], 
                                Parameters['param_lim'][j][1], (Parameters['param_lim'][j][1] - 
                                float(Parameters['param_lim'][j][0]))/1000)]  
                                      for j in range(len(Parameters['param_to_fit']))])
     
     #sampling for 2D plots
-    sampling2 = numpy.array([[i for i in numpy.arange(Parameters['param_lim'][j][0], 
+    sampling2 = np.array([[i for i in np.arange(Parameters['param_lim'][j][0], 
                                 Parameters['param_lim'][j][1], (Parameters['param_lim'][j][1] - 
                                 Parameters['param_lim'][j][0])/100)] 
                                           for j in range(len(Parameters['param_to_fit']))])
 
     #define variables for 2D plots 
-    xx12, yy12 = numpy.meshgrid(sampling2[0], sampling2[1])
-    xx13, yy13 = numpy.meshgrid(sampling2[0], sampling2[2])
-    xx23, yy23 = numpy.meshgrid(sampling2[1], sampling2[2])
+    xx12, yy12 = np.meshgrid(sampling2[0], sampling2[1])
+    xx13, yy13 = np.meshgrid(sampling2[0], sampling2[2])
+    xx23, yy23 = np.meshgrid(sampling2[1], sampling2[2])
     
     kwargs12 = dict(extent=(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1], 
                     Parameters['param_lim'][1][0], Parameters['param_lim'][1][1]), 
@@ -385,7 +385,7 @@ def plot_3D(T, file_output, Parameters):
                    Parameters['param_lim'][2][0], Parameters['param_lim'][2][1]), 
                    cmap='hot', origin='lower')
 
-    y0 = numpy.array([[Parameters['prior_func'][j1](Parameters['prior_par'][j1], 
+    y0 = np.array([[Parameters['prior_func'][j1](Parameters['prior_par'][j1], 
                        Parameters['param_lim'][j1]) for j1 in xrange(3) ] 
                                  for x in xrange(Parameters['M'])])
     
@@ -400,17 +400,17 @@ def plot_3D(T, file_output, Parameters):
     kde03 = gaussian_kde(y0[:,2], weights=w0)
     y03 = kde03(sampling[2])
 
-    kde012 = gaussian_kde(numpy.array([y0[:,0], y0[:,1]]))  
-    y012 = kde012((numpy.ravel(xx12), numpy.ravel(yy12)))
-    zz012 = numpy.reshape(y012, xx12.shape)   
+    kde012 = gaussian_kde(np.array([y0[:,0], y0[:,1]]))  
+    y012 = kde012((np.ravel(xx12), np.ravel(yy12)))
+    zz012 = np.reshape(y012, xx12.shape)   
     
-    kde013 = gaussian_kde(numpy.array([y0[:,0], y0[:,2]]))   
-    y013 = kde013((numpy.ravel(xx13), numpy.ravel(yy13)))
-    zz013 = numpy.reshape(y013, xx13.shape)    
+    kde013 = gaussian_kde(np.array([y0[:,0], y0[:,2]]))   
+    y013 = kde013((np.ravel(xx13), np.ravel(yy13)))
+    zz013 = np.reshape(y013, xx13.shape)    
     
-    kde023 = gaussian_kde(numpy.array([y0[:,1], y0[:,2]]))
-    y023 = kde023((numpy.ravel(xx23), numpy.ravel(yy23)))
-    zz023 = numpy.reshape(y023, xx23.shape)
+    kde023 = gaussian_kde(np.array([y0[:,1], y0[:,2]]))
+    y023 = kde023((np.ravel(xx23), np.ravel(yy23)))
+    zz023 = np.reshape(y023, xx23.shape)
 
     epsilon_ev = []
     time_ev = []
@@ -494,18 +494,18 @@ def plot_3D(T, file_output, Parameters):
             op1.close()
 
             d = [elem.split() for elem in lin1]
-            d1 = numpy.array([[float(item) for item in line] for line in d[1:]])
+            d1 = np.array([[float(item) for item in line] for line in d[1:]])
      
             epsilon_ev.append([float(d[1][d[0].index('dist_threshold' + str(jj + 1))])  
-                              for jj in xrange(len(Parameters['epsilon1']))])
+                              for jj in xrange(Parameters['dist_dim'])])
 
             time_ev.append(sum(float(line[ d[0].index('time')]) for line in d1[1:]))
             ndraws_ev.append(sum(float(line[ d[0].index('NDraws')]) for line in d1[1:]))
 
             if i > 0:
-                w1 = numpy.loadtxt(Parameters['file_root'] + str(i) + 'weights.dat')
+                w1 = np.loadtxt(Parameters['file_root'] + str(i) + 'weights.dat')
             else:
-                w1 = numpy.array([1.0/len(d1) for k in range(len(d1))])
+                w1 = np.array([1.0/len(d1) for k in range(len(d1))])
 
             kde1 = gaussian_kde(d1[:,0] , weights=w1)
             y1 = kde1(sampling[0])
@@ -516,28 +516,28 @@ def plot_3D(T, file_output, Parameters):
             kde3 = gaussian_kde(d1[:,2], weights=w1)
             y3 = kde3(sampling[2]) 
  
-            kde12 = gaussian_kde(numpy.array([d1[:,0], d1[:,1]]))
-            xx12, yy12 = numpy.meshgrid(sampling2[0], sampling2[1])
-            y12 = kde12((numpy.ravel(xx12), numpy.ravel(yy12)))
-            zz12 = numpy.reshape(y12, xx12.shape)
+            kde12 = gaussian_kde(np.array([d1[:,0], d1[:,1]]))
+            xx12, yy12 = np.meshgrid(sampling2[0], sampling2[1])
+            y12 = kde12((np.ravel(xx12), np.ravel(yy12)))
+            zz12 = np.reshape(y12, xx12.shape)
    
             kwargs12 = dict(extent=(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1], 
                                     Parameters['param_lim'][1][0], Parameters['param_lim'][1][1]), 
                                     cmap='hot', origin='lower') 
 
-            kde13 = gaussian_kde(numpy.array([d1[:,0], d1[:,2]]))
-            xx13, yy13 = numpy.meshgrid(sampling2[0], sampling2[2])
-            y13 = kde13(( numpy.ravel(xx13), numpy.ravel(yy13)))
-            zz13 = numpy.reshape( y13, xx13.shape)    
+            kde13 = gaussian_kde(np.array([d1[:,0], d1[:,2]]))
+            xx13, yy13 = np.meshgrid(sampling2[0], sampling2[2])
+            y13 = kde13(( np.ravel(xx13), np.ravel(yy13)))
+            zz13 = np.reshape( y13, xx13.shape)    
 
             kwargs13 = dict(extent=(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1], 
                                     Parameters['param_lim'][2][0], Parameters['param_lim'][2][1]), 
                                     cmap='hot', origin='lower')
 
-            kde23 = gaussian_kde(numpy.array([d1[:,1], d1[:,2]]))
-            xx23, yy23 = numpy.meshgrid(sampling2[1], sampling2[2])
-            y23 = kde23((numpy.ravel(xx23), numpy.ravel(yy23)))
-            zz23 = numpy.reshape(y23, xx23.shape)
+            kde23 = gaussian_kde(np.array([d1[:,1], d1[:,2]]))
+            xx23, yy23 = np.meshgrid(sampling2[1], sampling2[2])
+            y23 = kde23((np.ravel(xx23), np.ravel(yy23)))
+            zz23 = np.reshape(y23, xx23.shape)
 
             kwargs23 = dict(extent=(Parameters['param_lim'][1][0], Parameters['param_lim'][1][1], 
                                     Parameters['param_lim'][2][0], Parameters['param_lim'][2][1]), 
@@ -608,12 +608,12 @@ def plot_3D(T, file_output, Parameters):
 
             print 'Finished plotting particle system T=' + str(i + 1)
     
-        convergence = numpy.array([float(Parameters['M'])/item  for item in ndraws_ev])
+        convergence = np.array([float(Parameters['M'])/item  for item in ndraws_ev])
     
         #Plot epsilon evolution
         plt.figure()
-        for jj in xrange(len(Parameters['epsilon1'])):
-            plt.scatter(range(1,T + 1), numpy.array(epsilon_ev)[:, jj]/max(numpy.array(epsilon_ev)[:,jj]), 
+        for jj in xrange(Parameters['dist_dim']):
+            plt.scatter(range(1,T + 1), np.array(epsilon_ev)[:, jj]/max(np.array(epsilon_ev)[:,jj]), 
                         color=color[jj], marker=marker[jj], label='distance threshold' + str(jj + 1))
         plt.legend()
         plt.xlabel('Particle System')
@@ -622,19 +622,19 @@ def plot_3D(T, file_output, Parameters):
         plt.close()
 
         plt.figure()
-        plt.scatter(range(1, T+1 ), numpy.array(time_ev), 
-                    color=color[len(Parameters['epsilon1'])], 
-                    marker=marker[len( Parameters['epsilon1'])], label='time')
+        plt.scatter(range(1, T+1 ), np.array(time_ev), 
+                    color=color[Parameters['dist_dim']], 
+                    marker=marker[Parameters['dist_dim']], label='time')
         plt.legend(loc='upper left')
         plt.xlabel('Particle System')
-        plt.ylabel('time')
+        plt.ylabel('time(s)')
         pdf.savefig()
         plt.close()
 
         plt.figure()
         plt.scatter(range(1, T + 1), convergence, 
-                    color=color[len(Parameters['epsilon1']) + 1], 
-                    marker=marker[len(Parameters['epsilon1']) + 1], label='convergence')
+                    color=color[Parameters['dist_dim'] + 1], 
+                    marker=marker[Parameters['dist_dim'] + 1], label='convergence')
         plt.legend()
         plt.xlabel('Particle System')
         plt.ylabel('convergence criteria(M/K)')
@@ -662,22 +662,22 @@ def plot_4D(T, file_output, Parameters):
 
 
     #sampling for 1D plots
-    sampling = numpy.array([[i for i in numpy.arange( Parameters['param_lim'][j][0], 
+    sampling = np.array([[i for i in np.arange( Parameters['param_lim'][j][0], 
                                Parameters['param_lim'][j][1], (Parameters['param_lim'][j][1] - 
                                Parameters['param_lim'][j][0])/1000)] for j in range(len(Parameters['param_to_fit']))])
    
     #sampling for 2D plots
-    sampling2 = numpy.array([[i for i in numpy.arange(Parameters['param_lim'][j][0], 
+    sampling2 = np.array([[i for i in np.arange(Parameters['param_lim'][j][0], 
                                 Parameters['param_lim'][j][1], (Parameters['param_lim'][j][1] - 
                                 Parameters['param_lim'][j][0])/100)] for j in range(len(Parameters['param_to_fit']))])
 
     #define variables for 2D plots 
-    xx12, yy12 = numpy.meshgrid(sampling2[0], sampling2[1])
-    xx13, yy13 = numpy.meshgrid(sampling2[0], sampling2[2])
-    xx14, yy14 = numpy.meshgrid(sampling2[0], sampling2[3])
-    xx23, yy23 = numpy.meshgrid(sampling2[1], sampling2[2])
-    xx24, yy24 = numpy.meshgrid(sampling2[1], sampling2[3])
-    xx34, yy34 = numpy.meshgrid(sampling2[2], sampling2[3])
+    xx12, yy12 = np.meshgrid(sampling2[0], sampling2[1])
+    xx13, yy13 = np.meshgrid(sampling2[0], sampling2[2])
+    xx14, yy14 = np.meshgrid(sampling2[0], sampling2[3])
+    xx23, yy23 = np.meshgrid(sampling2[1], sampling2[2])
+    xx24, yy24 = np.meshgrid(sampling2[1], sampling2[3])
+    xx34, yy34 = np.meshgrid(sampling2[2], sampling2[3])
     
     kwargs12 = dict(extent=(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1], 
                             Parameters['param_lim'][1][0], Parameters['param_lim'][1][1]), 
@@ -703,7 +703,7 @@ def plot_4D(T, file_output, Parameters):
                             Parameters['param_lim'][3][0], Parameters['param_lim'][3][1]), 
                             cmap='hot', origin='lower')
 
-    y0 = numpy.array([[Parameters['prior_func'][j1](Parameters['prior_par'][j1], 
+    y0 = np.array([[Parameters['prior_func'][j1](Parameters['prior_par'][j1], 
                        Parameters['param_lim'][j1]) for j1 in xrange(4)] for x in xrange(Parameters['M'])])
     
     w0 = [1.0/len(y0) for i in y0]
@@ -720,29 +720,29 @@ def plot_4D(T, file_output, Parameters):
     kde04 = gaussian_kde(y0[:,3], weights=w0)
     y04 = kde04(sampling[3])
 
-    kde012 = gaussian_kde(numpy.array([y0[:,0], y0[:,1]]))  
-    y012 = kde012((numpy.ravel(xx12), numpy.ravel(yy12)))
-    zz012 = numpy.reshape(y012, xx12.shape)   
+    kde012 = gaussian_kde(np.array([y0[:,0], y0[:,1]]))  
+    y012 = kde012((np.ravel(xx12), np.ravel(yy12)))
+    zz012 = np.reshape(y012, xx12.shape)   
     
-    kde013 = gaussian_kde(numpy.array([y0[:,0], y0[:,2]]))   
-    y013 = kde013((numpy.ravel(xx13), numpy.ravel(yy13)))
-    zz013 = numpy.reshape(y013, xx13.shape)  
+    kde013 = gaussian_kde(np.array([y0[:,0], y0[:,2]]))   
+    y013 = kde013((np.ravel(xx13), np.ravel(yy13)))
+    zz013 = np.reshape(y013, xx13.shape)  
 
-    kde014 = gaussian_kde(numpy.array([y0[:,0], y0[:,3]]))   
-    y014 = kde014((numpy.ravel(xx14), numpy.ravel(yy14)))
-    zz014 = numpy.reshape(y014, xx14.shape)   
+    kde014 = gaussian_kde(np.array([y0[:,0], y0[:,3]]))   
+    y014 = kde014((np.ravel(xx14), np.ravel(yy14)))
+    zz014 = np.reshape(y014, xx14.shape)   
     
-    kde023 = gaussian_kde(numpy.array([y0[:,1], y0[:,2]]))
-    y023 = kde023((numpy.ravel(xx23), numpy.ravel(yy23)))
-    zz023 = numpy.reshape(y023, xx23.shape)
+    kde023 = gaussian_kde(np.array([y0[:,1], y0[:,2]]))
+    y023 = kde023((np.ravel(xx23), np.ravel(yy23)))
+    zz023 = np.reshape(y023, xx23.shape)
 
-    kde024 = gaussian_kde(numpy.array([y0[:,1], y0[:,3]]))
-    y024 = kde024((numpy.ravel(xx24), numpy.ravel(yy24)))
-    zz024 = numpy.reshape(y024, xx24.shape)
+    kde024 = gaussian_kde(np.array([y0[:,1], y0[:,3]]))
+    y024 = kde024((np.ravel(xx24), np.ravel(yy24)))
+    zz024 = np.reshape(y024, xx24.shape)
 
-    kde034 = gaussian_kde(numpy.array([y0[:,2], y0[:,3]]))
-    y034 = kde034((numpy.ravel(xx34), numpy.ravel(yy34)))
-    zz034 = numpy.reshape(y034, xx34.shape)
+    kde034 = gaussian_kde(np.array([y0[:,2], y0[:,3]]))
+    y034 = kde034((np.ravel(xx34), np.ravel(yy34)))
+    zz034 = np.reshape(y034, xx34.shape)
 
     epsilon_ev = []
     time_ev = []
@@ -863,18 +863,18 @@ def plot_4D(T, file_output, Parameters):
 
 
             d = [elem.split() for elem in lin1]
-            d1 = numpy.array([[float(item) for item in line] for line in d[1:]])
+            d1 = np.array([[float(item) for item in line] for line in d[1:]])
      
             epsilon_ev.append([float(d[1][d[0].index('dist_threshold' + str(jj + 1))]) 
-                              for jj in xrange(len(Parameters['epsilon1']))])
+                              for jj in xrange(Parameters['dist_dim'])])
 
             time_ev.append(sum(float(line[d[0].index('time')]) for line in d1[1:]))
             ndraws_ev.append(sum(float(line[d[0].index('NDraws')]) for line in d1[1:]))
 
             if i > 0:
-                w1 = numpy.loadtxt(Parameters['file_root'] + str(i) + 'weights.dat')
+                w1 = np.loadtxt(Parameters['file_root'] + str(i) + 'weights.dat')
             else:
-                w1 = numpy.array([1.0/len(d1) for k in range(len(d1))])
+                w1 = np.array([1.0/len(d1) for k in range(len(d1))])
 
             kde1 = gaussian_kde(d1[:,0] , weights=w1)
             y1 = kde1(sampling[0])
@@ -888,55 +888,55 @@ def plot_4D(T, file_output, Parameters):
             kde4 = gaussian_kde(d1[:,3], weights=w1)
             y4 = kde3(sampling[3]) 
 
-            kde12 = gaussian_kde(numpy.array([d1[:,0], d1[:,1]]))
-            xx12, yy12 = numpy.meshgrid(sampling2[0], sampling2[1])
-            y12 = kde12((numpy.ravel(xx12), numpy.ravel(yy12)))
-            zz12 = numpy.reshape(y12, xx12.shape)   
+            kde12 = gaussian_kde(np.array([d1[:,0], d1[:,1]]))
+            xx12, yy12 = np.meshgrid(sampling2[0], sampling2[1])
+            y12 = kde12((np.ravel(xx12), np.ravel(yy12)))
+            zz12 = np.reshape(y12, xx12.shape)   
 
             kwargs12 = dict(extent=(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1], 
                                     Parameters['param_lim'][1][0], Parameters['param_lim'][1][1]), 
                                     cmap='hot', origin='lower') 
 
-            kde13 = gaussian_kde(numpy.array([d1[:,0], d1[:,2]]))
-            xx13, yy13 = numpy.meshgrid(sampling2[0], sampling2[2])
-            y13 = kde13((numpy.ravel(xx13), numpy.ravel(yy13)))
-            zz13 = numpy.reshape(y13, xx13.shape)
+            kde13 = gaussian_kde(np.array([d1[:,0], d1[:,2]]))
+            xx13, yy13 = np.meshgrid(sampling2[0], sampling2[2])
+            y13 = kde13((np.ravel(xx13), np.ravel(yy13)))
+            zz13 = np.reshape(y13, xx13.shape)
     
             kwargs13 = dict(extent=(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1], 
                                     Parameters['param_lim'][2][0], Parameters['param_lim'][2][1]), 
                                     cmap='hot', origin='lower')
 
-            kde14 = gaussian_kde(numpy.array([d1[:,0], d1[:,3]]))
-            xx14, yy14 = numpy.meshgrid(sampling2[0], sampling2[3])
-            y14 = kde14((numpy.ravel(xx14), numpy.ravel(yy14)))
-            zz14 = numpy.reshape(y14, xx14.shape)    
+            kde14 = gaussian_kde(np.array([d1[:,0], d1[:,3]]))
+            xx14, yy14 = np.meshgrid(sampling2[0], sampling2[3])
+            y14 = kde14((np.ravel(xx14), np.ravel(yy14)))
+            zz14 = np.reshape(y14, xx14.shape)    
 
             kwargs14 = dict(extent=(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1], 
                                     Parameters['param_lim'][3][0], Parameters['param_lim'][3][1]), 
                                     cmap='hot', origin='lower') 
 
-            kde23 = gaussian_kde(numpy.array([d1[:,1], d1[:,2]]))
-            xx23, yy23 = numpy.meshgrid(sampling2[1], sampling2[2])
-            y23 = kde23((numpy.ravel(xx23), numpy.ravel(yy23)))
-            zz23 = numpy.reshape(y23, xx23.shape)
+            kde23 = gaussian_kde(np.array([d1[:,1], d1[:,2]]))
+            xx23, yy23 = np.meshgrid(sampling2[1], sampling2[2])
+            y23 = kde23((np.ravel(xx23), np.ravel(yy23)))
+            zz23 = np.reshape(y23, xx23.shape)
 
             kwargs23 = dict(extent=(Parameters['param_lim'][1][0], Parameters['param_lim'][1][1], 
                                     Parameters['param_lim'][2][0], Parameters['param_lim'][2][1]), 
                                     cmap='hot', origin='lower')
 
-            kde24 = gaussian_kde(numpy.array([d1[:,1], d1[:,3] ]))
-            xx24, yy24 = numpy.meshgrid(sampling2[1], sampling2[3])
-            y24 = kde24((numpy.ravel(xx24), numpy.ravel(yy24)))
-            zz24 = numpy.reshape(y24, xx24.shape)
+            kde24 = gaussian_kde(np.array([d1[:,1], d1[:,3] ]))
+            xx24, yy24 = np.meshgrid(sampling2[1], sampling2[3])
+            y24 = kde24((np.ravel(xx24), np.ravel(yy24)))
+            zz24 = np.reshape(y24, xx24.shape)
 
             kwargs24 = dict(extent=(Parameters['param_lim'][1][0], Parameters['param_lim'][1][1], 
                                     Parameters['param_lim'][3][0], Parameters['param_lim'][3][1]), 
                                     cmap='hot', origin='lower')
 
-            kde34 = gaussian_kde(numpy.array([d1[:,2], d1[:,3]]))
-            xx34, yy34 = numpy.meshgrid(sampling2[2], sampling2[3])
-            y34 = kde34((numpy.ravel(xx34), numpy.ravel(yy34)))
-            zz34 = numpy.reshape(y34, xx34.shape)
+            kde34 = gaussian_kde(np.array([d1[:,2], d1[:,3]]))
+            xx34, yy34 = np.meshgrid(sampling2[2], sampling2[3])
+            y34 = kde34((np.ravel(xx34), np.ravel(yy34)))
+            zz34 = np.reshape(y34, xx34.shape)
 
             kwargs34 = dict(extent=(Parameters['param_lim'][2][0], Parameters['param_lim'][2][1], 
                                     Parameters['param_lim'][3][0], Parameters['param_lim'][3][1]), 
@@ -1045,12 +1045,12 @@ def plot_4D(T, file_output, Parameters):
 
             print 'Finished plotting particle system T=' + str(i + 1)
     
-        convergence = numpy.array([float(Parameters['M'])/item  for item in ndraws_ev])
+        convergence = np.array([float(Parameters['M'])/item  for item in ndraws_ev])
     
         #Plot epsilon evolution
         plt.figure()
-        for jj in xrange(len( Parameters['epsilon1'])):
-            plt.scatter(range(1, T + 1), numpy.array(epsilon_ev)[:, jj ]/max(numpy.array(epsilon_ev)[:,jj]), 
+        for jj in xrange(Parameters['dist_dim']):
+            plt.scatter(range(1, T + 1), np.array(epsilon_ev)[:, jj ]/max(np.array(epsilon_ev)[:,jj]), 
                         color=color[jj], marker=marker[jj], label='distance threshold' + str(jj + 1))
         plt.legend()
         plt.xlabel('Particle System')
@@ -1059,18 +1059,18 @@ def plot_4D(T, file_output, Parameters):
         plt.close()
 
         plt.figure()
-        plt.scatter(range(1, T+1), numpy.array(time_ev), 
-                     color=color[len(Parameters['epsilon1'])], 
-                     marker=marker[len(Parameters['epsilon1'])], label='time')
+        plt.scatter(range(1, T+1), np.array(time_ev), 
+                     color=color[Parameters['dist_dim']], 
+                     marker=marker[Parameters['dist_dim']], label='time')
         plt.legend(loc='upper left')
         plt.xlabel('Particle System')
-        plt.ylabel('time')
+        plt.ylabel('time(s)')
         pdf.savefig()
         plt.close()
 
         plt.figure()
-        plt.scatter(range(1, T + 1), convergence, color=color[len(Parameters['epsilon1']) + 1], 
-                    marker=marker[len(Parameters['epsilon1']) + 1], label='convergence')
+        plt.scatter(range(1, T + 1), convergence, color=color[Parameters['dist_dim'] + 1], 
+                    marker=marker[Parameters['dist_dim'] + 1], label='convergence')
         plt.legend()
         plt.xlabel('Particle System')
         plt.ylabel('convergence criteria(M/K)')

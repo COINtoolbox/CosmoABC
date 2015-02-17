@@ -2,14 +2,13 @@
 Functions for catalog simulations using NumCosmo. 
 """
 
+import numpy as np
+import random
+import math
+from numpy import pi
 
 from gi.repository import NumCosmo as Nc
 from gi.repository import NumCosmoMath as Ncm
-from numpy import pi
-import numpy
-import random
-import math
-
 
 ############################################################################
 ###	From NumCosmo: for simulation	####################################
@@ -121,7 +120,7 @@ class ChooseParamsInput(object):
 
 
 
-def NumCosmo_simulation( simul_params, save=False ):
+def numcosmo_simulation( simul_params, save=False ):
 
         """
         Perform simulation using NumCosmo library given a set of input cosmological parameters.
@@ -140,11 +139,11 @@ def NumCosmo_simulation( simul_params, save=False ):
         data_simul = []
         
         #generate simulation
-        data_simul = numpy.array( ncount.simulation( simul_params['zmax'], simul_params,  simul_params['seed'] )[1] )
+        data_simul = np.array( ncount.simulation( simul_params['zmax'], simul_params,  simul_params['seed'] )[1] )
         
        
         if len( data_simul ) == 0:
-            data_simul = numpy.array([[0,0]])
+            data_simul = np.array([[0,0]])
 
        
         if save == True:
