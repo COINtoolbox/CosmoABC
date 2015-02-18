@@ -114,9 +114,9 @@ def beta_prior( par, par_lim, func=False):
 
 
     if func == False:
-        return draw
+        return par[2] * draw
     else:
-        return rv
+        return (1.0/abs(par[2])) * rv
   
 
 

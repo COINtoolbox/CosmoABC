@@ -27,6 +27,7 @@ You can run a few tests with::
 .. warning::  
     The  above tests will generate a lot of output data file and a pdf file with their graphical representation. 
     This was chosen to facilitate the identification of errors. 
+
     Make sure to run the tests in their own directory. 
 
 The test outputs a pdf file illustrating the evolution of the posterior.
@@ -40,7 +41,7 @@ Sample input in can be found in ``~CosmoABC/examples``. All example files mentio
 
 The user input file should contain all necessary variables for simulation as well as for the ABC sampler.
 
-A simple example of user input file, using a simulator which takes 3 parameters as input (mean, std, n) from which we want to fit only two (mean, std), would look like this ::
+A simple example of user input file, using a simulator which takes 3 parameters as input (``mean``, ``std``, ``n``) from which we want to fit only two (``mean``, ``std``), would look like this ::
 
     path_to_obs		= data.dat   	   # path to observed data. If None a simulated data set 
                                            # will be generated on the fly and used in place of the observations 
@@ -100,7 +101,7 @@ Moreover, CosmoABC is also able to handdle user defined functions for all three 
 You will find example files in the corresponding directory which will help you taylor your functions for the ABC sampler. 
 
 
-Consider the <user_function_file> containing,
+Consider the ``<user_function_file>`` containing,
 
 .. code-block:: python 
 
@@ -136,14 +137,14 @@ given as output.
 
 If the achieved result is not satisfactory, or if for some reason the calculation was stopped before reaching the convergence criteria, it is possible to run the ABC sampler beginning from the last completed particle system ``N``. 
 
-In case the convergence criteria was achieved but you wish to continue the run, remember to decrease the convergene criteria `delta` in the <user_input_file> before continuing. 
+In case the convergence criteria was achieved but you wish to continue the run, remember to decrease the convergene criteria `delta` in the ``<user_input_file>`` before continuing. 
 
 From the command line::
 
     $ continue_ABC.py -i <user_input_file> -f <user_function_file> -p N
 
 
-At any time it is possible to plot the outcomes from *N* particle systems, whose calculations were completed, using::
+At any time it is possible to plot the outcomes from ``N`` particle systems, whose calculations were completed, using::
 
     $ plot_ABC.py -i <user_input_file> -p N
 
@@ -214,9 +215,9 @@ In order to use it, prepare an appropriate user input and function files and, fr
 
     $ test_ABC_distance.py -i <user_input_file> -f <user_function_file> -o <output_filename>
 
-Here, <output_filename> is where the distance behaviour for different set of parameter values will be plotted. 
+Here, ``<output_filename>`` is where the distance behaviour for different set of parameter values will be plotted. 
 
-As always, the <user_input_file> must be provided. 
+As always, the ``<user_input_file>`` must be provided. 
 If you are using built-in CosmoABC functions, the ``-f`` option is not necessary and in case you forget to give an output filename, CosmoABC will ask you for it. 
 It will also ask you to input the number of points to be drawn from the parameter space in order to construct a grid. 
 
@@ -237,6 +238,13 @@ The output file will contain a plot like this:
 
 .. image:: nstatic/test_distance_mean_std_n.jpeg
  
+
+The example above corresponds to a perfect distance definition. 
+It has two independent outputs: the first one is able to constraint parameters ``mean`` and ``std`` while the second one constraints parameter ``n``.
+
+This is what one should aim for in constructing a distance function. 
+How large a deviation from this is acceptable should be decided based on each particular problem and goal. 
+
 
 
 Documentation

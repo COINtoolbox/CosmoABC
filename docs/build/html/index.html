@@ -62,9 +62,9 @@
 </div>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">The  above tests will generate a lot of output data file and a pdf file with their graphical representation.
-This was chosen to facilitate the identification of errors.
-Make sure to run the tests in their own directory.</p>
+<p>The  above tests will generate a lot of output data file and a pdf file with their graphical representation.
+This was chosen to facilitate the identification of errors.</p>
+<p class="last">Make sure to run the tests in their own directory.</p>
 </div>
 <p>The test outputs a pdf file illustrating the evolution of the posterior.</p>
 <img alt="_images/results_gaussian_sim.gif" src="_images/results_gaussian_sim.gif" />
@@ -73,7 +73,7 @@ Make sure to run the tests in their own directory.</p>
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
 <p>Sample input in can be found in <tt class="docutils literal"><span class="pre">~CosmoABC/examples</span></tt>. All example files mentioned in this section are available in that directory.</p>
 <p>The user input file should contain all necessary variables for simulation as well as for the ABC sampler.</p>
-<p>A simple example of user input file, using a simulator which takes 3 parameters as input (mean, std, n) from which we want to fit only two (mean, std), would look like this</p>
+<p>A simple example of user input file, using a simulator which takes 3 parameters as input (<tt class="docutils literal"><span class="pre">mean</span></tt>, <tt class="docutils literal"><span class="pre">std</span></tt>, <tt class="docutils literal"><span class="pre">n</span></tt>) from which we want to fit only two (<tt class="docutils literal"><span class="pre">mean</span></tt>, <tt class="docutils literal"><span class="pre">std</span></tt>), would look like this</p>
 <div class="highlight-python"><div class="highlight"><pre>path_to_obs         = data.dat         # path to observed data. If None a simulated data set
                                        # will be generated on the fly and used in place of the observations
 
@@ -129,7 +129,7 @@ distance_func       = distance_quantiles                    # distance function
 </ul>
 <p>Moreover, CosmoABC is also able to handdle user defined functions for all three elements.
 You will find example files in the corresponding directory which will help you taylor your functions for the ABC sampler.</p>
-<p>Consider the &lt;user_function_file&gt; containing,</p>
+<p>Consider the <tt class="docutils literal"><span class="pre">&lt;user_function_file&gt;</span></tt> containing,</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span>
 
 <span class="k">def</span> <span class="nf">simulation</span><span class="p">(</span> <span class="n">v</span> <span class="p">):</span>
@@ -160,12 +160,12 @@ You will find example files in the corresponding directory which will help you t
 <p>This will run the algorithm until the convergence criteria is reached. A pdf file containing graphical representation of the results for each particle system is
 given as output.</p>
 <p>If the achieved result is not satisfactory, or if for some reason the calculation was stopped before reaching the convergence criteria, it is possible to run the ABC sampler beginning from the last completed particle system <tt class="docutils literal"><span class="pre">N</span></tt>.</p>
-<p>In case the convergence criteria was achieved but you wish to continue the run, remember to decrease the convergene criteria <cite>delta</cite> in the &lt;user_input_file&gt; before continuing.</p>
+<p>In case the convergence criteria was achieved but you wish to continue the run, remember to decrease the convergene criteria <cite>delta</cite> in the <tt class="docutils literal"><span class="pre">&lt;user_input_file&gt;</span></tt> before continuing.</p>
 <p>From the command line:</p>
 <div class="highlight-python"><div class="highlight"><pre>$ continue_ABC.py -i &lt;user_input_file&gt; -f &lt;user_function_file&gt; -p N
 </pre></div>
 </div>
-<p>At any time it is possible to plot the outcomes from <em>N</em> particle systems, whose calculations were completed, using:</p>
+<p>At any time it is possible to plot the outcomes from <tt class="docutils literal"><span class="pre">N</span></tt> particle systems, whose calculations were completed, using:</p>
 <div class="highlight-python"><div class="highlight"><pre>$ plot_ABC.py -i &lt;user_input_file&gt; -p N
 </pre></div>
 </div>
@@ -229,8 +229,8 @@ In order to use it, prepare an appropriate user input and function files and, fr
 <div class="highlight-python"><div class="highlight"><pre>$ test_ABC_distance.py -i &lt;user_input_file&gt; -f &lt;user_function_file&gt; -o &lt;output_filename&gt;
 </pre></div>
 </div>
-<p>Here, &lt;output_filename&gt; is where the distance behaviour for different set of parameter values will be plotted.</p>
-<p>As always, the &lt;user_input_file&gt; must be provided.
+<p>Here, <tt class="docutils literal"><span class="pre">&lt;output_filename&gt;</span></tt> is where the distance behaviour for different set of parameter values will be plotted.</p>
+<p>As always, the <tt class="docutils literal"><span class="pre">&lt;user_input_file&gt;</span></tt> must be provided.
 If you are using built-in CosmoABC functions, the <tt class="docutils literal"><span class="pre">-f</span></tt> option is not necessary and in case you forget to give an output filename, CosmoABC will ask you for it.
 It will also ask you to input the number of points to be drawn from the parameter space in order to construct a grid.</p>
 <p>Here is an example from using the built-in tool to check the suitability of distance function:</p>
@@ -248,6 +248,10 @@ $ Figure containing distance results is stored in output.pdf
 </div>
 <p>The output file will contain a plot like this:</p>
 <img alt="_images/test_distance_mean_std_n.jpeg" src="_images/test_distance_mean_std_n.jpeg" />
+<p>The example above corresponds to a perfect distance definition.
+It has two independent outputs: the first one is able to constraint parameters <tt class="docutils literal"><span class="pre">mean</span></tt> and <tt class="docutils literal"><span class="pre">std</span></tt> while the second one constraints parameter <tt class="docutils literal"><span class="pre">n</span></tt>.</p>
+<p>This is what one should aim for in constructing a distance function.
+How large a deviation from this is acceptable should be decided based on each particular problem and goal.</p>
 </div>
 <div class="section" id="documentation">
 <h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
