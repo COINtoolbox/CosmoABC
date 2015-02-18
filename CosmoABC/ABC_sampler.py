@@ -4,7 +4,7 @@
 Approximate Bayesian Computation sampler.
 """
 
-__author__ = "E. E. O. Ishida, S. D. P. Vitenti, M. Penna-Lima,  R. S. de Souza, J. Cisewski, E. Cameron, V. C. Busti, A. Trindade"
+__author__ = "E. E. O. Ishida, S. D. P. Vitenti, M. Penna-Lima, R. S. de Souza, J. Cisewski, A. M. M., Trindade, V. C. Busti, E. Cameron"
 __maintainer__ = "E. E. O. Ishida"
 __copyright__ = "Copyright 2015"
 __version__ = "0.1.8"
