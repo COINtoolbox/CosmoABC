@@ -31,7 +31,7 @@ You can run a few tests with::
 
 The test outputs a pdf file illustrating the evolution of the posterior.
 
-`Test results <https://github.com/COINtoolbox/CosmoABC/blob/emille_dev/CosmoABC/examples/results_gaussian_sim.gif>`_
+.. image:: nstatic/results_gaussian_sim.gif
 
 Examples
 ********
