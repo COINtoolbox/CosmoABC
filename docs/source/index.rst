@@ -235,7 +235,7 @@ Here is an example from using the built-in tool to check the suitability of dist
 
 The output file will contain a plot like this:
 
-`Example distance test <https://github.com/COINtoolbox/CosmoABC/blob/emille_dev/CosmoABC/examples/test_distance_mean_std_n.jpeg>`_
+.. image:: nstatic/test_distance_mean_std_n.jpeg
  
 
 
