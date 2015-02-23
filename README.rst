@@ -182,7 +182,7 @@ NumCosmo simulations
 --------------------
 
 In order to reproduce the results of Ishida *et al.* 2015, first you need to make sure the NumCosmo library is running smoothly. 
-Instructions for complete installation and tests can be found at the  `NumCosmo website <http://www.nongnu.org/numcosmo/>`_ .
+Instructions for complete installation and tests can be found at the  `NumCosmo website <http://www.nongnu.org/numcosmo/>`_.
 
 An example of input file for NumCosmo simulations is provided in the corresponding directory.
 Once the simulator is installed run the complete ABC sampler + NumCosmo cluster simulations from the command line::
