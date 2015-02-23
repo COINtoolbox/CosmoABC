@@ -6,7 +6,7 @@ CosmoABC - Likelihood free parameter estimation for cosmology
 
 The code was originally designed for cosmological parameter inference from galaxy clusters number counts based on Sunyaev-Zel'dovich measurements. In this context, the cosmological simulations were performed using the `NumCosmo library <http://www.nongnu.org/numcosmo/>`_ .
 
-Nevertheless, the user can easily take advantadge of the ABC sampler along with his/her own simulator, as well as  test personalized prior distributions, summary statistics and distance functions. 
+Nevertheless, the user can easily take advantage of the ABC sampler along with his/her own simulator, as well as  test personalized prior distributions, summary statistics and distance functions. 
 
 
 Get it now!
@@ -18,7 +18,7 @@ The package can be installed using the PyPI and pip::
 
 Or if the tarball or repository is downloaded, in the CosmoABC directory you can install and test it::
 
-    $ pyton setup.py install
+    $ python setup.py install
 
 You can run a few tests with::
 
@@ -97,8 +97,8 @@ Built-in options for distance functions are:
 * Quantile-based distance with number of objects criteria
 * Gaussian Radial Basis Function distance (as descrived in Ishida et al., 2015 [LINK])
 
-Moreover, CosmoABC is also able to handdle user defined functions for all three elements. 
-You will find example files in the corresponding directory which will help you taylor your functions for the ABC sampler. 
+Moreover, CosmoABC is also able to handle user defined functions for all three elements. 
+You will find example files in the corresponding directory which will help you tailor your functions for the ABC sampler. 
 
 
 Consider the ``<user_function_file>`` containing,
@@ -137,7 +137,7 @@ given as output.
 
 If the achieved result is not satisfactory, or if for some reason the calculation was stopped before reaching the convergence criteria, it is possible to run the ABC sampler beginning from the last completed particle system ``N``. 
 
-In case the convergence criteria was achieved but you wish to continue the run, remember to decrease the convergene criteria `delta` in the ``<user_input_file>`` before continuing. 
+In case the convergence criteria was achieved but you wish to continue the run, remember to decrease the convergence criteria ``delta`` in the ``<user_input_file>`` before continuing. 
 
 From the command line::
 
@@ -182,7 +182,7 @@ NumCosmo simulations
 --------------------
 
 In order to reproduce the results of Ishida *et al.* 2015, first you need to make sure the NumCosmo library is running smoothly. 
-Instructions for complete instalation and tests can be found at the  `NumCosmo website <http://www.nongnu.org/numcosmo/>`_ .
+Instructions for complete installation and tests can be found at the  `NumCosmo website <http://www.nongnu.org/numcosmo/>`_ .
 
 An example of input file for NumCosmo simulations is provided in the corresponding directory.
 Once the simulator is installed run the complete ABC sampler + NumCosmo cluster simulations from the command line::
@@ -198,13 +198,13 @@ Analogously to what is available for the user defined simulations, we can also c
 
     $ continue_ABC_NumCosmo.py -i <user_input_file> -p N
 
-If we want to run the NumCosmo simulation with a different prior or distance function, we should define it in a separated file and run::
+If we want to run the NumCosmo simulation with a different prior or distance function, we should define it in a separate file and run::
 
     $ run_ABC_NumCosmo.py -i <user_input_file> -f <user_function_file>
 
 Plots are generated exactly as explained above for the user defined functions.
 
-Usefull tips
+Useful tips
 ************
 
 If you are using a personalized simulation/prior/distance, make sure that the chosen functions apply to the particular problem you are facing. 

@@ -42,9 +42,10 @@ import argparse
 import numpy as np
 import imp
 
-from CosmoABC.distances import distance_quantiles, distance_GRBF
+from CosmoABC.distances import distance_quantiles, distance_grbf
 from CosmoABC.priors import flat_prior, gaussian_prior, beta_prior
 from CosmoABC.plots import plot_1D, plot_2D, plot_3D, plot_4D
+from CosmoABC.ABC_functions import read_input
 
 
 def main( args ):

@@ -45,7 +45,7 @@
 <h1>CosmoABC - Likelihood free parameter estimation for cosmology<a class="headerlink" href="#cosmoabc-likelihood-free-parameter-estimation-for-cosmology" title="Permalink to this headline">¶</a></h1>
 <p><tt class="docutils literal"><span class="pre">CosmoABC</span></tt> is a package which enables parameter inference using an Approximate Bayesian Computation (ABC) algorithm, as described in Ishida et al., 2015 [LINK].</p>
 <p>The code was originally designed for cosmological parameter inference from galaxy clusters number counts based on Sunyaev-Zel&#8217;dovich measurements. In this context, the cosmological simulations were performed using the <a class="reference external" href="http://www.nongnu.org/numcosmo/">NumCosmo library</a> .</p>
-<p>Nevertheless, the user can easily take advantadge of the ABC sampler along with his/her own simulator, as well as  test personalized prior distributions, summary statistics and distance functions.</p>
+<p>Nevertheless, the user can easily take advantage of the ABC sampler along with his/her own simulator, as well as  test personalized prior distributions, summary statistics and distance functions.</p>
 <div class="section" id="get-it-now">
 <h2>Get it now!<a class="headerlink" href="#get-it-now" title="Permalink to this headline">¶</a></h2>
 <p>The package can be installed using the PyPI and pip:</p>
@@ -53,7 +53,7 @@
 </pre></div>
 </div>
 <p>Or if the tarball or repository is downloaded, in the CosmoABC directory you can install and test it:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ pyton setup.py install
+<div class="highlight-python"><div class="highlight"><pre>$ python setup.py install
 </pre></div>
 </div>
 <p>You can run a few tests with:</p>
@@ -127,8 +127,8 @@ distance_func       = distance_quantiles                    # distance function
 <li>Quantile-based distance with number of objects criteria</li>
 <li>Gaussian Radial Basis Function distance (as descrived in Ishida et al., 2015 [LINK])</li>
 </ul>
-<p>Moreover, CosmoABC is also able to handdle user defined functions for all three elements.
-You will find example files in the corresponding directory which will help you taylor your functions for the ABC sampler.</p>
+<p>Moreover, CosmoABC is also able to handle user defined functions for all three elements.
+You will find example files in the corresponding directory which will help you tailor your functions for the ABC sampler.</p>
 <p>Consider the <tt class="docutils literal"><span class="pre">&lt;user_function_file&gt;</span></tt> containing,</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span>
 
@@ -160,7 +160,7 @@ You will find example files in the corresponding directory which will help you t
 <p>This will run the algorithm until the convergence criteria is reached. A pdf file containing graphical representation of the results for each particle system is
 given as output.</p>
 <p>If the achieved result is not satisfactory, or if for some reason the calculation was stopped before reaching the convergence criteria, it is possible to run the ABC sampler beginning from the last completed particle system <tt class="docutils literal"><span class="pre">N</span></tt>.</p>
-<p>In case the convergence criteria was achieved but you wish to continue the run, remember to decrease the convergene criteria <cite>delta</cite> in the <tt class="docutils literal"><span class="pre">&lt;user_input_file&gt;</span></tt> before continuing.</p>
+<p>In case the convergence criteria was achieved but you wish to continue the run, remember to decrease the convergence criteria <tt class="docutils literal"><span class="pre">delta</span></tt> in the <tt class="docutils literal"><span class="pre">&lt;user_input_file&gt;</span></tt> before continuing.</p>
 <p>From the command line:</p>
 <div class="highlight-python"><div class="highlight"><pre>$ continue_ABC.py -i &lt;user_input_file&gt; -f &lt;user_function_file&gt; -p N
 </pre></div>
@@ -198,7 +198,7 @@ given as output.</p>
 <div class="section" id="numcosmo-simulations">
 <h3>NumCosmo simulations<a class="headerlink" href="#numcosmo-simulations" title="Permalink to this headline">¶</a></h3>
 <p>In order to reproduce the results of Ishida <em>et al.</em> 2015, first you need to make sure the NumCosmo library is running smoothly.
-Instructions for complete instalation and tests can be found at the  <a class="reference external" href="http://www.nongnu.org/numcosmo/">NumCosmo website</a> .</p>
+Instructions for complete installation and tests can be found at the  <a class="reference external" href="http://www.nongnu.org/numcosmo/">NumCosmo website</a> .</p>
 <p>An example of input file for NumCosmo simulations is provided in the corresponding directory.
 Once the simulator is installed run the complete ABC sampler + NumCosmo cluster simulations from the command line:</p>
 <div class="highlight-python"><div class="highlight"><pre>$ run_ABC_NumCosmo.py -i &lt;user_input_file&gt;
@@ -213,15 +213,15 @@ Once the simulator is installed run the complete ABC sampler + NumCosmo cluster 
 <div class="highlight-python"><div class="highlight"><pre>$ continue_ABC_NumCosmo.py -i &lt;user_input_file&gt; -p N
 </pre></div>
 </div>
-<p>If we want to run the NumCosmo simulation with a different prior or distance function, we should define it in a separated file and run:</p>
+<p>If we want to run the NumCosmo simulation with a different prior or distance function, we should define it in a separate file and run:</p>
 <div class="highlight-python"><div class="highlight"><pre>$ run_ABC_NumCosmo.py -i &lt;user_input_file&gt; -f &lt;user_function_file&gt;
 </pre></div>
 </div>
 <p>Plots are generated exactly as explained above for the user defined functions.</p>
 </div>
 </div>
-<div class="section" id="usefull-tips">
-<h2>Usefull tips<a class="headerlink" href="#usefull-tips" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="useful-tips">
+<h2>Useful tips<a class="headerlink" href="#useful-tips" title="Permalink to this headline">¶</a></h2>
 <p>If you are using a personalized simulation/prior/distance, make sure that the chosen functions apply to the particular problem you are facing.
 Particularly, you need to be sure that the distance definition you adpoted yields increasingly larger distances for increasingly different catalogues.</p>
 <p>CosmoABC has a built-in script which allows you to visually test the performances of your choices.
@@ -298,7 +298,7 @@ How large a deviation from this is acceptable should be decided based on each pa
 <li><a class="reference internal" href="#numcosmo-simulations">NumCosmo simulations</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#usefull-tips">Usefull tips</a></li>
+<li><a class="reference internal" href="#useful-tips">Useful tips</a></li>
 <li><a class="reference internal" href="#documentation">Documentation</a></li>
 <li><a class="reference internal" href="#requirements">Requirements</a><ul>
 <li><a class="reference internal" href="#optional">Optional</a></li>

@@ -162,7 +162,7 @@ def SelectParamInnerLoop(var1):
  
         #update counter
         K = K + 1 
-  
+
         #draw model parameters to serve as mean 
         index_theta0 = np.random.choice(xrange(len(var1['W'])), p=var1['W'])
         theta0 = np.atleast_2d(var1['previous_particle_system'][index_theta0][:len( var1['params']['param_to_fit'])])
@@ -219,6 +219,8 @@ def SelectParamInnerLoop(var1):
     for d3 in epsilon:
         theta_t_try.append(d3)
 
+    print 'Number of draws = ' + str(K)
+
     return theta_t_try
 
 def DrawAllParams(params):
@@ -259,6 +261,7 @@ def SetDistanceFromSimulation(var):
     dist = var['distance_func'](DataSimul, var)
 
     if dist > 0:
+
         total_time = time.time() - time1
         return dist, total_time, var
     else:

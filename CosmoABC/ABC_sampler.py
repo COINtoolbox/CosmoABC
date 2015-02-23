@@ -4,7 +4,7 @@
 Approximate Bayesian Computation sampler.
 """
 
-__author__ = "E. E. O. Ishida, S. D. P. Vitenti, M. Penna-Lima, R. S. de Souza, J. Cisewski, A. M. M., Trindade, V. C. Busti, E. Cameron"
+__author__ = "E. E. O. Ishida, S. D. P. Vitenti, M. Penna-Lima, R. S. de Souza, J. Cisewski, A. M. M. Trindade, V. C. Busti, E. Cameron"
 __maintainer__ = "E. E. O. Ishida"
 __copyright__ = "Copyright 2015"
 __version__ = "0.1.9"
@@ -24,7 +24,7 @@ from scipy.stats import norm
 
 from statsmodels.stats.weightstats import DescrStatsW
 
-from multiprocessing import Pool
+from multiprocessing import Pool 
 
 from ABC_functions import SelectParamInnerLoop, SetDistanceFromSimulation, DrawAllParams
 
@@ -93,7 +93,7 @@ class ABC(object):
             raise TypeError('Real data catalog must be at least 2 dimensional.')
                 
         #check minimum keywords in params
-        self.min_keys = ['simulation_params', 'param_to_fit', 'prior_par', 'param_lim', 'M', 'qthreshold', 'delta','file_root']  
+        self.min_keys = ['param_to_sim', 'param_to_fit', 'prior_par', 'param_lim', 'M', 'qthreshold', 'delta','file_root']  
         for item in self.min_keys:
             if item not in self.params.keys():
                 raise IOError('Keyword ' + str( item ) + '  is missing from inputed dictionary of parameters (params)!') 
@@ -130,6 +130,9 @@ class ABC(object):
         time_ini = time.time()
         args = [self.params for item in xrange(self.params['Mini'])]
         dist = pool.map(SetDistanceFromSimulation, args) 
+        #for i in args:
+        #    print 'Calculated ' + str(args.index(i)) + 'from ' + str(len(args))
+
         pool.close()
         time_end = time.time() - time_ini
 
@@ -314,11 +317,6 @@ class ABC(object):
             #build first particle system
             sys0 = self.BuildFirstPSystem()
 
-            op2 = open(self.params['file_root'] + '0weights.dat', 'w')
-            for item in W1:
-                 op2.write(str(item) + '\n')
-            op2.close()
-            
         #read first particle system from file
         op = open(self.params['file_root'] + '0.dat', 'r')
         lin = op.readlines()
@@ -338,13 +336,11 @@ class ABC(object):
         t = 0
         K = self.M
 
-        while float(self.M)/K > self.delta:
-
-           
-
-            self.T = t 
+        while float(self.M)/K > self.delta:      
 
             t = t + 1
+
+            self.T = t 
 
             sys_new = self.BuildPSystem(sys1, W1, t)
         
@@ -399,9 +395,9 @@ class ABC(object):
 
         while float(self.M)/K > self.delta:
 
-            self.T = t
-
             t = t + 1
+
+            self.T = t
 
             sys_new = self.BuildPSystem(sys1, W1, t)
         
