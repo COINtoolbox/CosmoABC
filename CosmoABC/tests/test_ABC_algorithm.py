@@ -29,8 +29,8 @@ class TestABC(unittest.TestCase):
         
         self.params = {}
         self.params['simulation_func'] = ysim
-        self.params['simulation_params'] = {'mu': self.mu, 'sigma':self.sigma, 'n':self.n} 
-        self.params['dataset1'] = self.params['simulation_func']( self.params['simulation_params'] )
+        self.params['simulation_input'] = {'mu': self.mu, 'sigma':self.sigma, 'n':self.n} 
+        self.params['dataset1'] = self.params['simulation_func']( self.params['simulation_input'] )
         self.params['param_to_fit']=['mu', 'sigma', 'n']							
         self.params['param_lim']=[[0.0, 5.0],[0.001, 3.0],[500, 1500]]	
         self.params['prior_par'] = [[1.0, 4.0],[0.001, 3.0],[600, 1400]]
@@ -50,7 +50,6 @@ class TestABC(unittest.TestCase):
         self.W = [1.0/self.params['M'] for i in xrange( self.params['M'] )]
         self.params = summ_quantiles(self.params['dataset1'], self.params)   	 
 
-      
     def test_DrawAllParams( self ):
          
         #draw parameters

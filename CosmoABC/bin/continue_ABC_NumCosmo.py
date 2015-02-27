@@ -51,7 +51,7 @@ from CosmoABC.ABC_functions import SelectParamInnerLoop, DrawAllParams, SetDista
 
 try: 
     from gi.repository import NumCosmo as Nc
-    from CosmoABC.sim_NumCosmo  import *
+    from CosmoABC.sim_NumCosmo import NCountSimul, ChooseParamsInput, numcosmo_simulation
 except ImportError:
     raise ImportError( 'You must have NumCosmo running to use the sim_NumCosmo simulation! \n Please check your NumCosmo instalation.' )
     

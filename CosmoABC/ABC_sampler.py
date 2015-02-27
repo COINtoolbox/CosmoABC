@@ -7,7 +7,7 @@ Approximate Bayesian Computation sampler.
 __author__ = "E. E. O. Ishida, S. D. P. Vitenti, M. Penna-Lima, R. S. de Souza, J. Cisewski, A. M. M. Trindade, V. C. Busti, E. Cameron"
 __maintainer__ = "E. E. O. Ishida"
 __copyright__ = "Copyright 2015"
-__version__ = "0.1.10"
+__version__ = "0.1.11"
 __email__ = "emilleishida@gmail.com"
 __status__ = "Prototype"
 __license__ = "GPL"
@@ -93,7 +93,7 @@ class ABC(object):
             raise TypeError('Real data catalog must be at least 2 dimensional.')
                 
         #check minimum keywords in params
-        self.min_keys = ['param_to_sim', 'param_to_fit', 'prior_par', 'param_lim', 'M', 'qthreshold', 'delta','file_root']  
+        self.min_keys = ['simulation_input', 'param_to_fit', 'prior_par', 'param_lim', 'M', 'qthreshold', 'delta','file_root']  
         for item in self.min_keys:
             if item not in self.params.keys():
                 raise IOError('Keyword ' + str( item ) + '  is missing from inputed dictionary of parameters (params)!') 
@@ -142,7 +142,7 @@ class ABC(object):
         theta = []    
 
         for line in dist:
-            theta_t = [line[2]['simulation_params'][item] for item in line[2]['param_to_fit']]
+            theta_t = [line[2]['simulation_input'][item] for item in line[2]['param_to_fit']]
                        
             for elem in line[0]:
                 theta_t.append( elem )

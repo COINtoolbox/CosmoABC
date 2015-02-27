@@ -18,7 +18,7 @@ from statsmodels.stats.weightstats import DescrStatsW
 
 from CosmoABC.distances import distance_quantiles, summ_quantiles, distance_grbf, SumGRBF 
 from CosmoABC.priors import flat_prior, gaussian_prior, beta_prior
-from CosmoABC.sim_NumCosmo import ChooseParamsInput, numcosmo_simulation
+
 
 ################################################
 
@@ -82,7 +82,7 @@ def read_input(filename):
 
     #functions
     ###### Update this if you include any new functions!!!!!  ##############
-    dispatcher = {'numcosmo_simulation': numcosmo_simulation, 'flat_prior': flat_prior, 
+    dispatcher = {'flat_prior': flat_prior, 
                   'gaussian_prior': gaussian_prior, 'beta_prior':beta_prior, 
                   'distance_grbf':distance_grbf, 'distance_quantiles': distance_quantiles}
     
@@ -102,7 +102,15 @@ def read_input(filename):
         except ValueError:
             sim_par[ item ] = params_ini[ item ][0] 
 
-    if 'simulation_func' in params.keys() and params['simulation_func'] == numcosmo_simulation:
+    if params_ini['simulation_func'] == 'numcosmo_simulation':
+
+        try: 
+            from gi.repository import NumCosmo as Nc
+            from CosmoABC.sim_NumCosmo import NCountSimul, ChooseParamsInput, numcosmo_simulation
+        except ImportError:
+            raise ImportError( 'You must have NumCosmo running to use the sim_NumCosmo simulation!' +
+                                '\n Please check your NumCosmo instalation.' )
+
         sim_par["OL"] = 1. - sim_par["Om"] - sim_par["Ob"]
         Cosmo=ChooseParamsInput()
         Cosmo.params = sim_par 
@@ -194,10 +202,10 @@ def SelectParamInnerLoop(var1):
 
         #update parameter values in dictionary
         for i1 in range(len(var1['params']['param_to_fit'])):
-            var1['params']['simulation_params'][var1['params']['param_to_fit'][i1]] = theta_t_try[i1]
+            var1['params']['simulation_input'][var1['params']['param_to_fit'][i1]] = theta_t_try[i1]
 
         #generate simulation
-        DataSimul = var1['params']['simulation_func'](var1['params']['simulation_params'])
+        DataSimul = var1['params']['simulation_func'](var1['params']['simulation_input'])
       
         #calculate distance
         dist = var1['params']['distance_func'](DataSimul, var1['params'])
@@ -219,7 +227,8 @@ def SelectParamInnerLoop(var1):
     for d3 in epsilon:
         theta_t_try.append(d3)
 
-    print 'Number of draws = ' + str(K)
+    if var1['params']['screen']:
+        print 'Number of draws = ' + str(K)
 
     return theta_t_try
 
@@ -252,10 +261,10 @@ def SetDistanceFromSimulation(var):
     ParTry = DrawAllParams(var)
   
     for i1 in range(len(var['param_to_fit'])):
-        var['simulation_params'][var['param_to_fit'][i1]] = ParTry[i1]
+        var['simulation_input'][var['param_to_fit'][i1]] = ParTry[i1]
 
     #generate simulation
-    DataSimul = var['simulation_func'](var['simulation_params'])
+    DataSimul = var['simulation_func'](var['simulation_input'])
    
     #calculate distance
     dist = var['distance_func'](DataSimul, var)

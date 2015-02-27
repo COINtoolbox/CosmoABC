@@ -51,7 +51,6 @@ from CosmoABC.ABC_sampler import ABC
 from CosmoABC.plots import plot_1D, plot_2D, plot_3D, plot_4D
 from CosmoABC.ABC_functions import SelectParamInnerLoop, DrawAllParams, SetDistanceFromSimulation, read_input 
 
-
 try: 
     from gi.repository import NumCosmo as Nc
     from CosmoABC.sim_NumCosmo  import NCountSimul, ChooseParamsInput, numcosmo_simulation
