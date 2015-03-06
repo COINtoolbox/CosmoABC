@@ -1,4 +1,4 @@
-..warning::
+.. warning::
 
     CosmoABC is in final test version. So use it at your own risk!
 
