@@ -1,3 +1,15 @@
+..warning::
+
+    CosmoABC is in final test version. So use it at your own risk!
+
+    The first release version will be available in spring 2015 accompanied by the corresponding paper.
+
+    In the mean time, comments/suggestions/criticism/bug reports are more than welcome!
+
+    Emille Ishida (emilleishida_at_gmail.com)
+
+
+
 CosmoABC - Likelihood free parameter estimation for cosmology
 =============================================================
 
