@@ -45,39 +45,49 @@ from CosmoABC.distances import distance_quantiles, summ_quantiles, distance_grbf
 from CosmoABC.priors import flat_prior, gaussian_prior, beta_prior
 from CosmoABC.ABC_sampler import ABC
 from CosmoABC.plots import plot_1D, plot_2D, plot_3D, plot_4D  
+from CosmoABC.ABC_functions import read_input, get_cores, DrawAllParams, SetDistanceFromSimulation, SelectParamInnerLoop
 
 def main( args ):
 
-    user_input = read_input( args.input )
-    m1 = imp.load_source( args.functions[:-3], args.functions )
+    user_input = read_input(args.input)
+    m1 = imp.load_source(args.functions[:-3], args.functions)
 
     user_input['simulation_func'] = m1.simulation
 
+
     if 'distance_func' not in user_input.keys():
         user_input['distance_func'] = m1.distance
-    
-    for l1 in range( user_input['npar'] ):
-        if isinstance( user_input['prior_func'][ l1 ], str):            
-            user_input['prior_func'][ l1 ] = getattr( m1, user_input['prior_func'][ l1 ] )
+
+    for l1 in range(user_input['npar']):
+        if isinstance(user_input['prior_func'][ l1 ], str):            
+            user_input['prior_func'][ l1 ] = getattr(m1, user_input['prior_func'][ l1 ])
             
+    #check if observed data exist, simulate in case negative
+    if user_input['path_to_obs'] == 'None':
+        user_input['dataset1'] = user_input['simulation_func'](user_input['simulation_input'])
+
+     
+    if 'dist_dim' not in user_input.keys():    
+        user_input['dist_dim'] = len(user_input['distance_func'](user_input['dataset1'], user_input))
+
     #initiate ABC construct
-    sampler_ABC = ABC( params=user_input ) 
+    sampler_ABC = ABC(params=user_input) 
 
     #build first particle system
-    sys1 = sampler_ABC.BuildFirstPSystem( filename=user_input['file_root'] + '0.dat' )
+    sys1 = sampler_ABC.BuildFirstPSystem()
 
     #update particle system until convergence
-    sampler_ABC.fullABC(  user_input['file_root'] )
+    sampler_ABC.fullABC(user_input['file_root'])
 
     #plot results
-    if len( user_input['param_to_fit'] ) == 1 :
-        plot_1D( sampler_ABC.T, 'results.pdf', user_input)
+    if len(user_input['param_to_fit'] ) == 1 :
+        plot_1D(sampler_ABC.T, 'results.pdf', user_input)
 
-    elif len( user_input['param_to_fit'] ) == 2 :
-        plot_2D( sampler_ABC.T, 'results.pdf', user_input )      
+    elif len(user_input['param_to_fit'] ) == 2 :
+        plot_2D(sampler_ABC.T, 'results.pdf', user_input)      
 
-    elif    len( user_input['param_to_fit'] ) == 3 :
-        plot_3D( sampler_ABC.T, 'results.pdf', user_input ) 
+    elif len(user_input['param_to_fit'] ) == 3 :
+        plot_3D(sampler_ABC.T, 'results.pdf', user_input) 
 
     else:
         raise ValueError('Only 1, 2 and 3 dimensional plots are implemented so far!')

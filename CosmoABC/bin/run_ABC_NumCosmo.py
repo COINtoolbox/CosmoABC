@@ -61,16 +61,6 @@ except ImportError:
 def main( args ):
 
     user_input = read_input( args.input )
-    user_input['simulation_func'] = numcosmo_simulation
-
-
-    #initiate NumCosmo object necessary for simulation
-    Cosmo=ChooseParamsInput()
-    Cosmo.params = user_input['simulation_input']
-    Cosmo.params["OL"]  = 1.- Cosmo.params['Om']-Cosmo.params['Ob']
-
-    #assign input for simulation
-    user_input['simulation_params'] = Cosmo.params
 
     if args.functions != None:
         m1 = imp.load_source( args.functions[:-3], args.functions )
@@ -81,7 +71,6 @@ def main( args ):
     for l1 in range( user_input['npar'] ):
         if isinstance( user_input['prior_func'][ l1 ], str):            
             user_input['prior_func'][ l1 ] = getattr( m1, user_input['prior_func'][ l1 ] )
-
 
     #initiate ABC construct
     sampler_ABC = ABC(params=user_input) 

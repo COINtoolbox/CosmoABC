@@ -51,18 +51,6 @@ def read_input(filename):
     
     params = {}
     params['path_to_obs'] = params_ini['path_to_obs'][0] 
-
-    #check if ``observer'' data already exists
-    if params['path_to_obs'] != 'None':
-        #read observed data
-        op2 = open(params_ini['path_to_obs'][0], 'r')
-        lin2 = op2.readlines()
-        op2.close()
-
-        data2 = [elem.split() for elem in lin2[1:]]
-        params['dataset1'] = np.array([[float(item) for item in line ] for line in data2])  
-
-
     params['param_to_fit'] = [params_ini['param_to_fit'][i] 
                              for i in xrange(params_ini['param_to_fit'].index('#'))]
     params['param_to_sim'] = [params_ini['param_to_sim'][i] 
@@ -89,9 +77,13 @@ def read_input(filename):
     if params_ini['simulation_func'][0] in dispatcher:
         params['simulation_func'] = dispatcher[params_ini['simulation_func'][0]]
 
-    params['prior_func'] = [dispatcher[params_ini['prior_func'][k]] 
+    if len(params_ini['prior_func']) == params['npar']:
+        params['prior_func'] = [dispatcher[params_ini['prior_func'][k]] 
                            if params_ini['prior_func'][k] in dispatcher.keys() 
                            else params_ini['prior_func'][k] for k in xrange(params['npar'])]
+    else:
+        raise ValueError('Number of prior functions does not match number of parameters!') 
+
 
     #fiducial extra parameters
     sim_par = {}  
@@ -102,7 +94,7 @@ def read_input(filename):
         except ValueError:
             sim_par[ item ] = params_ini[ item ][0] 
 
-    if params_ini['simulation_func'] == 'numcosmo_simulation':
+    if params_ini['simulation_func'][0] == 'numcosmo_simulation':
 
         try: 
             from gi.repository import NumCosmo as Nc
@@ -115,10 +107,25 @@ def read_input(filename):
         Cosmo=ChooseParamsInput()
         Cosmo.params = sim_par 
         params['simulation_input'] = Cosmo.params
-
+        params['simulation_func'] = numcosmo_simulation
+        
     else:
         params['simulation_input'] = sim_par
 
+
+    #check if ``observer'' data already exists, simulate in case negative
+    if params['path_to_obs'] != 'None':
+        #read observed data
+        op2 = open(params_ini['path_to_obs'][0], 'r')
+        lin2 = op2.readlines()
+        op2.close()
+
+        data2 = [elem.split() for elem in lin2[1:]]
+        params['dataset1'] = np.array([[float(item) for item in line ] for line in data2])  
+
+    elif 'simulation_func' in params.keys():
+        params['dataset1'] = params['simulation_func'](params['simulation_input'])
+    
     if params_ini['distance_func'][0] in dispatcher.keys():
         params['distance_func'] = dispatcher[params_ini['distance_func'][0]]
 
@@ -240,12 +247,13 @@ def DrawAllParams(params):
     """
 
     pars = []
+    
     for j in range(len(params['param_to_fit'])):
         p1 = params['prior_func'][j](params['prior_par'][j], params['param_lim'][j])   
         pars.append(p1)
 
     return np.array(pars)
-
+   
 def SetDistanceFromSimulation(var):
     """
     Draw cosmological parameter values from prior, generate simulation and calculate distance from a given comparison  catalog. 
@@ -272,6 +280,9 @@ def SetDistanceFromSimulation(var):
     if dist > 0:
 
         total_time = time.time() - time1
+        if var['screen']:
+            print 'Calculated distance: \n   ' + str(dist)
+   
         return dist, total_time, var
     else:
         print 'dist = ' + str(dist)

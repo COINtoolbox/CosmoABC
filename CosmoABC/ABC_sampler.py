@@ -7,13 +7,13 @@ Approximate Bayesian Computation sampler.
 __author__ = "E. E. O. Ishida, S. D. P. Vitenti, M. Penna-Lima, R. S. de Souza, J. Cisewski, A. M. M. Trindade, V. C. Busti, E. Cameron"
 __maintainer__ = "E. E. O. Ishida"
 __copyright__ = "Copyright 2015"
-__version__ = "0.1.12"
+__version__ = "0.1.13"
 __email__ = "emilleishida@gmail.com"
 __status__ = "Prototype"
 __license__ = "GPL"
 
 
-import numpy
+import numpy as np
 import time
 import sys
 
@@ -78,8 +78,6 @@ class ABC(object):
         self.M	= params['M']                                   #number of elements in each particle system
         self.qthreshold	= params['qthreshold']                  #quantile to define the distance threshold for subsequent particle system
 
-        self.params['dist_dim'] = len(params['dataset1'][0]) + 1
-
         #check length of observed data
         if isinstance(self.data, bool):
             raise IOError('No real data catalog provided.')
@@ -134,6 +132,7 @@ class ABC(object):
         #    print 'Calculated ' + str(args.index(i)) + 'from ' + str(len(args))
 
         pool.close()
+
         time_end = time.time() - time_ini
 
         total_time = time_end/self.M
@@ -143,16 +142,15 @@ class ABC(object):
 
         for line in dist:
             theta_t = [line[2]['simulation_input'][item] for item in line[2]['param_to_fit']]
-                       
-            for elem in line[0]:
-                theta_t.append( elem )
+           
+            theta_t = theta_t + list(line[0])            
+
             theta_t.append(str(self.params['Mini']/self.M))
             theta_t.append(total_time)
-            theta.append(theta_t)
-       
-               
+            theta.append(theta_t)            
+
         #choose smaller distance 
-        d1 = numpy.array([ numpy.sqrt(sum(line[j]**2 
+        d1 = np.array([ np.sqrt(sum(line[j]**2 
                          for j in xrange(len(self.params['param_to_fit']),len(self.params['param_to_fit']) 
                                   + self.params['dist_dim']))) for line in theta])
 
@@ -170,7 +168,7 @@ class ABC(object):
                 op.write(item  + '    ')
 
             for i2 in xrange(self.params['dist_dim']):
-                op.write('distance' + str(i2 + 1) + '    ')    
+                op.write('distance' + str(i2 + 1) + '    ')     
  
             op.write('NDraws    time       ')
 
@@ -182,7 +180,7 @@ class ABC(object):
                 for elem in line:
                     op.write(str( elem )  + '    ')
                 for i3 in xrange(self.params['dist_dim']):
-                    op.write(str( max(numpy.array(theta_new)[:,-self.params['dist_dim'] + i3])) + '    ')
+                    op.write(str( max(np.array(theta_new)[:,-self.params['dist_dim'] + i3])) + '    ')
                 op.write('\n')
             op.close()
 
@@ -194,7 +192,7 @@ class ABC(object):
             op2.write(str(item) + '\n')
         op2.close()
  
-        return numpy.array(theta_new), self.params['Mini']
+        return np.array(theta_new), self.params['Mini']
 
     def BuildPSystem(self, previous_particle_system, W, t):
         """
@@ -246,7 +244,7 @@ class ABC(object):
             op.write('\n')
         op.close()
 
-        return numpy.array(surv_param)
+        return np.array(surv_param)
 
 
     def UpdateWeights(self, W, previous_particle_system, current_particle_system, output=True):   
@@ -278,7 +276,7 @@ class ABC(object):
                                         for i1 in xrange(len(self.params['param_to_fit']))]
 
         for i4 in range(len(current_particle_system)):
-            nominator = numpy.prod([distributions[i2].pdf(current_particle_system[i4][i2])  
+            nominator = np.prod([distributions[i2].pdf(current_particle_system[i4][i2])  
                                    for i2 in xrange(len(self.params['param_to_fit']))])
 
             denominator = sum(W[i3]*multivariate_normal.pdf(current_particle_system[i4][:len(self.params['param_to_fit'])], 
@@ -322,9 +320,9 @@ class ABC(object):
         lin = op.readlines()
         op.close()
 
-        t1 = [elem.split() for elem in lin[1:]]
+        t1 = np.atleast_2d([elem.split() for elem in lin[1:]])
 
-        sys1 = numpy.array([numpy.array([float(line[i1]) 
+        sys1 = np.array([np.array([float(line[i1]) 
                            for i1 in xrange(len(self.params['param_to_fit']) + self.params['dist_dim'])]) 
                                             for line in t1 ])
 
@@ -379,7 +377,7 @@ class ABC(object):
 
         t1 = [elem.split() for elem in lin]
         
-        sys1 = numpy.array([numpy.array([float(line[i1]) 
+        sys1 = np.array([np.array([float(line[i1]) 
                           for i1 in xrange(len(self.params['param_to_fit']) + self.params['dist_dim'])]) 
                                           for line in t1[1:]])
         
@@ -388,7 +386,7 @@ class ABC(object):
         print 'number of draws PS' + str(t) + ' = ' + str(K)
         
         if t > 0:        
-            W1 = numpy.loadtxt(self.params['file_root'] + str(t) + 'weights.dat')
+            W1 = np.loadtxt(self.params['file_root'] + str(t) + 'weights.dat')
         elif t == 0:
             W1 = [1.0/self.M for i2 in xrange(self.M)]
     
