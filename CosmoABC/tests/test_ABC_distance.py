@@ -23,8 +23,6 @@ from CosmoABC.distances import distance_quantiles, summ_quantiles, distance_grbf
 from CosmoABC.priors import flat_prior, gaussian_prior, beta_prior
 from CosmoABC.ABC_sampler import ABC
 from CosmoABC.ABC_functions import SelectParamInnerLoop, DrawAllParams, SetDistanceFromSimulation, read_input 
-from CosmoABC.sim_NumCosmo import NCountSimul, ChooseParamsInput, numcosmo_simulation
-
         
 
 def main(args):

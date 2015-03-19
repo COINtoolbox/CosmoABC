@@ -58,7 +58,22 @@ def main( args ):
         for l1 in range( user_input['npar'] ):
             if isinstance( user_input['prior_func'][ l1 ], str):            
                 user_input['prior_func'][ l1 ] = getattr( m1, user_input['prior_func'][ l1 ] )
+
+        if 'simulation_func' not in user_input.keys(): 
+            user_input['simulation_func'] = m1.simulation
+
+        if 'distance_func'  not in user_input.keys():
+            user_input['distance_func'] = m1.distance
+
+   
+    #check if observed data exist, simulate in case negative
+    if user_input['path_to_obs'] == 'None':
+        user_input['dataset1'] = user_input['simulation_func'](user_input['simulation_input'])
+
      
+    if 'dist_dim' not in user_input.keys():    
+        user_input['dist_dim'] = len(user_input['distance_func'](user_input['dataset1'], user_input))
+  
             
 
     #plot results
