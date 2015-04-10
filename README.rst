@@ -18,11 +18,11 @@ Emille Ishida   (emilleishida_at_gmail.com)
 
 
 
-CosmoABC - Likelihood free parameter estimation for cosmology
+CosmoABC - Likelihood free inference via PMC-ABC
 =============================================================
 
 
-``CosmoABC`` is a package which enables parameter inference using an Approximate Bayesian Computation (ABC) algorithm, as described in Ishida et al., 2015 [LINK].
+``CosmoABC`` is a package which enables parameter inference using an Population Monte Carlo Approximate Bayesian Computation algorithm (PMC-ABC), as described in Ishida et al., 2015 [LINK].
 
 The code was originally designed for cosmological parameter inference from galaxy clusters number counts based on Sunyaev-Zel'dovich measurements. In this context, the cosmological simulations were performed using the `NumCosmo library <http://www.nongnu.org/numcosmo/>`_.
 
