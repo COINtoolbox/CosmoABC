@@ -32,10 +32,10 @@ def main(args):
     if args.functions != None:
         m1 = imp.load_source( args.functions[:-3], args.functions )
 
-        if 'distance_func' not in params:
+        if isinstance(params['distance_func'][0], str):
             params['distance_func'] = m1.distance
 
-        if 'simulation_func' not in params:
+        if isinstance(params['simulation_func'][0], str):
             params['simulation_func'] = m1.simulation
 
         for i1 in xrange(params['npar']):
