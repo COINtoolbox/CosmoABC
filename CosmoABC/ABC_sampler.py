@@ -12,7 +12,6 @@ __email__ = "emilleishida@gmail.com"
 __status__ = "Prototype"
 __license__ = "GPL"
 
-
 import numpy as np
 import time
 import sys

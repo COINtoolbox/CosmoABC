@@ -138,7 +138,12 @@ def read_input(filename):
 
         elif 'dataset1' in params and params['distance_func'] == distance_quantiles:
             params['dist_dim'] = len(params['dataset1'][0]) + 1
+            params['quantile_nodes'] = int(params_ini['quantile_nodes'][0])
             params = summ_quantiles(params['dataset1'], params)
+
+    for key in params_ini.keys():
+        if key not in params.keys():
+            params[key] = params_ini[key]
 
     return params
 

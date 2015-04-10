@@ -90,7 +90,7 @@ def summ_quantiles( dataset1, Parameters ):
     
     Parameters['dist_dim'] = len(dataset1[0]) + 1
  
-    qlist = np.arange( 0.05, 1.0, 0.05 )
+    qlist = np.arange( 0.05, 1.0, 0.95/Parameters['quantile_nodes'] )
 
     Parameters['extra'] = []
     for i1 in xrange( len( dataset1[0] ) ):
@@ -115,7 +115,7 @@ def distance_quantiles( dataset2, Parameters ):
     """
 
 
-    qlist = np.arange( 0.05, 1.0, 0.05 )
+    qlist = np.arange( 0.05, 1.0, 0.95/Parameters['quantile_nodes'] )
 
 
     qd = []

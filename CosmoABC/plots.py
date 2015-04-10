@@ -12,9 +12,9 @@ import matplotlib.gridspec as gridspec
 from weighted_gaussian_kde import gaussian_kde
 
 
-def plot_1D(T, file_output, Parameters):
+def plot_1P(T, file_output, Parameters):
     """
-    Make 1-dimensional plot for ABC results. 
+    Make 1 free parameter plot for ABC results. 
 
     input:  T 		-> number of total particle systems (int)  
 	    file_output -> name of output figure file (str)
@@ -63,7 +63,7 @@ def plot_1D(T, file_output, Parameters):
 
         print 'Finished plotting particle system T=0'
 
-        for i in range(T):
+        for i in range(T+1):
            
             op1 = open(Parameters['file_root'] + str(i) + '.dat', 'r')
             lin1 = op1.readlines()
@@ -133,9 +133,9 @@ def plot_1D(T, file_output, Parameters):
 
         print 'Finished plotting particle system T=' + str(i + 1)
 
-def plot_2D(T, file_output, Parameters):
+def plot_2P(T, file_output, Parameters):
     """
-    Make 2-dimensional plot for ABC results. 
+    Make 2 free parameter plot for ABC results. 
 
     input:  T 		-> number of total particle systems (int)  
 	    file_output -> name of output figure file (str)
@@ -174,7 +174,7 @@ def plot_2D(T, file_output, Parameters):
     y02 = kde02(sampling[1])
 
     d20 = np.array(y0) 
-    kde30 = gaussian_kde(d20.transpose())
+    kde30 = gaussian_kde(d20.transpose(), weights=w0)
     xx, yy = np.meshgrid(sampling2[0], sampling2[1])
     y30 = kde30((np.ravel(xx), np.ravel(yy)))
     zz0 = np.reshape(y30, xx.shape) 
@@ -231,7 +231,7 @@ def plot_2D(T, file_output, Parameters):
 
         print 'Finished plotting particle system T=0' 
 
-        for i in range(T):
+        for i in range(T+1):
            
             op1 = open(Parameters['file_root'] + str( i ) + '.dat', 'r')
             lin1 = op1.readlines()
@@ -258,7 +258,7 @@ def plot_2D(T, file_output, Parameters):
             y2 = kde2(sampling[1])
  
             d2 = np.array(d1[:,:len(Parameters['param_to_fit'])]) 
-            kde3 = gaussian_kde(d2.transpose())
+            kde3 = gaussian_kde(d2.transpose(), weights=w1)
             y3 = kde3((np.ravel(xx), np.ravel(yy)))
             zz = np.reshape(y3, xx.shape)    
 
@@ -338,9 +338,9 @@ def plot_2D(T, file_output, Parameters):
         pdf.savefig()
         plt.close()
 
-def plot_3D(T, file_output, Parameters):
+def plot_3P(T, file_output, Parameters):
     """
-    Make 3-dimensional plot for ABC results. 
+    Make 3 free parameters plot for ABC results. 
 
     input:  T 		-> number of total particle systems (int)  
 	    file_output -> name of output figure file (str)
@@ -400,15 +400,15 @@ def plot_3D(T, file_output, Parameters):
     kde03 = gaussian_kde(y0[:,2], weights=w0)
     y03 = kde03(sampling[2])
 
-    kde012 = gaussian_kde(np.array([y0[:,0], y0[:,1]]))  
+    kde012 = gaussian_kde(np.array([y0[:,0], y0[:,1]]), weights=w0)  
     y012 = kde012((np.ravel(xx12), np.ravel(yy12)))
     zz012 = np.reshape(y012, xx12.shape)   
     
-    kde013 = gaussian_kde(np.array([y0[:,0], y0[:,2]]))   
+    kde013 = gaussian_kde(np.array([y0[:,0], y0[:,2]]), weights=w0)   
     y013 = kde013((np.ravel(xx13), np.ravel(yy13)))
     zz013 = np.reshape(y013, xx13.shape)    
     
-    kde023 = gaussian_kde(np.array([y0[:,1], y0[:,2]]))
+    kde023 = gaussian_kde(np.array([y0[:,1], y0[:,2]]), weights=w0)
     y023 = kde023((np.ravel(xx23), np.ravel(yy23)))
     zz023 = np.reshape(y023, xx23.shape)
 
@@ -486,7 +486,7 @@ def plot_3D(T, file_output, Parameters):
 
         print 'Finished plotting particle system T=0'
 
-        for i in range(T):
+        for i in range(T+1):
            
             #read individual particle systems
             op1 = open(Parameters['file_root'] + str(i) + '.dat', 'r')
@@ -516,7 +516,7 @@ def plot_3D(T, file_output, Parameters):
             kde3 = gaussian_kde(d1[:,2], weights=w1)
             y3 = kde3(sampling[2]) 
  
-            kde12 = gaussian_kde(np.array([d1[:,0], d1[:,1]]))
+            kde12 = gaussian_kde(np.array([d1[:,0], d1[:,1]]), weights=w1)
             xx12, yy12 = np.meshgrid(sampling2[0], sampling2[1])
             y12 = kde12((np.ravel(xx12), np.ravel(yy12)))
             zz12 = np.reshape(y12, xx12.shape)
@@ -525,7 +525,7 @@ def plot_3D(T, file_output, Parameters):
                                     Parameters['param_lim'][1][0], Parameters['param_lim'][1][1]), 
                                     cmap='hot', origin='lower') 
 
-            kde13 = gaussian_kde(np.array([d1[:,0], d1[:,2]]))
+            kde13 = gaussian_kde(np.array([d1[:,0], d1[:,2]]), weights=w1)
             xx13, yy13 = np.meshgrid(sampling2[0], sampling2[2])
             y13 = kde13(( np.ravel(xx13), np.ravel(yy13)))
             zz13 = np.reshape( y13, xx13.shape)    
@@ -534,7 +534,7 @@ def plot_3D(T, file_output, Parameters):
                                     Parameters['param_lim'][2][0], Parameters['param_lim'][2][1]), 
                                     cmap='hot', origin='lower')
 
-            kde23 = gaussian_kde(np.array([d1[:,1], d1[:,2]]))
+            kde23 = gaussian_kde(np.array([d1[:,1], d1[:,2]]), weights=w1)
             xx23, yy23 = np.meshgrid(sampling2[1], sampling2[2])
             y23 = kde23((np.ravel(xx23), np.ravel(yy23)))
             zz23 = np.reshape(y23, xx23.shape)
@@ -642,9 +642,9 @@ def plot_3D(T, file_output, Parameters):
         plt.close()
 
 
-def plot_4D(T, file_output, Parameters):
+def plot_4P(T, file_output, Parameters):
     """
-    Make 3-dimensional plot for ABC results. 
+    Make 4 free parameter plot for ABC results. 
 
     input:  T 		-> number of total particle systems (int)  
 	    file_output -> name of output figure file (str)
@@ -720,27 +720,27 @@ def plot_4D(T, file_output, Parameters):
     kde04 = gaussian_kde(y0[:,3], weights=w0)
     y04 = kde04(sampling[3])
 
-    kde012 = gaussian_kde(np.array([y0[:,0], y0[:,1]]))  
+    kde012 = gaussian_kde(np.array([y0[:,0], y0[:,1]]), weights=w0)  
     y012 = kde012((np.ravel(xx12), np.ravel(yy12)))
     zz012 = np.reshape(y012, xx12.shape)   
     
-    kde013 = gaussian_kde(np.array([y0[:,0], y0[:,2]]))   
+    kde013 = gaussian_kde(np.array([y0[:,0], y0[:,2]]), weights=w0)   
     y013 = kde013((np.ravel(xx13), np.ravel(yy13)))
     zz013 = np.reshape(y013, xx13.shape)  
 
-    kde014 = gaussian_kde(np.array([y0[:,0], y0[:,3]]))   
+    kde014 = gaussian_kde(np.array([y0[:,0], y0[:,3]]), weights=w0)   
     y014 = kde014((np.ravel(xx14), np.ravel(yy14)))
     zz014 = np.reshape(y014, xx14.shape)   
     
-    kde023 = gaussian_kde(np.array([y0[:,1], y0[:,2]]))
+    kde023 = gaussian_kde(np.array([y0[:,1], y0[:,2]]), weights=w0)
     y023 = kde023((np.ravel(xx23), np.ravel(yy23)))
     zz023 = np.reshape(y023, xx23.shape)
 
-    kde024 = gaussian_kde(np.array([y0[:,1], y0[:,3]]))
+    kde024 = gaussian_kde(np.array([y0[:,1], y0[:,3]]), weights=w0)
     y024 = kde024((np.ravel(xx24), np.ravel(yy24)))
     zz024 = np.reshape(y024, xx24.shape)
 
-    kde034 = gaussian_kde(np.array([y0[:,2], y0[:,3]]))
+    kde034 = gaussian_kde(np.array([y0[:,2], y0[:,3]]), weights=w0)
     y034 = kde034((np.ravel(xx34), np.ravel(yy34)))
     zz034 = np.reshape(y034, xx34.shape)
 
@@ -854,7 +854,7 @@ def plot_4D(T, file_output, Parameters):
 
         print 'Finished plotting particle system T=0'
 
-        for i in range(T):
+        for i in range(T+1):
            
             #read individual particle systems
             op1 = open(Parameters['file_root'] + str( i ) + '.dat', 'r')
@@ -888,7 +888,7 @@ def plot_4D(T, file_output, Parameters):
             kde4 = gaussian_kde(d1[:,3], weights=w1)
             y4 = kde3(sampling[3]) 
 
-            kde12 = gaussian_kde(np.array([d1[:,0], d1[:,1]]))
+            kde12 = gaussian_kde(np.array([d1[:,0], d1[:,1]]), weights=w1)
             xx12, yy12 = np.meshgrid(sampling2[0], sampling2[1])
             y12 = kde12((np.ravel(xx12), np.ravel(yy12)))
             zz12 = np.reshape(y12, xx12.shape)   
@@ -897,7 +897,7 @@ def plot_4D(T, file_output, Parameters):
                                     Parameters['param_lim'][1][0], Parameters['param_lim'][1][1]), 
                                     cmap='hot', origin='lower') 
 
-            kde13 = gaussian_kde(np.array([d1[:,0], d1[:,2]]))
+            kde13 = gaussian_kde(np.array([d1[:,0], d1[:,2]]), weights=w1)
             xx13, yy13 = np.meshgrid(sampling2[0], sampling2[2])
             y13 = kde13((np.ravel(xx13), np.ravel(yy13)))
             zz13 = np.reshape(y13, xx13.shape)
@@ -906,7 +906,7 @@ def plot_4D(T, file_output, Parameters):
                                     Parameters['param_lim'][2][0], Parameters['param_lim'][2][1]), 
                                     cmap='hot', origin='lower')
 
-            kde14 = gaussian_kde(np.array([d1[:,0], d1[:,3]]))
+            kde14 = gaussian_kde(np.array([d1[:,0], d1[:,3]]), weights=w1)
             xx14, yy14 = np.meshgrid(sampling2[0], sampling2[3])
             y14 = kde14((np.ravel(xx14), np.ravel(yy14)))
             zz14 = np.reshape(y14, xx14.shape)    
@@ -915,7 +915,7 @@ def plot_4D(T, file_output, Parameters):
                                     Parameters['param_lim'][3][0], Parameters['param_lim'][3][1]), 
                                     cmap='hot', origin='lower') 
 
-            kde23 = gaussian_kde(np.array([d1[:,1], d1[:,2]]))
+            kde23 = gaussian_kde(np.array([d1[:,1], d1[:,2]]), weights=w1)
             xx23, yy23 = np.meshgrid(sampling2[1], sampling2[2])
             y23 = kde23((np.ravel(xx23), np.ravel(yy23)))
             zz23 = np.reshape(y23, xx23.shape)
@@ -924,7 +924,7 @@ def plot_4D(T, file_output, Parameters):
                                     Parameters['param_lim'][2][0], Parameters['param_lim'][2][1]), 
                                     cmap='hot', origin='lower')
 
-            kde24 = gaussian_kde(np.array([d1[:,1], d1[:,3] ]))
+            kde24 = gaussian_kde(np.array([d1[:,1], d1[:,3] ]), weights=w1)
             xx24, yy24 = np.meshgrid(sampling2[1], sampling2[3])
             y24 = kde24((np.ravel(xx24), np.ravel(yy24)))
             zz24 = np.reshape(y24, xx24.shape)
@@ -933,7 +933,7 @@ def plot_4D(T, file_output, Parameters):
                                     Parameters['param_lim'][3][0], Parameters['param_lim'][3][1]), 
                                     cmap='hot', origin='lower')
 
-            kde34 = gaussian_kde(np.array([d1[:,2], d1[:,3]]))
+            kde34 = gaussian_kde(np.array([d1[:,2], d1[:,3]]), weights=w1)
             xx34, yy34 = np.meshgrid(sampling2[2], sampling2[3])
             y34 = kde34((np.ravel(xx34), np.ravel(yy34)))
             zz34 = np.reshape(y34, xx34.shape)
