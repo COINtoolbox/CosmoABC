@@ -48,7 +48,6 @@ import os
 from CosmoABC.distances import distance_quantiles, summ_quantiles, distance_grbf, SumGRBF 
 from CosmoABC.priors import flat_prior, gaussian_prior, beta_prior
 from CosmoABC.ABC_sampler import ABC
-from CosmoABC.plots import plot_1D, plot_2D, plot_3D, plot_4D
 from CosmoABC.ABC_functions import SelectParamInnerLoop, DrawAllParams, SetDistanceFromSimulation, read_input 
 
 try: 

@@ -12,7 +12,7 @@ import matplotlib.gridspec as gridspec
 from weighted_gaussian_kde import gaussian_kde
 
 
-def plot_1D(T, file_output, Parameters):
+def plot_1p(T, file_output, Parameters):
     """
     Make 1-dimensional plot for ABC results. 
 
@@ -133,7 +133,7 @@ def plot_1D(T, file_output, Parameters):
 
         print 'Finished plotting particle system T=' + str(i + 1)
 
-def plot_2D(T, file_output, Parameters):
+def plot_2p(T, file_output, Parameters):
     """
     Make 2-dimensional plot for ABC results. 
 
@@ -338,7 +338,7 @@ def plot_2D(T, file_output, Parameters):
         pdf.savefig()
         plt.close()
 
-def plot_3D(T, file_output, Parameters):
+def plot_3p(T, file_output, Parameters):
     """
     Make 3-dimensional plot for ABC results. 
 
@@ -642,7 +642,7 @@ def plot_3D(T, file_output, Parameters):
         plt.close()
 
 
-def plot_4D(T, file_output, Parameters):
+def plot_4p(T, file_output, Parameters):
     """
     Make 3-dimensional plot for ABC results. 
 

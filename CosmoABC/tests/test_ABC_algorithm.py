@@ -10,7 +10,7 @@ from CosmoABC.distances import distance_quantiles, summ_quantiles
 from CosmoABC.priors import flat_prior
 from CosmoABC.ABC_sampler import ABC
 from CosmoABC.ABC_functions import SelectParamInnerLoop, SetDistanceFromSimulation, DrawAllParams, get_cores
-from CosmoABC.plots import plot_1D, plot_2D, plot_3D, plot_4D
+from CosmoABC.plots import plot_1p, plot_2p, plot_3p, plot_4p
 
 
 def ysim(v):
@@ -78,16 +78,16 @@ class TestABC(unittest.TestCase):
         self.sampler_ABC.fullABC(build_first_system=True)
 
         if len(self.params['param_to_fit']) == 1:
-            plot_1D(self.sampler_ABC.T, 'results.pdf', self.params)
+            plot_1p(self.sampler_ABC.T, 'results.pdf', self.params)
 
         elif len(self.params['param_to_fit']) == 2:
-            plot_2D(self.sampler_ABC.T, 'results.pdf', self.params) 
+            plot_2p(self.sampler_ABC.T, 'results.pdf', self.params) 
 
         elif len(self.params['param_to_fit']) == 3:
-            plot_3D(self.sampler_ABC.T, 'results.pdf', self.params) 
+            plot_3p(self.sampler_ABC.T, 'results.pdf', self.params) 
 
         elif len(self.params['param_to_fit']) == 4:
-            plot_4D(self.sampler_ABC.T, 'results.pdf', self.params) 
+            plot_4p(self.sampler_ABC.T, 'results.pdf', self.params) 
    
 
 if __name__ == '__main__':
