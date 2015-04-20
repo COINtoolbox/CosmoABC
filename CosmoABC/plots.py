@@ -12,7 +12,7 @@ import matplotlib.gridspec as gridspec
 from weighted_gaussian_kde import gaussian_kde
 
 
-def plot_1P(T, file_output, Parameters):
+def plot_1p(T, file_output, Parameters):
     """
     Make 1 free parameter plot for ABC results. 
 
@@ -133,7 +133,7 @@ def plot_1P(T, file_output, Parameters):
 
         print 'Finished plotting particle system T=' + str(i + 1)
 
-def plot_2P(T, file_output, Parameters):
+def plot_2p(T, file_output, Parameters):
     """
     Make 2 free parameter plot for ABC results. 
 
@@ -338,7 +338,8 @@ def plot_2P(T, file_output, Parameters):
         pdf.savefig()
         plt.close()
 
-def plot_3P(T, file_output, Parameters):
+
+def plot_3p(T, file_output, Parameters):
     """
     Make 3 free parameters plot for ABC results. 
 
@@ -642,7 +643,7 @@ def plot_3P(T, file_output, Parameters):
         plt.close()
 
 
-def plot_4P(T, file_output, Parameters):
+def plot_4p(T, file_output, Parameters):
     """
     Make 4 free parameter plot for ABC results. 
 
