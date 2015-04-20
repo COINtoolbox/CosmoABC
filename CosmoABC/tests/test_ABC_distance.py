@@ -86,6 +86,9 @@ def main(args):
     ngrid = int(raw_input('Enter number of draws in parameter grid: '))    
     param_grid = [DrawAllParams(params) for j1 in xrange(ngrid)]
 
+    #open output data file
+    op = open(output_file + '.dat', 'w')
+
     grid = []
     for pars in param_grid:
         
@@ -101,8 +104,12 @@ def main(args):
         if sum(distance_grid) < 9**9:
             for elem in distance_grid:
                 grid_element.append(elem)
-
+                op.write(str(elem) + '    ')
+            op.write('\n')
+  
             grid.append(grid_element)                   
+
+    op.close()
 
     grid = np.array(grid)
 
