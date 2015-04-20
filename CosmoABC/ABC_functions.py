@@ -67,6 +67,8 @@ def read_input(filename):
     params['file_root'] = params_ini['file_root'][0]  
     params['screen'] = bool(params_ini['screen'][0])
     params['ncores'] = int(params_ini['ncores'][0])
+    params['prior_func'] = [params_ini['prior_func'][i] 
+                             for i in xrange(params_ini['prior_func'].index('#'))]
 
     #functions
     ###### Update this if you include any new functions!!!!!  ##############
@@ -77,12 +79,10 @@ def read_input(filename):
     if params_ini['simulation_func'][0] in dispatcher:
         params['simulation_func'] = dispatcher[params_ini['simulation_func'][0]]
 
-    if len(params_ini['prior_func']) == params['npar']:
-        print "params['npar'] = " + str(params['npar'])
-        print "params_ini['prior_func'] = " + str(params_ini['prior_func'])
-        params['prior_func'] = [dispatcher[params_ini['prior_func'][k]] 
-                           if params_ini['prior_func'][k] in dispatcher.keys() 
-                           else params_ini['prior_func'][k] for k in xrange(params['npar'])]
+    if len(params['prior_func']) == params['npar']:
+        params['prior_func'] = [dispatcher[params['prior_func'][k]] 
+                           if params['prior_func'][k] in dispatcher.keys() 
+                           else params['prior_func'][k] for k in xrange(params['npar'])]
     else:
         raise ValueError('Number of prior functions does not match number of parameters!') 
 

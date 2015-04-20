@@ -139,10 +139,10 @@ def distance_quantiles(dataset2, Parameters):
 
     d = []
     for j2 in xrange( len( dataset2[0] ) ):
-        d.append( np.linalg.norm( Parameters['extra'][ j2] - qd[ j2 ] ) )
+        d.append(np.linalg.norm(Parameters['extra'][ j2] - qd[j2]))
 
     
-    d.append( max(abs(1-float(l1)/l2), abs(1-float(l2)/l1)) )
+    d.append(max(abs(1-float(l1)/l2), abs(1-float(l2)/l1)))
 
     return d
 
