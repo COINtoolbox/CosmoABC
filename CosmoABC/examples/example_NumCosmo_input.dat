@@ -35,7 +35,8 @@ qthreshold 	= 0.75				# quantile in distance threshold used to define epsilon in
 file_root 	= flat_om_PSB			# root to output file name for subsequent particle systems
 screen          = 1                                     # rather or not to display outputs on screen
 ncores          = 2                                     # number of cores
+quantile_nodes  = 20					# number of quantiles to compare
 
 simulation_func = numcosmo_simulation                   #
-prior_func	= flat_prior   flat_prior flat_prior		#
+prior_func	= flat_prior   flat_prior flat_prior	#
 distance_func	= distance_quantiles                    #
