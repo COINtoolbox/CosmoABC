@@ -43,7 +43,7 @@ def main(args):
                 params['prior_func'][i1] = m1.prior
 
     if not args.output:
-        output_file = raw_input('Enter output file name:  ')
+        output_file = raw_input('Enter root for output files (no extension):  ')
     else:
         output_file = args.output
 
@@ -88,6 +88,11 @@ def main(args):
 
     #open output data file
     op = open(output_file + '.dat', 'w')
+    for par in params['param_to_fit']:
+        op.write(par + '    ')
+    for i1 in xrange(len(distance_equal)):
+        op.write('dist' + str(i1 + 1) + '    ')
+    op.write('\n')
 
     grid = []
     for pars in param_grid:
@@ -95,6 +100,7 @@ def main(args):
         print 'Particle index: ' + str(len(grid)+1)
  
         grid_element = list(pars)
+ 
         for j1 in xrange(params['npar']):
             params['simulation_input'][params['param_to_fit'][j1]] = pars[j1]
          
@@ -102,6 +108,9 @@ def main(args):
         distance_grid = np.atleast_1d(params['distance_func'](data_simul_grid, params))
              
         if sum(distance_grid) < 9**9:
+            for item in grid_element:
+                op.write(str(item) + '   ')
+ 
             for elem in distance_grid:
                 grid_element.append(elem)
                 op.write(str(elem) + '    ')

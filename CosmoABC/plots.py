@@ -102,7 +102,7 @@ def plot_1p(T, file_output, Parameters):
         plt.figure()
         plt.title('Distance threshold evolution')
         for kk in xrange(Parameters['dist_dim']):
-            plt.scatter(range(1,  T + 1), np.array(epsilon_ev)[:,kk]/max(np.array(epsilon_ev)[:,kk]), 
+            plt.scatter(range(1,  T + 2), np.array(epsilon_ev)[:,kk]/max(np.array(epsilon_ev)[:,kk]), 
                         color=color[kk], marker=marker[kk], label='distance threshold' + str(kk + 1))
         plt.legend()
         plt.xlabel('Particle System')
@@ -112,7 +112,7 @@ def plot_1p(T, file_output, Parameters):
 
         plt.figure()
         plt.title('Computational time evolution')
-        plt.scatter(range(1, T + 1), np.array(time_ev), 
+        plt.scatter(range(1, T + 2), np.array(time_ev), 
                    color=color[Parameters['dist_dim']], marker=marker[Parameters['dist_dim']], 
                    label='time' )
         plt.legend(loc='upper left')
@@ -123,7 +123,7 @@ def plot_1p(T, file_output, Parameters):
 
         plt.figure()
         plt.title('Convergence criteria evolution')
-        plt.scatter(range(1, T + 1), convergence, color=color[Parameters['dist_dim'] + 1], 
+        plt.scatter(range(1, T + 2), convergence, color=color[Parameters['dist_dim'] + 1], 
                     marker=marker[Parameters['dist_dim'] + 1], label='convergence')
         plt.legend()
         plt.xlabel('Particle System')
@@ -308,7 +308,7 @@ def plot_2p(T, file_output, Parameters):
         plt.figure()
         plt.title('Distance threshold evolution')
         for jj in xrange(Parameters['dist_dim']):
-            plt.scatter(range(1, T + 1), np.array(epsilon_ev)[:,jj]/max(np.array(epsilon_ev)[:,jj]), 
+            plt.scatter(range(1, T + 2), np.array(epsilon_ev)[:,jj]/max(np.array(epsilon_ev)[:,jj]), 
                         color=color[jj], marker=marker[jj], label='distance threshold' + str(jj + 1))
         plt.legend()
         plt.xlabel('Particle System')
@@ -318,7 +318,7 @@ def plot_2p(T, file_output, Parameters):
 
         plt.figure()
         plt.title('Computational time evolution')
-        plt.scatter(range(1, T + 1), np.array(time_ev), 
+        plt.scatter(range(1, T + 2), np.array(time_ev), 
                    color=color[Parameters['dist_dim']], 
                    marker=marker[Parameters['dist_dim']], label='time')
         plt.legend(loc='upper left')
@@ -329,7 +329,7 @@ def plot_2p(T, file_output, Parameters):
 
         plt.figure()
         plt.title('Convergene criteria evolution')
-        plt.scatter(range(1, T + 1), convergence, 
+        plt.scatter(range(1, T + 2), convergence, 
                     color=color[Parameters['dist_dim'] + 1], 
                     marker=marker[Parameters['dist_dim'] + 1], label='convergence')
         plt.legend()
@@ -1051,7 +1051,7 @@ def plot_4p(T, file_output, Parameters):
         #Plot epsilon evolution
         plt.figure()
         for jj in xrange(Parameters['dist_dim']):
-            plt.scatter(range(1, T + 1), np.array(epsilon_ev)[:, jj ]/max(np.array(epsilon_ev)[:,jj]), 
+            plt.scatter(range(1, T + 2), np.array(epsilon_ev)[:,jj]/max(np.array(epsilon_ev)[:,jj]), 
                         color=color[jj], marker=marker[jj], label='distance threshold' + str(jj + 1))
         plt.legend()
         plt.xlabel('Particle System')
@@ -1060,7 +1060,7 @@ def plot_4p(T, file_output, Parameters):
         plt.close()
 
         plt.figure()
-        plt.scatter(range(1, T+1), np.array(time_ev), 
+        plt.scatter(range(1, T + 2), np.array(time_ev), 
                      color=color[Parameters['dist_dim']], 
                      marker=marker[Parameters['dist_dim']], label='time')
         plt.legend(loc='upper left')
@@ -1070,7 +1070,7 @@ def plot_4p(T, file_output, Parameters):
         plt.close()
 
         plt.figure()
-        plt.scatter(range(1, T + 1), convergence, color=color[Parameters['dist_dim'] + 1], 
+        plt.scatter(range(1, T + 2), convergence, color=color[Parameters['dist_dim'] + 1], 
                     marker=marker[Parameters['dist_dim'] + 1], label='convergence')
         plt.legend()
         plt.xlabel('Particle System')
