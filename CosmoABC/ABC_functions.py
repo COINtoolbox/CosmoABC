@@ -78,6 +78,8 @@ def read_input(filename):
         params['simulation_func'] = dispatcher[params_ini['simulation_func'][0]]
 
     if len(params_ini['prior_func']) == params['npar']:
+        print "params['npar'] = " + str(params['npar'])
+        print "params_ini['prior_func'] = " + str(params_ini['prior_func'])
         params['prior_func'] = [dispatcher[params_ini['prior_func'][k]] 
                            if params_ini['prior_func'][k] in dispatcher.keys() 
                            else params_ini['prior_func'][k] for k in xrange(params['npar'])]

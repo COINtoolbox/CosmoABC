@@ -62,8 +62,7 @@ def distance_grbf(dataset2, Parameters):
     output: distance -> scalar
     """
 
-    if sum(dataset2[0]) == 0 or len(dataset2) > 5*len(Parameters['dataset1']) \ 
-                             or dataset2.shape[0] == 1:
+    if sum(dataset2[0]) == 0 or len(dataset2) > 5*len(Parameters['dataset1']) or dataset2.shape[0] == 1:
         return 10**10
     else:
  
@@ -83,9 +82,7 @@ def distance_grbf(dataset2, Parameters):
                 op1.write('\n')
             op1.close() 
                
-            raise ValueError('ERROR in function SumGRBF!!  Corresponding \
-                              simulation is stored in file \ 
-                              "dataset2_error.dat"')
+            raise ValueError('ERROR in function SumGRBF!!  Corresponding simulation is stored in file "dataset2_error.dat"')
 
 
 
@@ -110,7 +107,7 @@ def summ_quantiles( dataset1, Parameters ):
     Parameters['extra'] = []
     for i1 in xrange(len( dataset1[0])):
 
-        Parameters['extra'].append(np.array([mquantiles(dataset1[:,i1], \ 
+        Parameters['extra'].append(np.array([mquantiles(dataset1[:,i1], 
                                    prob=item) for item in qlist]))
    
     return Parameters
