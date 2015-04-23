@@ -1,18 +1,4 @@
-.. warning::
-
-    CosmoABC is in final test version.
-
-    The first release version will be available in spring 2015 accompanied by the corresponding paper.
-
-    In the mean time, we deply appreciate your interest and hope it can be useful for your project.
-
-    Obviously, comments/suggestions/criticism/bug reports are more than welcome!
-
-    Please do not hesitate to contact us.
-
-    Sincerely,
-
-    Emille Ishida (emilleishida_at_gmail.com)
+.. image:: nstatic/COIN.jpg
 
 
 
