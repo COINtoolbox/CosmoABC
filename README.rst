@@ -1,30 +1,14 @@
-WARNING!!!
-==========
-
-CosmoABC is in final test version. 
-
-The first release version will be available in spring 2015 accompanied by the corresponding paper. 
-
-In the mean time, we deply appreciate your interest and hope it can be useful for your project. 
-
-Obviously,  comments/suggestions/criticism/bug reports are more than welcome!
-
-Please do not hesitate to contact us.
-
-Sincerely, 
-
-Emille Ishida   (emilleishida_at_gmail.com)
+.. image:: nstatic/COIN.jpg
 
 
 
-
-CosmoABC - Likelihood free inference via PMC-ABC
+CosmoABC - Likelihood free inference for cosmology
 =============================================================
 
 
-``CosmoABC`` is a package which enables parameter inference using an Population Monte Carlo Approximate Bayesian Computation algorithm (PMC-ABC), as described in Ishida et al., 2015 [LINK].
+``CosmoABC`` is a package which enables parameter inference using an Approximate Bayesian Computation (ABC) algorithm, as described in Ishida et al., 2015 [LINK].
 
-The code was originally designed for cosmological parameter inference from galaxy clusters number counts based on Sunyaev-Zel'dovich measurements. In this context, the cosmological simulations were performed using the `NumCosmo library <http://www.nongnu.org/numcosmo/>`_.
+The code was originally designed for cosmological parameter inference from galaxy clusters number counts based on Sunyaev-Zel'dovich measurements. In this context, the cosmological simulations were performed using the `NumCosmo library <http://www.nongnu.org/numcosmo/>`_ .
 
 Nevertheless, the user can easily take advantage of the ABC sampler along with his/her own simulator, as well as  test personalized prior distributions, summary statistics and distance functions. 
 
@@ -52,7 +36,7 @@ You can run a few tests with::
 
 The test outputs a pdf file illustrating the evolution of the posterior.
 
-`Test results <https://github.com/COINtoolbox/CosmoABC/blob/emille_dev/CosmoABC/examples/results_gaussian_sim.gif>`_
+.. image:: nstatic/results_gaussian_sim.gif
 
 Examples
 ********
@@ -238,9 +222,7 @@ In order to use it, prepare an appropriate user input and function files and, fr
 Here, ``<output_filename>`` is where the distance behaviour for different set of parameter values will be plotted. 
 
 As always, the ``<user_input_file>`` must be provided. 
-
 If you are using built-in CosmoABC functions, the ``-f`` option is not necessary and in case you forget to give an output filename, CosmoABC will ask you for it. 
-
 It will also ask you to input the number of points to be drawn from the parameter space in order to construct a grid. 
 
 Here is an example from using the built-in tool to check the suitability of distance function::
@@ -258,14 +240,15 @@ Here is an example from using the built-in tool to check the suitability of dist
 
 The output file will contain a plot like this:
 
-`Example distance test <https://github.com/COINtoolbox/CosmoABC/blob/emille_dev/CosmoABC/examples/test_distance_mean_std_n.jpeg>`_
-
+.. image:: nstatic/test_distance_mean_std_n.jpeg
+ 
 
 The example above corresponds to a perfect distance definition. 
 It has two independent outputs: the first one is able to constraint parameters ``mean`` and ``std`` while the second one constraints parameter ``n``.
 
 This is what one should aim for in constructing a distance function. 
 How large a deviation from this is acceptable should be decided based on each particular problem and goal. 
+
 
 
 Documentation
