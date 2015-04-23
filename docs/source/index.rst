@@ -2,7 +2,7 @@
 
 
 
-CosmoABC - Likelihood free parameter estimation for cosmology
+CosmoABC - Likelihood free inference for cosmology
 =============================================================
 
 
