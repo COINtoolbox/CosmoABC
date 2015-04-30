@@ -82,13 +82,13 @@ def main( args ):
 
 
     #initiate ABC construct
-    sampler_ABC = ABC(  params=user_input ) 
+    sampler_ABC = ABC(params = user_input) 
 
     #define finished particle system index
-    sampler_ABC.T = int( args.PS )
+    sampler_ABC.T = int(args.PS)
 
     #continue from previous run
-    sampler_ABC.ContinueStoppedRun( sampler_ABC.T )
+    sampler_ABC.ContinueStoppedRun(int(args.PS))
 
 if __name__=='__main__':
   

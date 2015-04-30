@@ -36,7 +36,7 @@ def gaussian_prior( par, par_lim, func=False ):
             pdf		-> probability distribution function
 
     """
-
+    np.random.seed()
    
     #check dimension of feature vector  defining prior distribution 
     if len( par ) == 2:
@@ -74,7 +74,7 @@ def flat_prior( par, par_lim, func=False ):
 
     output:     scalar	     -> draw number or 1
     """
-
+    np.random.seed()
 
     #check dimensional of feature vector defining distribution
     #if distribution is flat there is no need to check the bounderies
@@ -102,6 +102,7 @@ def beta_prior( par, par_lim, func=False):
 
     output:     scalar	     -> draw number or 1
     """
+    np.random.seed()
 
     #check dimension of feature vector  defining prior distribution 
     if len( par ) == 2:
