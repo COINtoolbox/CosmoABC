@@ -123,35 +123,45 @@ class ABC(object):
 
         print 'Building first particle system:'
 
-        time_ini = time.time()
-        args = [self.params for item in xrange(self.params['Mini'])]
+        theta = []
 
-        pool = Pool(processes=self.params['ncores'])
-        p = pool.map_async(SetDistanceFromSimulation, args)
-        try:
-             dist = p.get(0xFFFF)
-        except KeyboardInterrupt:
-            print 'Interruputed by the user!'
-            sys.exit()
+        for iteration in xrange(int(self.params['split_output'][0])):
+            time_ini = time.time()
+            args = [self.params for item in xrange(self.params['Mini']/int(self.params['split_output'][0]))]
 
-        pool.close()
-        pool.join()
+            pool = Pool(processes=self.params['ncores'])
+            p = pool.map_async(SetDistanceFromSimulation, args)
+            try:
+                 dist = p.get(0xFFFF)
+            except KeyboardInterrupt:
+                print 'Interruputed by the user!'
+                sys.exit()
 
-        time_end = time.time() - time_ini
+            pool.close()
+            pool.join()
 
-        total_time = time_end/self.M
+            time_end = time.time() - time_ini
 
-        #initiate variables to store total number of draws and surviving parameters 
-        theta = []    
+            total_time = time_end/self.M
 
-        for line in dist:
-            theta_t = [par for par in line[2]]
-           
-            theta_t = theta_t + list(line[0])            
+            #initiate variables to store total number of draws and surviving parameters 
+            theta_local = []    
 
-            theta_t.append(str(self.params['Mini']/self.M))
-            theta_t.append(total_time)
-            theta.append(theta_t)            
+            for line in dist:
+                theta_t = [par for par in line[2]]
+                theta_t = theta_t + list(line[0])            
+                theta_t.append(str(self.params['Mini']/self.M))
+                theta_t.append(total_time)
+                theta_local.append(theta_t) 
+                theta.append(theta_t)           
+
+            if output:
+                ftemp = open(self.params['file_root'] + '0_p' + str(iteration) + '.dat', 'w')   
+                for line in theta_local:
+                    for element in line:
+                        ftemp.write(str(element) + '    ')
+                    ftemp.write('\n')
+                ftemp.close()    
 
         #choose smaller distance 
         d1 = np.array([ np.sqrt(sum(line[j]**2 
@@ -166,27 +176,25 @@ class ABC(object):
         theta_new = [theta[elem] for elem in indx[:self.M]]    
 
         #write particle system to file
-        if output:
-            op = open(self.params['file_root'] + '0.dat', 'w')
-            for item in self.params['param_to_fit']:
-                op.write(item  + '    ')
+        op = open(self.params['file_root'] + '0.dat', 'w')
+        for item in self.params['param_to_fit']:
+            op.write(item  + '    ')
 
-            for i2 in xrange(self.params['dist_dim']):
-                op.write('distance' + str(i2 + 1) + '    ')     
+        for i2 in xrange(self.params['dist_dim']):
+            op.write('distance' + str(i2 + 1) + '    ')     
  
-            op.write('NDraws    time       ')
+        op.write('NDraws    time       ')
+        for i2 in xrange(self.params['dist_dim']):
+            op.write('dist_threshold' + str(i2 + 1) + '    ')
+        op.write('\n')
 
-            for i2 in xrange(self.params['dist_dim']):
-                op.write('dist_threshold' + str(i2 + 1) + '    ')
+        for line in theta_new:
+            for elem in line:
+                op.write(str( elem )  + '    ')
+            for i3 in xrange(self.params['dist_dim']):
+                op.write(str( max(np.array(theta_new)[:,-self.params['dist_dim'] + i3])) + '    ')
             op.write('\n')
-
-            for line in theta_new:
-                for elem in line:
-                    op.write(str( elem )  + '    ')
-                for i3 in xrange(self.params['dist_dim']):
-                    op.write(str( max(np.array(theta_new)[:,-self.params['dist_dim'] + i3])) + '    ')
-                op.write('\n')
-            op.close()
+        op.close()
 
         #determine initial weights
         W1 = [1.0/self.M for i2 in xrange(self.M)]
@@ -195,10 +203,15 @@ class ABC(object):
         for item in W1:
             op2.write(str(item) + '\n')
         op2.close()
+
+        #erase temporary files 
+        if output:
+            for iteration in xrange(int(self.params['split_output'][0])):
+                os.remove(self.params['file_root'] + '0_p' + str(iteration) + '.dat')
  
         return np.array(theta_new), self.params['Mini']
 
-    def BuildPSystem(self, previous_particle_system, W, t):
+    def BuildPSystem(self, previous_particle_system, W, t, output=True):
         """
         Build particle system. 
 
@@ -223,19 +236,32 @@ class ABC(object):
         var['W'] = W
         var['previous_particle_system'] = previous_particle_system
         var['previous_cov_matrix'] = cov1
+        surv_param = []
 
-        args = [var for j in xrange(self.params['M'])]
+        for iteration in xrange(int(self.params['split_output'][0])):   
+            args = [var for j in xrange(self.params['M']/int(self.params['split_output'][0]))]
 
-        pool = Pool(self.params['ncores'])
-        p = pool.map_async(SelectParamInnerLoop, args)
-        try:
-            surv_param = p.get(0xFFFF)
-        except KeyboardInterrupt:
-            print 'Interruputed by the user!'
-            sys.exit()
+            pool = Pool(self.params['ncores'])
+            p = pool.map_async(SelectParamInnerLoop, args)
+            try:
+                surv_param_local = p.get(0xFFFF)
+            except KeyboardInterrupt:
+                print 'Interruputed by the user!'
+                sys.exit()
 
-        pool.close()
-        pool.join() 
+            pool.close()
+            pool.join() 
+
+            for item in surv_param_local:
+                surv_param.append(item)
+
+            if output:
+                ftemp = open(self.params['file_root'] + str(t) + '_p' + str(iteration) + '.dat', 'w')  
+                for line in surv_param_local:
+                    for element in line:
+                        ftemp.write(str(element) + '    ')
+                    ftemp.write('\n')
+                ftemp.close() 
 
         #begin writing output file
         op = open(self.params['file_root'] + str(t) + '.dat' , 'w')
@@ -252,6 +278,10 @@ class ABC(object):
                 op.write(str( elem ) + '    ')
             op.write('\n')
         op.close()
+
+        if output:
+            for iteration in xrange(int(self.params['split_output'][0])):   
+                os.remove(self.params['file_root'] + str(t) + '_p' + str(iteration) + '.dat')
 
         return np.array(surv_param)
 
