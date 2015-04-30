@@ -168,85 +168,90 @@ def SelectParamInnerLoop(var1):
     :returns: vector -> [ surviving_model_parameters, distance, number_necessary_draws, computational_time (s), distance_threshold ]
     """
 
-    dist = [10**10 for i in xrange(var1['params']['dist_dim'])]
-    K = 0
-    np.random.seed()
+    try:
+        dist = [10**10 for i in xrange(var1['params']['dist_dim'])]
+        K = 0
+        np.random.seed()
 
-    #time marker
-    time_start = time.time()
+        #time marker
+        time_start = time.time()
 
-    #determine distance threshold
-    epsilon = [mquantiles(var1['previous_particle_system'][:, kk ], prob=var1['params']['qthreshold'])[0] 
-                  for kk in xrange(len(var1['params']['param_to_fit']), 
+        #determine distance threshold
+        epsilon = [mquantiles(var1['previous_particle_system'][:, kk ], prob=var1['params']['qthreshold'])[0] 
+                      for kk in xrange(len(var1['params']['param_to_fit']), 
                                    len(var1['params']['param_to_fit']) + var1['params']['dist_dim'])]
 
-    flag = [False for ii in xrange(var1['params']['dist_dim'])]
+        flag = [False for ii in xrange(var1['params']['dist_dim'])]
 
-    while False in flag:               
+        while False in flag:               
  
-        #update counter
-        K = K + 1 
+            #update counter
+            K = K + 1 
 
-        #draw model parameters to serve as mean 
-        index_theta0 = np.random.choice(xrange(len(var1['W'])), p=var1['W'])
-        theta0 = np.atleast_2d(var1['previous_particle_system'][index_theta0][:len( var1['params']['param_to_fit'])])
+            #draw model parameters to serve as mean 
+            index_theta0 = np.random.choice(xrange(len(var1['W'])), p=var1['W'])
+            theta0 = np.atleast_2d(var1['previous_particle_system'][index_theta0][:len( var1['params']['param_to_fit'])])
 
-        #initialize boolean parmeter vector
-        theta_t = [False for i in xrange(len(var1['params']['param_to_fit']))]
+            #initialize boolean parmeter vector
+            theta_t = [False for i in xrange(len(var1['params']['param_to_fit']))]
            
-        while False in theta_t:
+            while False in theta_t:
           
-            #draw model parameter values for simulation
-            mvn = multivariate_normal.rvs(theta0.flatten(), var1['previous_cov_matrix'])
+                #draw model parameter values for simulation
+                mvn = multivariate_normal.rvs(theta0.flatten(), var1['previous_cov_matrix'])
 
-            try:
-                len(mvn)
-                theta_t_try = list(mvn)
+                try:
+                    len(mvn)
+                    theta_t_try = list(mvn)
 
-            except TypeError:
-                theta_t_try = [mvn]
+                except TypeError:
+                    theta_t_try = [mvn]
 
-            theta_t = []
-            for k1 in xrange(len(var1['params']['param_to_fit'])):
+                theta_t = []
+                for k1 in xrange(len(var1['params']['param_to_fit'])):
+ 
+                    if  theta_t_try[k1] >= var1['params']['param_lim'][k1][0] and theta_t_try[k1] < var1['params']['param_lim'][k1][1]:
+                        theta_t.append(True)
 
-                if  theta_t_try[k1] >= var1['params']['param_lim'][k1][0] and theta_t_try[k1] < var1['params']['param_lim'][k1][1]:
-                    theta_t.append(True)
+                    else:
+                        theta_t.append(False)         
+   
 
-                else:
-                    theta_t.append(False)         
+            #update parameter values in dictionary
+            for i1 in range(len(var1['params']['param_to_fit'])):
+                var1['params']['simulation_input'][var1['params']['param_to_fit'][i1]] = theta_t_try[i1]
 
-
-        #update parameter values in dictionary
-        for i1 in range(len(var1['params']['param_to_fit'])):
-            var1['params']['simulation_input'][var1['params']['param_to_fit'][i1]] = theta_t_try[i1]
-
-        #generate simulation
-        DataSimul = var1['params']['simulation_func'](var1['params']['simulation_input'])
+            #generate simulation
+            DataSimul = var1['params']['simulation_func'](var1['params']['simulation_input'])
       
-        #calculate distance
-        dist = var1['params']['distance_func'](DataSimul, var1['params'])
+            #calculate distance
+            dist = var1['params']['distance_func'](DataSimul, var1['params'])
               
-        #check if it satisfies distance thresholds 
-        flag = [] 
-        for ll in xrange(len( dist )):
-            if dist[ll] > epsilon[ll]:
-                flag.append(False)
-            else:
-                flag.append(True)
+            #check if it satisfies distance thresholds 
+            flag = [] 
+            for ll in xrange(len( dist )):
+                if dist[ll] > epsilon[ll]:
+                    flag.append(False)
+                else:
+                    flag.append(True)
 
-    #store results
-    for d2 in dist:
-        theta_t_try.append(d2)
-    theta_t_try.append(K)    
-    theta_t_try.append(time.time() - time_start)
+        #store results
+        for d2 in dist:
+            theta_t_try.append(d2)
+        theta_t_try.append(K)    
+        theta_t_try.append(time.time() - time_start)
 
-    for d3 in epsilon:
-        theta_t_try.append(d3)
+        for d3 in epsilon:
+            theta_t_try.append(d3)
 
-    if var1['params']['screen']:
-        print 'Number of draws = ' + str(K)
+        if var1['params']['screen']:
+            print 'Number of draws = ' + str(K)
 
-    return theta_t_try
+        return theta_t_try
+    
+    except KeyboardInterrupt, e:
+        pass
+
 
 def DrawAllParams(params):
     """
@@ -272,42 +277,45 @@ def SetDistanceFromSimulation(var):
     
     """
 
-    time1 = time.time()
+    try:
+        time1 = time.time()
 
-    #draw parameters from prior
-    ParTry = DrawAllParams(var)
+        #draw parameters from prior
+        ParTry = DrawAllParams(var)
   
-    for i1 in range(len(var['param_to_fit'])):
-        var['simulation_input'][var['param_to_fit'][i1]] = ParTry[i1]
+        for i1 in range(len(var['param_to_fit'])):
+            var['simulation_input'][var['param_to_fit'][i1]] = ParTry[i1]
 
-    #generate simulation
-    DataSimul = var['simulation_func'](var['simulation_input'])
+        #generate simulation
+        DataSimul = var['simulation_func'](var['simulation_input'])
    
-    #calculate distance
-    dist = var['distance_func'](DataSimul, var)
+        #calculate distance
+        dist = var['distance_func'](DataSimul, var)
 
-    if dist >= 0:
+        if dist >= 0:
 
-        total_time = time.time() - time1
-        if var['screen']:
-            print 'Calculated distance: \n   ' + str(dist)
+            total_time = time.time() - time1
+            if var['screen']:
+                print 'Calculated distance: \n   ' + str(dist)
 
-        result = (dist, total_time, ParTry)
+            result = (dist, total_time, ParTry)
  
-        return result
-    else:
-        print 'dist = ' + str(dist)
-        print 'DataSimul = ' + str(DataSimul)
-        print 'ParTry = ' + str(ParTry)
+            return result
+        else:
+            print 'dist = ' + str(dist)
+            print 'DataSimul = ' + str(DataSimul)
+            print 'ParTry = ' + str(ParTry)
 
-        op1=open('simulation.dat', 'w')
-        for line in DataSimul:
-            for item in line:
-                op1.write( str(item) + '    ')
-            op1.write('\n')
-        op1.close() 
-        raise ValueError('Found negative distance value!')
+            op1=open('simulation.dat', 'w')
+            for line in DataSimul:
+                for item in line:
+                    op1.write( str(item) + '    ')
+                op1.write('\n')
+            op1.close() 
+            raise ValueError('Found negative distance value!')
 
+    except KeyboardInterrupt, e:
+        pass        
 
 def main():
   print(__doc__)

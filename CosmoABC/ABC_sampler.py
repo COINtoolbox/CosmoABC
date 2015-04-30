@@ -127,7 +127,13 @@ class ABC(object):
         args = [self.params for item in xrange(self.params['Mini'])]
 
         pool = Pool(processes=self.params['ncores'])
-        dist = pool.map(SetDistanceFromSimulation, args) 
+        p = pool.map_async(SetDistanceFromSimulation, args)
+        try:
+             dist = p.get(0xFFFF)
+        except KeyboardInterrupt:
+            print 'Interruputed by the user!'
+            sys.exit()
+
         pool.close()
         pool.join()
 
@@ -221,7 +227,13 @@ class ABC(object):
         args = [var for j in xrange(self.params['M'])]
 
         pool = Pool(self.params['ncores'])
-        surv_param = pool.map(SelectParamInnerLoop, args)
+        p = pool.map_async(SelectParamInnerLoop, args)
+        try:
+            surv_param = p.get(0xFFFF)
+        except KeyboardInterrupt:
+            print 'Interruputed by the user!'
+            sys.exit()
+
         pool.close()
         pool.join() 
 
