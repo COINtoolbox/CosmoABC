@@ -15,6 +15,7 @@ __license__ = "GPL"
 import numpy as np
 import time
 import sys
+import os 
 
 from scipy.stats import multivariate_normal
 from scipy.interpolate import Rbf
@@ -122,15 +123,13 @@ class ABC(object):
 
         print 'Building first particle system:'
 
-        pool = Pool(self.params['ncores'])
-
         time_ini = time.time()
         args = [self.params for item in xrange(self.params['Mini'])]
-        dist = pool.map(SetDistanceFromSimulation, args) 
-        #for i in args:
-        #    print 'Calculated ' + str(args.index(i)) + 'from ' + str(len(args))
 
+        pool = Pool(processes=self.params['ncores'])
+        dist = pool.map(SetDistanceFromSimulation, args) 
         pool.close()
+        pool.join()
 
         time_end = time.time() - time_ini
 
@@ -140,7 +139,7 @@ class ABC(object):
         theta = []    
 
         for line in dist:
-            theta_t = [line[2]['simulation_input'][item] for item in line[2]['param_to_fit']]
+            theta_t = [par for par in line[2]]
            
             theta_t = theta_t + list(line[0])            
 
@@ -222,10 +221,9 @@ class ABC(object):
         args = [var for j in xrange(self.params['M'])]
 
         pool = Pool(self.params['ncores'])
-
         surv_param = pool.map(SelectParamInnerLoop, args)
-
         pool.close()
+        pool.join() 
 
         #begin writing output file
         op = open(self.params['file_root'] + str(t) + '.dat' , 'w')
