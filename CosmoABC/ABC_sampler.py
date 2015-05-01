@@ -7,7 +7,7 @@ Approximate Bayesian Computation sampler.
 __author__ = "E. E. O. Ishida, S. D. P. Vitenti, M. Penna-Lima, R. S. de Souza, J. Cisewski, A. M. M. Trindade, V. C. Busti, E. Cameron"
 __maintainer__ = "E. E. O. Ishida"
 __copyright__ = "Copyright 2015"
-__version__ = "0.1.15"
+__version__ = "0.1.16"
 __email__ = "emilleishida@gmail.com"
 __status__ = "Prototype"
 __license__ = "GPL"
@@ -238,7 +238,24 @@ class ABC(object):
         var['previous_cov_matrix'] = cov1
         surv_param = []
 
-        for iteration in xrange(int(self.params['split_output'][0])):   
+        #check if there are previous runs
+        temp_files = [self.params['file_root'] + str(t) + '_p' + str(part) + '.dat'
+                                for part in xrange(int(self.params['split_output'][0]))]
+
+        file_list = os.listdir(os.getcwd())
+        if temp_files[0] in file_list:
+           for partial_calc in xrange(int(self.params['split_output'][0])):
+               if temp_files[partial_calc] in file_list:
+                   pass
+               else:
+                   begin_int = partial_calc
+                   print 'Calculations will begin in particle system t = ' + str(t) + ' part ' + str(begin_int)
+                   break 
+        else:
+            begin_int = 0
+            
+        #run sampler in separate chuncks 
+        for iteration in xrange(begin_int, int(self.params['split_output'][0])):   
             args = [var for j in xrange(self.params['M']/int(self.params['split_output'][0]))]
 
             pool = Pool(self.params['ncores'])
