@@ -238,7 +238,7 @@ class ABC(object):
         var['previous_cov_matrix'] = cov1
         surv_param = []
 
-        #check if there are previous runs
+        #check if there are previous partial results
         temp_files = [self.params['file_root'] + str(t) + '_p' + str(part) + '.dat'
                                 for part in xrange(int(self.params['split_output'][0]))]
 
@@ -246,9 +246,12 @@ class ABC(object):
         if temp_files[0] in file_list:
            for partial_calc in xrange(int(self.params['split_output'][0])):
                if temp_files[partial_calc] in file_list:
-                   pass
+                   local_data = np.loadtxt(temp_files[partial_calc])
+                   for line in local_data:
+                       surv_param.append(line) 
                else:
                    begin_int = partial_calc
+                   print 'Found ' + str(len(surv_param)) + ' values in t = ' + str(t)
                    print 'Calculations will begin in particle system t = ' + str(t) + ' part ' + str(begin_int)
                    break 
         else:
