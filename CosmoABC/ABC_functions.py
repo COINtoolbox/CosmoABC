@@ -17,7 +17,7 @@ from scipy.stats import norm
 
 from statsmodels.stats.weightstats import DescrStatsW
 
-from CosmoABC.distances import distance_quantiles, summ_quantiles, distance_grbf, SumGRBF 
+from CosmoABC.distances import distance_quantiles, distance_GRBF 
 from CosmoABC.priors import flat_prior, gaussian_prior, beta_prior
 
 
@@ -73,9 +73,10 @@ def read_input(filename):
 
     #functions
     ###### Update this if you include any new functions!!!!!  ##############
+    from CosmoABC.distances import distance_GRBF
     dispatcher = {'flat_prior': flat_prior, 
-                  'gaussian_prior': gaussian_prior, 'beta_prior':beta_prior, 
-                  'distance_grbf':distance_grbf, 'distance_quantiles': distance_quantiles}
+                  'gaussian_prior': gaussian_prior, 'beta_prior': beta_prior, 
+                  'distance_quantiles': distance_quantiles, 'distance_GRBF': distance_GRBF}
     
     if params_ini['simulation_func'][0] in dispatcher:
         params['simulation_func'] = dispatcher[params_ini['simulation_func'][0]]
@@ -132,12 +133,10 @@ def read_input(filename):
     if params_ini['distance_func'][0] in dispatcher.keys():
         params['distance_func'] = dispatcher[params_ini['distance_func'][0]]
 
-        if params['distance_func'] == distance_grbf:
+        if params['distance_func'] == distance_GRBF:
+            from CosmoABC.distances import GRBF, logf, norm_GRBF, prep_GRBF, distance_GRBF
             params['s'] = float(params_ini['s'][0])
-            params['kernel_func'] = str(params_ini['kernel_func'][0])
-
-            if 'dataset1' in params:
-                params['extra'] =  SumGRBF(params['dataset1'], params['dataset1'], params)
+            params = prep_GRBF(params)
 
         elif 'dataset1' in params and params['distance_func'] == distance_quantiles:
             params['dist_dim'] = len(params['dataset1'][0]) + 1

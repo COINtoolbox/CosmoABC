@@ -1,90 +1,112 @@
 """
 Functions for distance determination.
-
-***
-In order to insert a new distance function, add it to this file.
-***
+Created by Emille Ishida in 2015.
 """ 
 
-
 import numpy as np
-
-from scipy.interpolate import Rbf
+from multiprocessing import Pool
 from scipy.stats.mstats import mquantiles
 
-def SumGRBF(dataset1, dataset2, Parameters):
+
+###############################################################
+### GRBF distance    -  Appendix B from Ishida et al., 2015
+
+def GRBF(vec):
     """
-    Compute the sum of Gaussian Radial Basis Function (GRBF).  
+    Gaussian Radial Basis Function (GRBF). 
+    Equation B.1 of Ishida et al., 2015.
 
-    input: data1 -> first data matrix ( collumns -> features, lines -> objects )
-   	   data2 -> second data matrix, fixed basis (collumns -> features, 
-                                                     lines -> objects )
- 	   Parameters -> dictionary of input parameters
+    input:  vec -> vector of input parameters
+                   vec[0] -> array of observabed values for 1 object
+                   vec[1] -> dictionary of parameters
 
-    output: distance -> scalar
-    """
-
-    #GRBF must be one in all points in the fixed basis sample
-    one = [1 for j in range(len(dataset2))]
-
-    if len(dataset2[0]) == 1:
-
-        rbf1 = Rbf(dataset2,  one, function=Parameters['kernel_func'], 
-                   smooth=Parameters['s'])
-    
-        #sum GRBF for all elements in data1 and centralize in the number of 
-        #existing points in data2
-        sum1 = abs(np.nansum([np.log(rbf1(line[0])) for line in dataset1 ]) 
-                   - len( dataset2 ))
-    
-    if len(dataset2[0]) == 2:
-
-        rbf1 = Rbf(dataset2[:,0], dataset2[:,1], one, 
-                   function=Parameters['kernel_func'], smooth=Parameters['s'])
-    
-        #sum GRBF for all elements in data1 and centralize in the number of 
-        #existing points in data2
-        sum1 = abs(np.nansum([np.log(rbf1(line[0], line[1])) 
-                   for line in dataset1]) - len(dataset2))
-           
-    return sum1 
-        
-
-
-def distance_grbf(dataset2, Parameters):
-    """
-    Compute the distance between two catalogues based on Gaussian Radial 
-    Basis function.
-    
-    input: dataset2 -> simulated catalogue
-           Parameters -> dictionary of input parameters
-              
-    output: distance -> scalar
+    output: scalar -> GRBF at obs values
     """
 
-    if sum(dataset2[0]) == 0 or len(dataset2) > 5*len(Parameters['dataset1']) or dataset2.shape[0] == 1:
-        return 10**10
-    else:
+    try:
+        core_exp = 0
+        for obj in vec[1]['dataset1']:
+            d = vec[0] - obj
+            term  = np.exp(-(np.dot(np.dot(d, vec[1]['cov']), d.T))/2.0)
+
+            core_exp = core_exp + vec[1]['const'] * term
+  
+        return core_exp   
+
+    except KeyboardInterrupt, e:
+        pass
+
+def logf(dataset2, var):
+    """
+    Log of GRBF between 2 data sets. 
+    Equation B.3 of Ishida et al, 2015.
+
+    input: dataset2 -> array of simulated catalogue
+           var -> dictionary of parameters
+
+    output: scalar  
+    """
+    args = [[line, var] for line in dataset2]
+
+    pool = Pool(processes=var['ncores'])
+    p = pool.map_async(GRBF, args)
+    try:
+        result = p.get(0xFFFF)
+    except KeyboardInterrupt:
+        print 'Interruputed by the user!'
+        sys.exit()
+
+    pool.close()
+    pool.join()
+
+    output = sum(result) - len(dataset2)
+
+    return output
+
+
+def norm_GRBF(var):
+    """
+    GRBF relating the observed data to itself. 
+    
+    input: var -> dictionary of parameters
+
+    output: scalar -> normalization constant
+    """
+
+    return logf(var['dataset1'], var)
+
+
+def prep_GRBF(var):
+    """
+    Calculates all parameters needed by the GRBF definition. 
+
+    input: var -> dictionary of parameters
+
+    output: var -> updated dictionary of parameters enabling 
+                   GRBF calculations
+    """
+
+    var['cov'] = (var['s'] ** 2) * np.cov(var['dataset1'].T)
+    det = np.exp(np.linalg.slogdet(var['cov'])[1])
+    var['const'] = 1.0/(2 * np.pi * np.sqrt(det))
+
+    var['norm_GRBF'] = norm_GRBF(var)
+
+    return var
+
+def distance_GRBF(dataset2, var):
+    """
+    Distance based on GRBF as defined in equation B.4 of Ishida et al, 2015.
+
+    input: dataset2 -> array of simulated catalogue
  
-        j1 = SumGRBF(Parameters['dataset1'], dataset2, Parameters)
+    output: scalar -> GRBF distance
+    """
 
-        #distance based on the logarithm of GRBF and normalized by 
-        #results from data1
-        if j1 > 0 and str( j1 ) != 'nan' :
-            d = abs( -2 * j1 + 2 * Parameters['extra'])
-            return [d]
+    return -2 * logf(dataset2, var) + 2 * var['norm_GRBF']
 
-        else:
-            op1 = open('dataset2_error_source.dat', 'w')
-            for line in dataset2:
-                for item in line:
-                    op1.write(str(item) + '    ')
-                op1.write('\n')
-            op1.close() 
-               
-            raise ValueError('ERROR in function SumGRBF!!  Corresponding simulation is stored in file "dataset2_error.dat"')
-
-
+###############################################################
+### Quantile distances - section 4.2 of Ishida et al., 2015
 
 def summ_quantiles( dataset1, Parameters ):
     """
@@ -146,6 +168,7 @@ def distance_quantiles(dataset2, Parameters):
 
     return d
 
+###############################################################
 
 def main():
   print(__doc__)

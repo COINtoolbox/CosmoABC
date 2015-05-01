@@ -19,7 +19,7 @@ import argparse
 import imp
 import os
 
-from CosmoABC.distances import distance_quantiles, summ_quantiles, distance_grbf, SumGRBF 
+from CosmoABC.distances import distance_quantiles, distance_GRBF 
 from CosmoABC.priors import flat_prior, gaussian_prior, beta_prior
 from CosmoABC.ABC_sampler import ABC
 from CosmoABC.ABC_functions import SelectParamInnerLoop, DrawAllParams, SetDistanceFromSimulation, read_input 
@@ -32,10 +32,10 @@ def main(args):
     if args.functions != None:
         m1 = imp.load_source( args.functions[:-3], args.functions )
 
-        if isinstance(params['distance_func'][0], str):
+        if isinstance(params['distance_func'], list):
             params['distance_func'] = m1.distance
 
-        if isinstance(params['simulation_func'][0], str):
+        if isinstance(params['simulation_func'], list):
             params['simulation_func'] = m1.simulation
 
         for i1 in xrange(params['npar']):
