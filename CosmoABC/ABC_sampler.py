@@ -322,7 +322,7 @@ class ABC(object):
                  
         """
 
-        print 'update weights'
+        print 'updating weights'
 
         #calculate weighted covariance matrix from previous particle system
         ds = DescrStatsW(previous_particle_system[:,:len(self.params['param_to_fit'])], weights=W)
@@ -387,7 +387,9 @@ class ABC(object):
 
         #determine number of draws in previous particle system generation
         K =  sum(int(line[len(self.params['param_to_fit']) + self.params['dist_dim']]) for line in t1)
-        print 'number of draws PS0 = ' + str(K)
+
+        if self.params['screen']:
+            print 'number of draws PS0 = ' + str(K)
 
         #initiate iteration counter
         t = 0

@@ -4,6 +4,7 @@ Created by Emille Ishida in 2015.
 """ 
 
 import numpy as np
+import sys
 from multiprocessing import Pool
 from scipy.stats.mstats import mquantiles
 
@@ -25,9 +26,9 @@ def GRBF(vec):
 
     try:
         core_exp = 0
-        for obj in vec[1]['dataset1']:
+        for obj in vec[1]['sim']:
             d = vec[0] - obj
-            term  = np.exp(-(np.dot(np.dot(d, vec[1]['cov']), d.T))/2.0)
+            term  = np.exp(-(np.dot(np.dot(d, vec[1]['inv_cov']), d.T))/2.0)
 
             core_exp = core_exp + vec[1]['const'] * term
   
@@ -36,7 +37,7 @@ def GRBF(vec):
     except KeyboardInterrupt, e:
         pass
 
-def logf(dataset2, var):
+def logf(var):
     """
     Log of GRBF between 2 data sets. 
     Equation B.3 of Ishida et al, 2015.
@@ -46,7 +47,7 @@ def logf(dataset2, var):
 
     output: scalar  
     """
-    args = [[line, var] for line in dataset2]
+    args = [[line, var] for line in var['dataset1']]
 
     pool = Pool(processes=var['ncores'])
     p = pool.map_async(GRBF, args)
@@ -59,7 +60,7 @@ def logf(dataset2, var):
     pool.close()
     pool.join()
 
-    output = sum(result) - len(dataset2)
+    output = sum(result) - len(var['sim'])
 
     return output
 
@@ -72,8 +73,9 @@ def norm_GRBF(var):
 
     output: scalar -> normalization constant
     """
+    var['sim'] = var['dataset1']
 
-    return logf(var['dataset1'], var)
+    return logf(var)
 
 
 def prep_GRBF(var):
@@ -87,6 +89,7 @@ def prep_GRBF(var):
     """
 
     var['cov'] = (var['s'] ** 2) * np.cov(var['dataset1'].T)
+    var['inv_cov'] = np.linalg.inv(var['cov'])
     det = np.exp(np.linalg.slogdet(var['cov'])[1])
     var['const'] = 1.0/(2 * np.pi * np.sqrt(det))
 
@@ -103,7 +106,9 @@ def distance_GRBF(dataset2, var):
     output: scalar -> GRBF distance
     """
 
-    return -2 * logf(dataset2, var) + 2 * var['norm_GRBF']
+    var['sim'] = dataset2
+
+    return [-2 * logf(var) + 2 * var['norm_GRBF']]
 
 ###############################################################
 ### Quantile distances - section 4.2 of Ishida et al., 2015

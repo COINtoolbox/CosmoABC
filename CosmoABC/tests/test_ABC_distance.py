@@ -50,13 +50,6 @@ def main(args):
     if 'dataset1' not in params:
         params['dataset1'] = params['simulation_func'](params['simulation_input'])
 
-        if params['distance_func'] == distance_grbf:
-            params['extra'] =  SumGRBF(params['dataset1'], params['dataset1'], params)
-
-        elif params['distance_func'] == distance_quantiles:
-            params['dist_dim'] = len(params['dataset1'][0]) + 1
-            params = summ_quantiles(params['dataset1'], params)
-
     #test distance between identical cataloges
     distance_equal = np.atleast_1d(params['distance_func'](params['dataset1'], params))
 
@@ -96,8 +89,9 @@ def main(args):
 
     grid = []
     for pars in param_grid:
-        
-        print 'Particle index: ' + str(len(grid)+1)
+
+        if params['screen']:         
+            print 'Particle index: ' + str(len(grid)+1)
  
         grid_element = list(pars)
  
@@ -124,8 +118,8 @@ def main(args):
 
     #plot distance behaviour
     plt.figure()
-    plt.suptitle(params['distance_func'].__name__)
-    plt.subplots_adjust(top = 0.95, right=0.985, left=0.075, bottom=0.075, wspace=0.25, hspace=0.25)
+    plt.subplots_adjust(top = 0.95, right=0.985, left=0.075, bottom=0.075, 
+                        wspace=0.25, hspace=0.25)
     
     n=0
     for par_indx in xrange(params['npar']):
@@ -135,18 +129,17 @@ def main(args):
             ylim = np.std( grid[:,params['npar'] + dist_indx])
             plt.subplot(params['npar'], len(distance_single), n)
             plt.scatter(grid[:,par_indx], grid[:,params['npar'] + dist_indx])
-            plt.xlabel(params['param_to_fit'][par_indx])
-            plt.ylabel('distance' + str(dist_indx + 1), fontsize = 10)
-            plt.xticks(np.arange(params['param_lim'][par_indx][0], params['param_lim'][par_indx][1], 
-                       (params['param_lim'][par_indx][1]-params['param_lim'][par_indx][0])/5), 
-                       fontsize=8)
+            plt.xlabel(params['param_to_fit'][par_indx], fontsize=14)
+            plt.ylabel('distance' + str(dist_indx + 1), fontsize=14)
+            plt.xticks(xrange(int(params['param_lim'][par_indx][0]) - 1, 
+                       int(params['param_lim'][par_indx][1]) + 1), fontsize=8)
             plt.yticks(fontsize = 8)
             plt.ylim(-0.25*ylim, ylim)
    
-    plt.savefig(output_file)
+    plt.savefig(output_file + '.pdf')
     plt.close()
   
-    print '\n Figure containing distance results is stored in ' + output_file
+    print '\n Figure containing distance results is stored in ' + output_file + '.pdf'
 
 if __name__=='__main__':
   

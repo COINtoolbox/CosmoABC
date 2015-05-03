@@ -30,18 +30,10 @@ Optional external dependences:
  -	NumCosmo:			For cosmological simulations.	
 """
 
-__author__ = "E. E. O. Ishida, S. D. P. Vitenti, M. Penna-Lima, R. S. de Souza, J. Cisewski, E. Cameron, V. C. Busti"
-__maintainer__ = "E. E. O. Ishida"
-__copyright__ = "Copyright 2015"
-__version__ = "0.1"
-__email__ = "emilleishida@gmail.com"
-__status__ = "Prototype"
-__license__ = "GPL"
-
 import argparse
 import imp
 
-from CosmoABC.distances import distance_quantiles, summ_quantiles, distance_grbf, SumGRBF 
+from CosmoABC.distances import distance_quantiles, distance_GRBF
 from CosmoABC.priors import flat_prior, gaussian_prior, beta_prior
 from CosmoABC.ABC_sampler import ABC
 from CosmoABC.plots import plot_1p, plot_2p, plot_3p, plot_4p  
@@ -55,7 +47,7 @@ def main( args ):
     user_input['simulation_func'] = m1.simulation
 
 
-    if 'distance_func' not in user_input.keys():
+    if  isinstance(user_input['distance_func'], list):
         user_input['distance_func'] = m1.distance
 
     for l1 in range(user_input['npar']):
@@ -77,7 +69,7 @@ def main( args ):
     sys1 = sampler_ABC.BuildFirstPSystem()
 
     #update particle system until convergence
-    sampler_ABC.fullABC(user_input['file_root'])
+    sampler_ABC.fullABC()
 
     #plot results
     if len(user_input['param_to_fit'] ) == 1 :

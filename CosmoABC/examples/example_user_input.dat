@@ -1,31 +1,31 @@
-path_to_obs		= None   	   # path to observed data 
+path_to_obs		= None   	           # path to observed data 
 
-param_to_fit 		= mean 	std  n								   # parameters to fit
-param_to_sim    	= mean  std  n	   # parameters needed for simulation
+param_to_fit 		= mean 	std  	           # parameters to fit
+param_to_sim    	= mean  std  n	           # parameters needed for simulation
 
-n_lim		         = 500  3000 		# extreme limits for parametes
-mean_lim                 = -2.0  4.0
-std_lim                  = 0.001  5.0
+mean_prior_par           = -2.0  4.0               # parameters for prior distribution   
+std_prior_par            =  0.1  5.0               #
+	
+mean_lim                 = -2.0  4.0               # extreme limits for parametes
+std_lim                  = 0.1  5.0                #
+		           
 
-n_prior_par 		= 500  2000		# parameters for prior distribution           
-mean_prior_par           = -1.5  3.0
-std_prior_par            =  0.1  2.0
+mean		= 2.0			           # parameters values need for simulation
+std		= 1.0                              #
+n		= 1000                             #
 
-mean		= 1.0				#fiducial parameters for simulation
-std		= 1.0
-n		= 1000
+M 		= 100				   # number of particle in each particle system
+Mini            = 200                              # number of draws for 1st particle system
+delta 		= 0.25				   # convergence criteria
+qthreshold 	= 0.75				   # quantile in distance threshold 
 
-M 		= 100				# number of particle in each particle system
-Mini            = 200
-delta 		= 0.1				# convergence criteria
-qthreshold 	= 0.75				# quantile in distance threshold used to define epsilon in the construction of subsequent particle system
+file_root 	= toy_model_PS		           # root to output files names 
+screen          = 0			           # rather (1) or not (0) to screen outputs
+ncores          = 1				   # number of cores
+split_output    = 1                                # number of intermediate steps written to file
 
-file_root 	= example_1par_PS		# root to output file name for subsequent particle systems
-screen          = 1				# rather (1) or not (0) to display intermediate steps on screen
-ncores          = 1				# number of cores
-
-simulation_func = simulation
-prior_func	= flat_prior flat_prior  flat_prior
-distance_func	= distance_quantiles 
+simulation_func = simulation                       # simulation function
+prior_func	= flat_prior flat_prior            # one prior function for each free parameter 
+distance_func	= distance                         # distance function
 
 

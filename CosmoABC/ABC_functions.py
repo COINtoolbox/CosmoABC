@@ -66,7 +66,7 @@ def read_input(filename):
     params['qthreshold'] = float(params_ini['qthreshold'][0])
     params['delta'] = float(params_ini['delta'][0])
     params['file_root'] = params_ini['file_root'][0]  
-    params['screen'] = bool(params_ini['screen'][0])
+    params['screen'] = bool(int(params_ini['screen'][0]))
     params['ncores'] = int(params_ini['ncores'][0])
     params['prior_func'] = [params_ini['prior_func'][i] 
                              for i in xrange(params_ini['prior_func'].index('#'))]
@@ -98,11 +98,11 @@ def read_input(filename):
         except ValueError:
             sim_par[ item ] = params_ini[ item ][0] 
 
-    if params_ini['simulation_func'][0] == 'numcosmo_simulation':
+    if params_ini['simulation_func'][0] == 'numcosmo_sim_cluster':
 
         try: 
             from gi.repository import NumCosmo as Nc
-            from CosmoABC.sim_NumCosmo import NCountSimul, ChooseParamsInput, numcosmo_simulation
+            from CosmoABC.sim_NumCosmo import NCountSimul, ChooseParamsInput, numcosmo_sim_cluster
         except ImportError:
             raise ImportError( 'You must have NumCosmo running to use the sim_NumCosmo simulation!' +
                                 '\n Please check your NumCosmo instalation.' )
@@ -111,7 +111,7 @@ def read_input(filename):
         Cosmo=ChooseParamsInput()
         Cosmo.params = sim_par 
         params['simulation_input'] = Cosmo.params
-        params['simulation_func'] = numcosmo_simulation
+        params['simulation_func'] = numcosmo_sim_cluster
         
     else:
         params['simulation_input'] = sim_par
@@ -139,6 +139,7 @@ def read_input(filename):
             params = prep_GRBF(params)
 
         elif 'dataset1' in params and params['distance_func'] == distance_quantiles:
+            from CosmoABC.distances import summ_quantiles
             params['dist_dim'] = len(params['dataset1'][0]) + 1
             params['quantile_nodes'] = int(params_ini['quantile_nodes'][0])
             params = summ_quantiles(params['dataset1'], params)

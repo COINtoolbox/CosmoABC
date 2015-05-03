@@ -44,6 +44,7 @@ class TestABC(unittest.TestCase):
  	self.params['prior_func'] = [ flat_prior, flat_prior, flat_prior ]
         self.params['ncores'] = 1 
         self.params['quantile_nodes'] = 20
+        self.params['split_output'] = [1]
 
         #initiate ABC sampler
         self.sampler_ABC = ABC( self.params ) 

@@ -30,19 +30,10 @@ Optional external dependences:
  -	NumCosmo:			For cosmological simulations.	
 """
 
-
-__author__ = "E. E. O. Ishida, S. D. P. Vitenti, M. Penna-Lima,  R. S. de Souza, J. Cisewski, E. Cameron, V. C. Busti"
-__maintainer__ = "E. E. O. Ishida"
-__copyright__ = "Copyright 2015"
-__version__ = "0.1"
-__email__ = "emilleishida@gmail.com"
-__status__ = "Prototype"
-__license__ = "GPL"
-
 import argparse
 import imp
 
-from CosmoABC.distances import distance_quantiles, summ_quantiles, distance_grbf, SumGRBF 
+from CosmoABC.distances import distance_quantiles, distance_GRBF
 from CosmoABC.priors import flat_prior, gaussian_prior, beta_prior
 from CosmoABC.ABC_sampler import ABC
 from CosmoABC.ABC_functions import SelectParamInnerLoop, DrawAllParams, SetDistanceFromSimulation, read_input 
