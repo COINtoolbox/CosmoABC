@@ -13,114 +13,87 @@ There must also be an optional variable regulating the output (rather a draw or 
 
 import numpy as np
 
-from scipy.stats import norm
-from scipy.stats import uniform
 from scipy.stats import beta
+from scipy.stats import uniform
+from scipy.stats import norm
 
-def gaussian_prior( par, par_lim, func=False ):
+def gaussian_prior(par, func=False):
     """
-    Draw a parameter value from a Gaussian prior.
+    Gaussian prior.
   
-    input: 	par          -> vector of parameter required by the corresponding distribution family.
-                                format: [ mean, standard_devitaion]
+    input: par -> dictionary of parameter values
+                  keywords: mean, standard_devitation, 
+                            min and max
 
-                par_lim      -> physical reasonable limits for the cosmological parameters
-                                2-dimensional vector with [min_value, max_value] for each parameter
+                  values: all scalars 
+           func -> boolean (optional)
+                   if True returns the pdf random variable. 
+                   Default is False.
 
-		func (optional)	->   return the pdf random variable (boolean). Default is False.
+    output: scalar (if func=False)
+            gaussian probability distribution function (if func=True)
+
+    """
+        
+    dist = norm(loc=par['mean'], scale=par['std'])
+    flag = False  
+    while flag == False:   
+        draw = dist.rvs() 
+        if par['min'] < draw and draw < par['max']:
+            flag = True
+     
+    if func == False:
+        return draw
+    else:
+        return dist
+
+
+def flat_prior(par, func=False):
+    """
+    Flat prior.
+  
+    input: par ->  dictionary of parameter values
+                   keywords: min and max (scalars)
+           func -> boolean (optional)
+                   if True returns the pdf random variable. 
+                   Default is False.
+
+    output: scalar (if func=False)
+            uniform probability distribution function (if func=True)
+
+    """
+    dist = uniform(loc=par['min'], scale=par['max']-par['min'])
+
+    draw = dist.rvs()
+              
+    if func == False:
+        return draw
+    else:
+        return dist
+
+def beta_prior(par, func=False):
+    """
+    Beta prior.
+  
+    input: par ->  dictionary of parameter values
+                   keywords: alpha, belta
+           func -> boolean (optional)
+                   if True returns the pdf random variable. 
+                   Default is False.
+
+    output: scalar (if func=False)
+            beta probability distribution function (if func=True)
+
+    """
+
+    rv = beta(par['alpha'], par['beta'])
+    draw = beta.rvs(par['alpha'], par['beta']) 
+
+    if func == False:
+        return draw
+    else:
+        return rv
  
-                
-
-    output: scalar	-> one random draw
-            or
-            pdf		-> probability distribution function
-
-    """
-    np.random.seed()
-   
-    #check dimension of feature vector  defining prior distribution 
-    if len( par ) == 2:
-
-        flag = False
-
-        #draw a parameter value physically meaningfull
-        while flag == False:
-            draw = np.random.normal( loc=par[0], scale=par[1] ) 
-                
-            if par_lim[0] <= draw and draw < par_lim[1]:
-                flag = True
-
-    else:
-        raise ValueError("Gaussian distribution requires 2-dimensional parameter vector: [mean, standard_deviation].")
-
-
-    if func == False:
-        return draw
-    else:
-        return norm( loc=par[0],  scale=par[1])
-
-
-def flat_prior( par, par_lim, func=False ):
-    """
-    Draw a parameter value from a flat prior.
-  
-    input: 	par          -> vector of parameter required by the corresponding distribution family.
-                                format: [ lower_bound, upper_bound]
-
-                par_lim      -> physical reasonable limits for the cosmological parameters
-                                2-dimensional vector with [min_value, max_value] for each parameter  
-
-                func (optional)	->   return the pdf random variable (boolean). Default is False.
-
-    output:     scalar	     -> draw number or 1
-    """
-    np.random.seed()
-
-    #check dimensional of feature vector defining distribution
-    #if distribution is flat there is no need to check the bounderies
-    if len( par ) == 2 and par[0] < par[1]:
-        draw = np.random.uniform( low=par[0], high=par[1] )
-    else:
-        raise ValueError("Flat distribution requires 2-dimensional parameter vector: [lower_bound, upper_bound].")
-               
-    if func == False:
-        return draw
-    else:
-        return uniform( loc=par_lim[0], scale=par_lim[1]-par_lim[0])
-
-def beta_prior( par, par_lim, func=False):
-    """
-    Draw a parameter value from a beta prior.
-  
-    input: 	par          -> vector of parameter required by the corresponding distribution family.
-                                format: [ lower_bound, upper_bound]
-
-                par_lim      -> physical reasonable limits for the cosmological parameters
-                                2-dimensional vector with [min_value, max_value] for each parameter  
-
-                func (optional)	->   return the pdf random variable (boolean). Default is False.
-
-    output:     scalar	     -> draw number or 1
-    """
-    np.random.seed()
-
-    #check dimension of feature vector  defining prior distribution 
-    if len( par ) == 2:
-
-        rv = beta(par[0], par[1])
-        draw = beta.rvs( par[0], par[1]) 
-
-    else:
-        raise ValueError("Beta distribution requires 2-dimensional parameter vector: [mean, standard_deviation].")
-
-
-    if func == False:
-        return par[2] * draw
-    else:
-        return (1.0/abs(par[2])) * rv
-  
-
-
 
 def main():
   print(__doc__)

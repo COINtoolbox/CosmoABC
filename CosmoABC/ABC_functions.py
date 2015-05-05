@@ -57,10 +57,6 @@ def read_input(filename):
     params['param_to_sim'] = [params_ini['param_to_sim'][i] 
                              for i in xrange(params_ini['param_to_sim'].index('#'))]
     params['npar'] = len(params['param_to_fit'])
-    params['prior_par'] = [[float(params_ini[params['param_to_fit'][i] + '_prior_par'][j]) 
-                          for j in xrange(2) ] for i in xrange(params['npar'])]
-    params['param_lim'] = [[float(params_ini[params['param_to_fit'][i] + '_lim'][j]) 
-                          for j in xrange(2) ] for i in xrange(params['npar'])]
     params['M'] = int(params_ini['M'][0])
     params['Mini'] = int(params_ini['Mini'][0])
     params['qthreshold'] = float(params_ini['qthreshold'][0])
@@ -82,9 +78,32 @@ def read_input(filename):
         params['simulation_func'] = dispatcher[params_ini['simulation_func'][0]]
 
     if len(params['prior_func']) == params['npar']:
-        params['prior_func'] = [dispatcher[params['prior_func'][k]] 
-                           if params['prior_func'][k] in dispatcher.keys() 
-                           else params['prior_func'][k] for k in xrange(params['npar'])]
+
+        prior_dic = {}
+        for i1 in xrange(params['npar']):
+            element = params['param_to_fit'][i1]
+            prior_dic[element] = {}
+            if element + '_par_lim' in params_ini.keys():
+                prior_dic[element]['min'] = float(params_ini[element + '_lim'][0])
+                prior_dic[element]['max'] = float(params_ini[element + '_lim'][1])
+
+            if params['prior_func'][i1] == 'gaussian_prior':    
+                prior_dic[element]['func'] = dispatcher['gaussian_prior']
+                prior_dic[element]['mean'] = float(params_ini[element + '_prior_par'][0])
+                prior_dic[element]['std'] = float(params_ini[element + '_prior_par'][1])
+
+            elif params['prior_func'][i1] == 'flat_prior':
+                prior_dic[element]['func'] = dispatcher['flat_prior']
+                prior_dic[element]['min'] = float(params_ini[element + '_prior_par'][0])
+                prior_dic[element]['max'] = float(params_ini[element + '_prior_par'][1])
+
+            elif params['prior_func'][i1] == 'beta_prior':
+                prior_dic[element]['func'] = dispatcher['beta_prior']
+                prior_dic[element]['alpha'] = float(params_ini[element + '_prior_par'][0])
+                prior_dic[element]['beta'] = float(params_ini[element + '_prior_par'][1])
+
+        params['prior'] = prior_dic
+                    
     else:
         raise ValueError('Number of prior functions does not match number of parameters!') 
 
@@ -208,9 +227,10 @@ def SelectParamInnerLoop(var1):
                     theta_t_try = [mvn]
 
                 theta_t = []
-                for k1 in xrange(len(var1['params']['param_to_fit'])):
- 
-                    if  theta_t_try[k1] >= var1['params']['param_lim'][k1][0] and theta_t_try[k1] < var1['params']['param_lim'][k1][1]:
+                for par in var1['params']['param_to_fit']:
+                   
+                    k1 = var1['params']['param_to_fit'].index(par)
+                    if  theta_t_try[k1] >= var1['params']['prior'][par]['min'] and theta_t_try[k1] <= var1['params']['prior'][par]['max']:
                         theta_t.append(True)
 
                     else:
@@ -253,7 +273,7 @@ def SelectParamInnerLoop(var1):
         pass
 
 
-def DrawAllParams(params):
+def DrawAllParams(prior_dic):
     """
     Draw complete set of  parameters from prior.
 
@@ -261,9 +281,8 @@ def DrawAllParams(params):
     """
 
     pars = []
-    
-    for j in range(len(params['param_to_fit'])):
-        p1 = params['prior_func'][j](params['prior_par'][j], params['param_lim'][j])   
+    for key in prior_dic.keys():
+        p1 = prior_dic[key]['func'](prior_dic[key])   
         pars.append(p1)
 
     return np.array(pars)
@@ -281,7 +300,7 @@ def SetDistanceFromSimulation(var):
         time1 = time.time()
 
         #draw parameters from prior
-        ParTry = DrawAllParams(var)
+        ParTry = DrawAllParams(var['prior'])
   
         for i1 in range(len(var['param_to_fit'])):
             var['simulation_input'][var['param_to_fit'][i1]] = ParTry[i1]

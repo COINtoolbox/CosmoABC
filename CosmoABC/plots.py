@@ -27,16 +27,18 @@ def plot_1p(T, file_output, Parameters):
     *******
     """
 
+    par = Parameters['param_to_fit'][0]
+
     if file_output[-3:] != 'pdf':
         raise NameError('Name file for figure output must be a pdf!')       
 
-  
-    sampling = np.array([[i1 for i1 in np.arange(Parameters['param_lim'][j][0], 
-                    Parameters['param_lim'][j][1], 
-                   (Parameters['param_lim'][j][1]-Parameters['param_lim'][j][0])/1000) ] 
-                              for j in range(len(Parameters['param_to_fit']))])
+    sampling = np.array([[i1 for i1 in np.arange(Parameters['prior'][element]['min'], 
+                    Parameters['prior'][element]['max'], 
+                   (Parameters['prior'][element]['max']-Parameters['prior'][element]['min'])/1000) ] 
+                              for element in Parameters['param_to_fit']])
 
-    y0 = [Parameters['prior_func'][0](Parameters['prior_par'][0], Parameters['param_lim'][0] ) for x in xrange(Parameters['M'])]
+    par1 = Parameters['param_to_fit'][0]
+    y0 = [Parameters['prior'][par1]['func'](Parameters['prior'][par1]) for x in xrange(Parameters['M'])]
     w0 = [1.0/len(y0) for i1 in y0]
 
     kde0 = gaussian_kde(y0 , weights=w0)
@@ -57,7 +59,7 @@ def plot_1p(T, file_output, Parameters):
         plt.xlabel(Parameters['param_to_fit'][0])
         plt.ylabel('density', fontsize=12)
         plt.tick_params(axis='both', which='major', labelsize=12)
-        plt.xlim(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1])
+        plt.xlim(Parameters['prior'][par1]['min'], Parameters['prior'][par1]['max'])
         pdf.savefig()
         plt.close()
 
@@ -92,7 +94,7 @@ def plot_1p(T, file_output, Parameters):
             plt.xlabel(Parameters['param_to_fit'][0])
             plt.ylabel('density', fontsize=12)
             plt.tick_params(axis='both', which='major', labelsize=12)
-            plt.xlim(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1])
+            plt.xlim(Parameters['prior'][par1]['min'], Parameters['prior'][par1]['max'])
             pdf.savefig()
             plt.close()
 
@@ -148,21 +150,23 @@ def plot_2p(T, file_output, Parameters):
     *******
     """
 
+    p1 = Parameters['param_to_fit'][0]
+    p2 = Parameters['param_to_fit'][1]
+
     if file_output[-3:] != 'pdf':
         raise NameError('Name file for figure output must be a pdf!')       
 
-    sampling = np.array([[i for i in np.arange(Parameters['param_lim'][j][0], 
-                          Parameters['param_lim'][j][1], (Parameters['param_lim'][j][1] -
-                          Parameters['param_lim'][j][0])/1000)] 
-                                    for j in range(len(Parameters['param_to_fit']))])
+    sampling = np.array([[i for i in np.arange(Parameters['prior'][par]['min'], 
+                          Parameters['prior'][par]['max'], (Parameters['prior'][par]['max'] -
+                          Parameters['prior'][par]['min'])/1000)] 
+                                    for par in Parameters['param_to_fit']])
    
-    sampling2 = np.array([[i for i in np.arange(Parameters['param_lim'][j][0], 
-                           Parameters['param_lim'][j][1], (Parameters['param_lim'][j][1] - 
-                           Parameters['param_lim'][j][0])/100)] 
-                                     for j in range(len(Parameters['param_to_fit']))])
+    sampling2 = np.array([[i for i in np.arange(Parameters['prior'][par]['min'], 
+                           Parameters['prior'][par]['max'], (Parameters['prior'][par]['max'] - 
+                           Parameters['prior'][par]['min'])/100)] 
+                                     for par in Parameters['param_to_fit']])
 
-    y0 = np.array([[Parameters['prior_func'][0](Parameters['prior_par'][0], Parameters['param_lim'][0]), 
-                       Parameters['prior_func'][1](Parameters['prior_par'][1], Parameters['param_lim'][1])] 
+    y0 = np.array([[Parameters['prior'][par]['func'](Parameters['prior'][par]) for par in Parameters['param_to_fit']] 
                                  for x in xrange(Parameters['M'])])
     
     w0 = [1.0/len(y0) for i in y0]
@@ -179,8 +183,9 @@ def plot_2p(T, file_output, Parameters):
     y30 = kde30((np.ravel(xx), np.ravel(yy)))
     zz0 = np.reshape(y30, xx.shape) 
 
-    kwargs = dict(extent=(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1], 
-                          Parameters['param_lim'][1][0], Parameters['param_lim'][1][1]), 
+    
+    kwargs = dict(extent=([Parameters['prior'][par]['min'] for par in Parameters['param_to_fit']] +
+                          [Parameters['prior'][par]['max'] for par in Parameters['param_to_fit']]), 
                           cmap='hot', origin='lower')
 
     epsilon_ev = []
@@ -214,17 +219,19 @@ def plot_2p(T, file_output, Parameters):
         axA.set_aspect('auto')     
         axA.tick_params(axis='both', which='major', labelsize=10)
 
+        p1 = Parameters['param_to_fit']
         ax1.plot(sampling[0], y01, color='blue')
         ax1.set_xlabel(Parameters['param_to_fit'][0])
         ax1.set_ylabel('density', fontsize=8)
         ax1.tick_params(axis='both', which='major', labelsize=8)
-        ax1.set_xlim(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1])
+        ax1.set_xlim(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'])
 
+        p2 = Parameters['param_to_fit']
         ax2.plot(sampling[1], y02, color='blue')
         ax2.set_xlabel(Parameters['param_to_fit'][1])
         ax2.set_ylabel('density', fontsize = 8)
         ax2.tick_params(axis='both', which='major', labelsize=8)
-        ax2.set_xlim(Parameters['param_lim'][1][0], Parameters['param_lim'][1][1]) 
+        ax2.set_xlim(Parameters['prior'][p2]['min'], Parameters['prior'][p2]['max']) 
 
         pdf.savefig()
         plt.close()
@@ -288,13 +295,13 @@ def plot_2p(T, file_output, Parameters):
             ax1.set_xlabel(Parameters['param_to_fit'][0])
             ax1.set_ylabel('density', fontsize=8)
             ax1.tick_params(axis='both', which='major', labelsize=8)
-            ax1.set_xlim(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1])
+            ax1.set_xlim(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'])
 
             ax2.plot(sampling[1], y2, color='blue')
             ax2.set_xlabel(Parameters['param_to_fit'][1])
             ax2.set_ylabel('density', fontsize = 8)
             ax2.tick_params(axis='both', which='major', labelsize=8)
-            ax2.set_xlim(Parameters['param_lim'][1][0], Parameters['param_lim'][1][1]) 
+            ax2.set_xlim(Parameters['prior'][p2]['min'], Parameters['prior'][p2]['max']) 
 
             pdf.savefig()
             plt.close()
@@ -358,36 +365,39 @@ def plot_3p(T, file_output, Parameters):
         raise NameError('Name file for figure output must be a pdf!')       
 
     #sampling for 1D plots
-    sampling = np.array([[i for i in np.arange(Parameters['param_lim'][j][0], 
-                               Parameters['param_lim'][j][1], (Parameters['param_lim'][j][1] - 
-                               float(Parameters['param_lim'][j][0]))/1000)]  
-                                     for j in range(len(Parameters['param_to_fit']))])
+    sampling = np.array([[i for i in np.arange(Parameters['prior'][par]['min'], 
+                               Parameters['prior'][par]['max'], (Parameters['prior'][par]['max'] - 
+                               float(Parameters['prior'][par]['min']))/1000)]  
+                                     for par in Parameters['param_to_fit']])
     
     #sampling for 2D plots
-    sampling2 = np.array([[i for i in np.arange(Parameters['param_lim'][j][0], 
-                                Parameters['param_lim'][j][1], (Parameters['param_lim'][j][1] - 
-                                Parameters['param_lim'][j][0])/100)] 
-                                          for j in range(len(Parameters['param_to_fit']))])
+    sampling2 = np.array([[i for i in np.arange(Parameters['prior'][par]['min'], 
+                                Parameters['prior'][par]['max'], (Parameters['prior'][par]['max'] - 
+                                Parameters['prior'][par]['min'])/100)] 
+                                          for par in Parameters['param_to_fit']])
 
     #define variables for 2D plots 
     xx12, yy12 = np.meshgrid(sampling2[0], sampling2[1])
     xx13, yy13 = np.meshgrid(sampling2[0], sampling2[2])
     xx23, yy23 = np.meshgrid(sampling2[1], sampling2[2])
     
-    kwargs12 = dict(extent=(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1], 
-                    Parameters['param_lim'][1][0], Parameters['param_lim'][1][1]), 
-                    cmap='hot', origin='lower')
+    p1 = Parameters['param_to_fit'][0]
+    p2 = Parameters['param_to_fit'][1]
+    p3 = Parameters['param_to_fit'][2]
+   
+    kwargs12 = dict(extent=(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'], 
+                            Parameters['prior'][p2]['min'], Parameters['prior'][p2]['max']), 
+                            cmap='hot', origin='lower')
  
-    kwargs13 = dict(extent=(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1], 
-                    Parameters['param_lim'][2][0], Parameters['param_lim'][2][1]), 
-                    cmap='hot', origin='lower')
+    kwargs13 = dict(extent=(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'], 
+                            Parameters['prior'][p3]['min'], Parameters['prior'][p3]['max']), 
+                            cmap='hot', origin='lower')
 
-    kwargs23 = dict(extent=(Parameters['param_lim'][1][0], Parameters['param_lim'][1][1], 
-                   Parameters['param_lim'][2][0], Parameters['param_lim'][2][1]), 
-                   cmap='hot', origin='lower')
+    kwargs23 = dict(extent=(Parameters['prior'][p2]['min'], Parameters['prior'][p2]['max'], 
+                            Parameters['prior'][p3]['min'], Parameters['prior'][p3]['max']), 
+                            cmap='hot', origin='lower')
 
-    y0 = np.array([[Parameters['prior_func'][j1](Parameters['prior_par'][j1], 
-                       Parameters['param_lim'][j1]) for j1 in xrange(3) ] 
+    y0 = np.array([[Parameters['prior'][par]['func'](Parameters['prior'][par]) for par in Parameters['param_to_fit']] 
                                  for x in xrange(Parameters['M'])])
     
     w0 = [1.0/len(y0) for i in y0]
@@ -468,19 +478,19 @@ def plot_3p(T, file_output, Parameters):
         ax4.set_xlabel(Parameters['param_to_fit'][0])
         ax4.set_ylabel('density', fontsize=8)
         ax4.tick_params(axis='both', which='major', labelsize=8)
-        ax4.set_xlim(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1])
+        ax4.set_xlim(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'])
 
         ax5.plot(sampling[1], y02, color='red')
         ax5.set_xlabel(Parameters['param_to_fit'][1])
         ax5.set_ylabel('density', fontsize = 8)
         ax5.tick_params(axis='both', which='major', labelsize=8)
-        ax5.set_xlim(Parameters['param_lim'][1][0], Parameters['param_lim'][1][1]) 
+        ax5.set_xlim(Parameters['prior'][p2]['min'], Parameters['prior'][p2]['max']) 
 
         ax6.plot(sampling[2], y03, color='green')
         ax6.set_xlabel(Parameters['param_to_fit'][2])
         ax6.set_ylabel('density', fontsize = 8)
         ax6.tick_params(axis='both', which='major', labelsize=8)
-        ax6.set_xlim(Parameters['param_lim'][2][0], Parameters['param_lim'][2][1]) 
+        ax6.set_xlim(Parameters['prior'][p3]['min'], Parameters['prior'][p3]['max']) 
 
         pdf.savefig()
         plt.close()
@@ -522,8 +532,8 @@ def plot_3p(T, file_output, Parameters):
             y12 = kde12((np.ravel(xx12), np.ravel(yy12)))
             zz12 = np.reshape(y12, xx12.shape)
    
-            kwargs12 = dict(extent=(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1], 
-                                    Parameters['param_lim'][1][0], Parameters['param_lim'][1][1]), 
+            kwargs12 = dict(extent=(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'], 
+                                    Parameters['prior'][p2]['min'], Parameters['prior'][p2]['max']), 
                                     cmap='hot', origin='lower') 
 
             kde13 = gaussian_kde(np.array([d1[:,0], d1[:,2]]), weights=w1)
@@ -531,8 +541,8 @@ def plot_3p(T, file_output, Parameters):
             y13 = kde13(( np.ravel(xx13), np.ravel(yy13)))
             zz13 = np.reshape( y13, xx13.shape)    
 
-            kwargs13 = dict(extent=(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1], 
-                                    Parameters['param_lim'][2][0], Parameters['param_lim'][2][1]), 
+            kwargs13 = dict(extent=(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'], 
+                                    Parameters['prior'][p3]['min'], Parameters['prior'][p3]['max']), 
                                     cmap='hot', origin='lower')
 
             kde23 = gaussian_kde(np.array([d1[:,1], d1[:,2]]), weights=w1)
@@ -540,8 +550,8 @@ def plot_3p(T, file_output, Parameters):
             y23 = kde23((np.ravel(xx23), np.ravel(yy23)))
             zz23 = np.reshape(y23, xx23.shape)
 
-            kwargs23 = dict(extent=(Parameters['param_lim'][1][0], Parameters['param_lim'][1][1], 
-                                    Parameters['param_lim'][2][0], Parameters['param_lim'][2][1]), 
+            kwargs23 = dict(extent=(Parameters['prior'][p2]['min'], Parameters['prior'][p2]['max'], 
+                                    Parameters['prior'][p3]['min'], Parameters['prior'][p3]['max']), 
                                     cmap='hot', origin='lower')
 
             #### Plot posteriors
@@ -590,19 +600,19 @@ def plot_3p(T, file_output, Parameters):
             ax4.set_xlabel(Parameters['param_to_fit'][0])
             ax4.set_ylabel('density', fontsize=8)
             ax4.tick_params(axis='both', which='major', labelsize=8)
-            ax4.set_xlim(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1])
+            ax4.set_xlim(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'])
 
             ax5.plot(sampling[1], y2, color='red')
             ax5.set_xlabel(Parameters['param_to_fit'][1])
             ax5.set_ylabel('density', fontsize = 8)
             ax5.tick_params(axis='both', which='major', labelsize=8)
-            ax5.set_xlim(Parameters['param_lim'][1][0], Parameters['param_lim'][1][1]) 
+            ax5.set_xlim(Parameters['prior'][p2]['min'], Parameters['prior'][p2]['max']) 
 
             ax6.plot(sampling[2], y3, color='green')
             ax6.set_xlabel(Parameters['param_to_fit'][2])
             ax6.set_ylabel('density', fontsize = 8)
             ax6.tick_params(axis='both', which='major', labelsize=8)
-            ax6.set_xlim(Parameters['param_lim'][2][0], Parameters['param_lim'][2][1]) 
+            ax6.set_xlim(Parameters['prior'][p3]['min'], Parameters['prior'][p3]['max']) 
 
             pdf.savefig()
             plt.close()
@@ -663,14 +673,14 @@ def plot_4p(T, file_output, Parameters):
 
 
     #sampling for 1D plots
-    sampling = np.array([[i for i in np.arange( Parameters['param_lim'][j][0], 
-                               Parameters['param_lim'][j][1], (Parameters['param_lim'][j][1] - 
-                               Parameters['param_lim'][j][0])/1000)] for j in range(len(Parameters['param_to_fit']))])
+    sampling = np.array([[i for i in np.arange( Parameters['prior'][par]['min'], 
+                               Parameters['prior'][par]['max'], (Parameters['prior'][par]['max'] - 
+                               Parameters['prior'][par]['min'])/1000)] for par in Parameters['param_to_fit']])
    
     #sampling for 2D plots
-    sampling2 = np.array([[i for i in np.arange(Parameters['param_lim'][j][0], 
-                                Parameters['param_lim'][j][1], (Parameters['param_lim'][j][1] - 
-                                Parameters['param_lim'][j][0])/100)] for j in range(len(Parameters['param_to_fit']))])
+    sampling2 = np.array([[i for i in np.arange(Parameters['prior'][par]['min'], 
+                                Parameters['prior'][par]['max'], (Parameters['prior'][par]['max'] - 
+                                Parameters['prior'][par]['min'])/100)] for par in Parameters['param_to_fit']])
 
     #define variables for 2D plots 
     xx12, yy12 = np.meshgrid(sampling2[0], sampling2[1])
@@ -679,33 +689,37 @@ def plot_4p(T, file_output, Parameters):
     xx23, yy23 = np.meshgrid(sampling2[1], sampling2[2])
     xx24, yy24 = np.meshgrid(sampling2[1], sampling2[3])
     xx34, yy34 = np.meshgrid(sampling2[2], sampling2[3])
+
+    p1 = Parameters['param_to_fit'][0]
+    p2 = Parameters['param_to_fit'][1]
+    p3 = Parameters['param_to_fit'][2]
+    p4 = Parameters['param_to_fit'][3]
     
-    kwargs12 = dict(extent=(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1], 
-                            Parameters['param_lim'][1][0], Parameters['param_lim'][1][1]), 
+    kwargs12 = dict(extent=(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'], 
+                            Parameters['prior'][p2]['min'], Parameters['prior'][p2]['max']), 
                             cmap='hot', origin='lower')
  
-    kwargs13 = dict(extent=(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1], 
-                            Parameters['param_lim'][2][0], Parameters['param_lim'][2][1]), 
+    kwargs13 = dict(extent=(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'], 
+                            Parameters['prior'][p3]['min'], Parameters['prior'][p3]['max']), 
                             cmap='hot', origin='lower')
 
-    kwargs14 = dict(extent=(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1], 
-                            Parameters['param_lim'][3][0], Parameters['param_lim'][3][1]), 
+    kwargs14 = dict(extent=(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'], 
+                            Parameters['prior'][p4]['min'], Parameters['prior'][p4]['max']), 
                             cmap='hot', origin='lower')
 
-    kwargs23 = dict(extent=(Parameters['param_lim'][1][0], Parameters['param_lim'][1][1], 
-                            Parameters['param_lim'][2][0], Parameters['param_lim'][2][1]), 
+    kwargs23 = dict(extent=(Parameters['prior'][p2]['min'], Parameters['prior'][p2]['max'], 
+                            Parameters['prior'][p3]['min'], Parameters['prior'][p3]['max']), 
                             cmap='hot', origin='lower')
 
-    kwargs24 = dict(extent=(Parameters['param_lim'][1][0], Parameters['param_lim'][1][1], 
-                            Parameters['param_lim'][3][0], Parameters['param_lim'][3][1]), 
+    kwargs24 = dict(extent=(Parameters['prior'][p2]['min'], Parameters['prior'][p2]['max'], 
+                            Parameters['prior'][p4]['min'], Parameters['prior'][p4]['max']), 
                             cmap='hot', origin='lower')
 
-    kwargs34 = dict(extent=(Parameters['param_lim'][2][0], Parameters['param_lim'][2][1], 
-                            Parameters['param_lim'][3][0], Parameters['param_lim'][3][1]), 
+    kwargs34 = dict(extent=(Parameters['prior'][p3]['min'], Parameters['prior'][p3]['max'], 
+                            Parameters['prior'][p4]['min'], Parameters['prior'][p4]['max']), 
                             cmap='hot', origin='lower')
 
-    y0 = np.array([[Parameters['prior_func'][j1](Parameters['prior_par'][j1], 
-                       Parameters['param_lim'][j1]) for j1 in xrange(4)] for x in xrange(Parameters['M'])])
+    y0 = np.array([[Parameters['prior'][par]['func'](Parameters['prior'][par]) for par in Parameters['param_to_fit']] for x in xrange(Parameters['M'])])
     
     w0 = [1.0/len(y0) for i in y0]
 
@@ -830,25 +844,25 @@ def plot_4p(T, file_output, Parameters):
         ax7.set_xlabel(Parameters['param_to_fit'][0])
         ax7.set_ylabel('density', fontsize=8)
         ax7.tick_params(axis='both', which='major', labelsize=8)
-        ax7.set_xlim(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1])
+        ax7.set_xlim(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'])
 
         ax8.plot(sampling[1], y02, color='red')
         ax8.set_xlabel(Parameters['param_to_fit'][1])
         ax8.set_ylabel('density', fontsize = 8)
         ax8.tick_params(axis='both', which='major', labelsize=8)
-        ax8.set_xlim(Parameters['param_lim'][1][0], Parameters['param_lim'][1][1]) 
+        ax8.set_xlim(Parameters['prior'][p2]['min'], Parameters['prior'][p2]['max']) 
 
         ax9.plot(sampling[2], y03, color='green')
         ax9.set_xlabel(Parameters['param_to_fit'][2])
         ax9.set_ylabel('density', fontsize = 8)
         ax9.tick_params(axis='both', which='major', labelsize=8)
-        ax9.set_xlim(Parameters['param_lim'][2][0], Parameters['param_lim'][2][1]) 
+        ax9.set_xlim(Parameters['prior'][p3]['min'], Parameters['prior'][p3]['max']) 
 
         ax10.plot(sampling[3], y04, color='purple')
         ax10.set_xlabel(Parameters['param_to_fit'][2])
         ax10.set_ylabel('density', fontsize = 8)
         ax10.tick_params(axis='both', which='major', labelsize=8)
-        ax10.set_xlim(Parameters['param_lim'][3][0], Parameters['param_lim'][3][1])
+        ax10.set_xlim(Parameters['prior'][p4]['min'], Parameters['prior'][p4]['max'])
 
         pdf.savefig()
         plt.close()
@@ -894,8 +908,8 @@ def plot_4p(T, file_output, Parameters):
             y12 = kde12((np.ravel(xx12), np.ravel(yy12)))
             zz12 = np.reshape(y12, xx12.shape)   
 
-            kwargs12 = dict(extent=(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1], 
-                                    Parameters['param_lim'][1][0], Parameters['param_lim'][1][1]), 
+            kwargs12 = dict(extent=(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'], 
+                                    Parameters['prior'][p2]['min'], Parameters['prior'][p2]['max']), 
                                     cmap='hot', origin='lower') 
 
             kde13 = gaussian_kde(np.array([d1[:,0], d1[:,2]]), weights=w1)
@@ -903,8 +917,8 @@ def plot_4p(T, file_output, Parameters):
             y13 = kde13((np.ravel(xx13), np.ravel(yy13)))
             zz13 = np.reshape(y13, xx13.shape)
     
-            kwargs13 = dict(extent=(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1], 
-                                    Parameters['param_lim'][2][0], Parameters['param_lim'][2][1]), 
+            kwargs13 = dict(extent=(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'], 
+                                    Parameters['prior'][p3]['min'], Parameters['prior'][p3]['max']), 
                                     cmap='hot', origin='lower')
 
             kde14 = gaussian_kde(np.array([d1[:,0], d1[:,3]]), weights=w1)
@@ -912,8 +926,8 @@ def plot_4p(T, file_output, Parameters):
             y14 = kde14((np.ravel(xx14), np.ravel(yy14)))
             zz14 = np.reshape(y14, xx14.shape)    
 
-            kwargs14 = dict(extent=(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1], 
-                                    Parameters['param_lim'][3][0], Parameters['param_lim'][3][1]), 
+            kwargs14 = dict(extent=(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'], 
+                                    Parameters['prior'][p4]['min'], Parameters['prior'][p4]['max']), 
                                     cmap='hot', origin='lower') 
 
             kde23 = gaussian_kde(np.array([d1[:,1], d1[:,2]]), weights=w1)
@@ -921,8 +935,8 @@ def plot_4p(T, file_output, Parameters):
             y23 = kde23((np.ravel(xx23), np.ravel(yy23)))
             zz23 = np.reshape(y23, xx23.shape)
 
-            kwargs23 = dict(extent=(Parameters['param_lim'][1][0], Parameters['param_lim'][1][1], 
-                                    Parameters['param_lim'][2][0], Parameters['param_lim'][2][1]), 
+            kwargs23 = dict(extent=(Parameters['prior'][p2]['min'], Parameters['prior'][p2]['max'], 
+                                    Parameters['prior'][p3]['min'], Parameters['prior'][p3]['max']), 
                                     cmap='hot', origin='lower')
 
             kde24 = gaussian_kde(np.array([d1[:,1], d1[:,3] ]), weights=w1)
@@ -930,8 +944,8 @@ def plot_4p(T, file_output, Parameters):
             y24 = kde24((np.ravel(xx24), np.ravel(yy24)))
             zz24 = np.reshape(y24, xx24.shape)
 
-            kwargs24 = dict(extent=(Parameters['param_lim'][1][0], Parameters['param_lim'][1][1], 
-                                    Parameters['param_lim'][3][0], Parameters['param_lim'][3][1]), 
+            kwargs24 = dict(extent=(Parameters['prior'][p2]['min'], Parameters['prior'][p2]['max'], 
+                                    Parameters['prior'][p4]['min'], Parameters['prior'][p4]['max']), 
                                     cmap='hot', origin='lower')
 
             kde34 = gaussian_kde(np.array([d1[:,2], d1[:,3]]), weights=w1)
@@ -939,8 +953,8 @@ def plot_4p(T, file_output, Parameters):
             y34 = kde34((np.ravel(xx34), np.ravel(yy34)))
             zz34 = np.reshape(y34, xx34.shape)
 
-            kwargs34 = dict(extent=(Parameters['param_lim'][2][0], Parameters['param_lim'][2][1], 
-                                    Parameters['param_lim'][3][0], Parameters['param_lim'][3][1]), 
+            kwargs34 = dict(extent=(Parameters['prior'][p3]['min'], Parameters['prior'][p3]['max'], 
+                                    Parameters['prior'][p4]['min'], Parameters['prior'][p4]['max']), 
                                     cmap='hot', origin='lower')
 
             #### Plot posteriors
@@ -1020,26 +1034,26 @@ def plot_4p(T, file_output, Parameters):
             ax7.set_xlabel(Parameters['param_to_fit'][0])
             ax7.set_ylabel('density', fontsize=8 )
             ax7.tick_params(axis='both', which='major', labelsize=8)
-            ax7.set_xlim(Parameters['param_lim'][0][0], Parameters['param_lim'][0][1])
+            ax7.set_xlim(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'])
 
 
             ax8.plot(sampling[1], y2, color='red')
             ax8.set_xlabel(Parameters['param_to_fit'][1])
             ax8.set_ylabel('density', fontsize = 8)
             ax8.tick_params(axis='both', which='major', labelsize=8)
-            ax8.set_xlim(Parameters['param_lim'][1][0], Parameters['param_lim'][1][1]) 
+            ax8.set_xlim(Parameters['prior'][p2]['min'], Parameters['prior'][p2]['max']) 
 
             ax9.plot(sampling[2], y3, color='green')
             ax9.set_xlabel(Parameters['param_to_fit'][2])
             ax9.set_ylabel('density', fontsize = 8)
             ax9.tick_params(axis='both', which='major', labelsize=8)
-            ax9.set_xlim(Parameters['param_lim'][2][0], Parameters['param_lim'][2][1]) 
+            ax9.set_xlim(Parameters['prior'][p3]['min'], Parameters['prior'][p3]['max']) 
    
             ax10.plot(sampling[3], y3, color='purple')
             ax10.set_xlabel(Parameters['param_to_fit'][3] )
             ax10.set_ylabel('density', fontsize = 8)
             ax10.tick_params(axis='both', which='major', labelsize=8)
-            ax10.set_xlim(Parameters['param_lim'][3][0], Parameters['param_lim'][3][1]) 
+            ax10.set_xlim(Parameters['prior'][p4]['min'], Parameters['prior'][p4]['max']) 
 
             pdf.savefig()
             plt.close()

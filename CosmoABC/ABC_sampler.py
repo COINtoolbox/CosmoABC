@@ -73,7 +73,7 @@ class ABC(object):
         self.data = params['dataset1']                          #set of 2-dimensional arrays of "real" catalog.         
         self.simulation = params['simulation_func']             #function which performs the simulation
         self.distance = params['distance_func']     	        #distance function
-        self.prior = params['prior_func']                       #list of prior distribution function     
+        self.prior = params['prior']                            #dictionary of prior parameters  
         self.delta = params['delta']                            #convergence criteria 
         self.M	= params['M']                                   #number of elements in each particle system
         self.qthreshold	= params['qthreshold']                  #quantile to define the distance threshold for subsequent particle system
@@ -91,7 +91,7 @@ class ABC(object):
             raise TypeError('Real data catalog must be at least 2 dimensional.')
                 
         #check minimum keywords in params
-        self.min_keys = ['simulation_input', 'param_to_fit', 'prior_par', 'param_lim', 'M', 'qthreshold', 'delta','file_root']  
+        self.min_keys = ['simulation_input', 'param_to_fit', 'prior', 'M', 'qthreshold', 'delta','file_root']  
         for item in self.min_keys:
             if item not in self.params.keys():
                 raise IOError('Keyword ' + str( item ) + '  is missing from inputed dictionary of parameters (params)!') 
@@ -102,7 +102,7 @@ class ABC(object):
 
         #check prior function
         if not self.prior:
-            raise IOError('Please provide a valid prior distribution function for each variable parameter. \n "See file priors.py"')
+            raise IOError('Please provide a valid prior information for each variable parameter. \n "See file priors.py"')
 
         #check distance function
         if not self.distance:
@@ -331,8 +331,8 @@ class ABC(object):
         new_weights = []
 
         #determine prior distributions
-        distributions = [self.prior[i1](self.params['prior_par'][i1], self.params['param_lim'][i1], func=True) 
-                                        for i1 in xrange(len(self.params['param_to_fit']))]
+        distributions = [self.prior[par]['func'](self.params['prior'][par], func=True) 
+                                        for par in self.params['param_to_fit']]
 
         for i4 in range(len(current_particle_system)):
             nominator = np.prod([distributions[i2].pdf(current_particle_system[i4][i2])  

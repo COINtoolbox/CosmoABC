@@ -3,6 +3,7 @@
 import unittest 
 import os
 import numpy as np
+import sys
 
 from statsmodels.stats.weightstats import DescrStatsW
 
@@ -31,20 +32,29 @@ class TestABC(unittest.TestCase):
         self.params['simulation_func'] = ysim
         self.params['simulation_input'] = {'mu': self.mu, 'sigma':self.sigma, 'n':self.n} 
         self.params['dataset1'] = self.params['simulation_func']( self.params['simulation_input'] )
-        self.params['param_to_fit']=['mu', 'sigma', 'n']							
-        self.params['param_lim']=[[0.0, 5.0],[0.001, 3.0],[500, 1500]]	
-        self.params['prior_par'] = [[1.0, 4.0],[0.001, 3.0],[600, 1400]]
+        self.params['param_to_fit']=['mu', 'sigma']							
         self.params['screen'] = 0
         self.params['Mini'] = 200 							
         self.params['M'] = 100				
         self.params['delta'] =0.1				
         self.params['qthreshold'] = 0.75
         self.params['file_root'] = os.getcwd() + '/test_PS'	
-        self.params['distance_func'] =  distance_quantiles 
- 	self.params['prior_func'] = [ flat_prior, flat_prior, flat_prior ]
-        self.params['ncores'] = 1 
+        self.params['distance_func'] =  distance_quantiles  
         self.params['quantile_nodes'] = 20
         self.params['split_output'] = [1]
+        self.params['prior'] = {}
+        self.params['prior']['mu'] = {}
+        self.params['prior']['mu']['func'] = flat_prior
+        self.params['prior']['mu']['min'] = 1.0
+        self.params['prior']['mu']['max'] = 4.0
+        self.params['prior']['sigma'] = {}
+        self.params['prior']['sigma']['func'] = flat_prior
+        self.params['prior']['sigma']['min'] = 0.001
+        self.params['prior']['sigma']['max'] = 3.0
+        #self.params['prior']['n'] = {}
+        #self.params['prior']['n']['func'] = flat_prior
+        #self.params['prior']['n']['min'] = 500
+        #self.params['prior']['n']['max'] = 1500
 
         #initiate ABC sampler
         self.sampler_ABC = ABC( self.params ) 
@@ -55,11 +65,12 @@ class TestABC(unittest.TestCase):
     def test_DrawAllParams( self ):
          
         #draw parameters
-        r1 = DrawAllParams(self.params)
+        r1 = DrawAllParams(self.params['prior'])
 
         res = []
         for i1 in xrange(len(r1)):
-            if r1[i1] >= self.params['param_lim'][i1][0] and r1[i1] < self.params['param_lim'][i1][1]:
+            par = self.params['param_to_fit'][i1]
+            if r1[i1] >= self.params['prior'][par]['min'] and r1[i1] <= self.params['prior'][par]['max']:
                 res.append(True)
 
             else:
@@ -76,6 +87,7 @@ class TestABC(unittest.TestCase):
 
     def test_plot(self):
 
+     
         self.params['ncores'] = get_cores()
         self.sampler_ABC.fullABC(build_first_system=True)
 

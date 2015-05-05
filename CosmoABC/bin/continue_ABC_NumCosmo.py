@@ -67,9 +67,10 @@ def main( args ):
         if 'distance_func' not in user_input.keys():
             user_input['distance_func'] = m1.distance
     
-    for l1 in range( user_input['npar'] ):
-        if isinstance( user_input['prior_func'][ l1 ], str):            
-            user_input['prior_func'][ l1 ] = getattr( m1, user_input['prior_func'][ l1 ] )
+    for par in user_input['param_to_fit']:
+        l1 = user_input['param_to_fit'].index(par)
+        if isinstance( user_input['prior'][par]['func'], str):            
+            user_input['prior'][par]['func'] = getattr(m1, user_input['prior_func'][l1])
 
 
     #initiate ABC construct

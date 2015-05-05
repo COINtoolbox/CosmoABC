@@ -50,9 +50,12 @@ def main( args ):
     if  isinstance(user_input['distance_func'], list):
         user_input['distance_func'] = m1.distance
 
-    for l1 in range(user_input['npar']):
+    for element in user_input['param_to_fit']:
         if isinstance(user_input['prior_func'][ l1 ], str):            
-            user_input['prior_func'][ l1 ] = getattr(m1, user_input['prior_func'][ l1 ])
+            user_input['prior']['func'][ l1 ] = getattr(m1, user_input['prior_func'][ l1 ])
+            for pvar in user_input['prior_var']:
+                indx = user_input['prior_var'].index(pvar)
+                user_input['prior'][element][pvar] = float(user_input['prior_par'][indx])
             
     #check if observed data exist, simulate in case negative
     if user_input['path_to_obs'] == 'None':
