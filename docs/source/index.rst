@@ -285,7 +285,7 @@ The code includes a built-in citation function which outputs the bibtex entry
     
     cosmoabc.__cite__()
 
-this will return
+this will return::
 
     |@ARTICLE{2015arXiv150406129I,
     |author = {{Ishida}, E.~E.~O. and {Vitenti}, S.~D.~P. and {Penna-Lima}, M. and
@@ -336,7 +336,7 @@ The Cosmostatistics Initiative (COIN)
 The IAA Cosmostatistics Initiative (`COIN <https://asaip.psu.edu/organizations/iaa/iaa-working-group-of-cosmostatistics>`_) is a non-profit organization whose aim is to nourish the synergy between astrophysics, cosmology, statistics and machine learning communities. 
 This work is a product of the first COIN Summer Residence Program, Lisbon, August/2014.
 
-Other projects develop under COIN can be found in the `COINtoolbox <http://cointoolbox.github.io/>`_
+Other projects developed under COIN can be found in the `COINtoolbox <http://cointoolbox.github.io/>`_
 
 Acknowledgements
 ****************
@@ -344,8 +344,11 @@ Acknowledgements
 In order to give proper credit to the online sources used in the development of this work, we list bellow the main web websites, foruns and blogs which were used in different parts of its development. We deeply thank all of those who contribute to open learning resources plataforms.
 
 `Multiprocessing and KeyboarInterrupt <http://bryceboe.com/2010/08/26/python-multiprocessing-and-keyboardinterrupt/>`_
+
 `Ordering gif <http://stackoverflow.com/questions/12339330/defining-the-file-order-for-imagemagick-convert>`_
+
 `Plotting <http://nbviewer.ipython.org/gist/tillahoffmann/f844bce2ec264c1c8cb5>`_
+
 `Remembering git commands <https://www.atlassian.com/git/tutorials/setting-up-a-repository/git-init>`_
 
 
