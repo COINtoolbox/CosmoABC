@@ -1,0 +1,55 @@
+path_to_obs		= data_format_SZ.dat   	   # path to observed data 
+
+param_to_fit 		= Om sigma8 w		   # parameters to fit
+param_to_sim    	= zmin zmax zsigma H0 Om  Ob Tgamma  ns sigma8 w observable area seed MinMass MaxMass	   # parameters needed for simulation
+
+Om_lim			= 0.001 0.6		# extreme limits for model parameters
+sigma8_lim 		= 0.5  1.0              #
+w_lim			= -3.0  0.0	        #
+
+
+prior_func	                = flat_prior flat_prior  flat_prior     # prior distributions 
+
+Om_prior_par_name               = pmin pmax                             # prior parameters for Om
+Om_prior_par_val 		= 0.01  0.5	                	# values for prior distribution
+
+sigma8_prior_par_name           = pmin pmax                             # prior parameters for sigma8
+sigma8_prior_par_val	        = 0.5   0.9                             # values for prior distribution
+
+w_prior_par_name                = pmin pmax                             # prior parameters for w
+w_prior_par_val	         	= -2.0  0.0                             # values for prior distributions 
+
+
+zmin 		= 0.3              		# minimum redshift
+zmax 		= 1.32             		# maximum redshift
+zsigma	        = 0.05				# error in photo-z
+H0 		= 71.15       	        	# Hubble constant
+Om 		= 0.262   	        	# Dark matter density
+Ob 		= 0.044   		       	# Baryon density
+Tgamma	 	= 2.725  	        	# Radiation temperature today
+ns 		= 0.97        	        	# spectral index 
+sigma8 		= 0.807   	        	# sigma8
+w 		= -1.01       			# DE equation of state parameter
+
+observable 	= SZ				# observable in the data set: options are 'SZ' or 'true_mass'  
+                                                # ***Only SZ is working at this point, check NumCosmo***
+
+area 		= 2500				# sky area covered by telescope
+seed 		= 0				# control of random number generation seed. Use non-zero only for consistence checks.
+MinMass		= 10**14.3			# minimum cluster mass considered
+MaxMass 	= 10**16			# maximum cluster mass considered
+
+epsilon1 	= 0.1	0.1   0.1		# initial distance threshold for building first particle system
+M 		= 5000				# number of particle in each particle system
+Mini            = 50000				# number of draws to build first particle system
+delta 		= 0.01				# convergence criteria
+qthreshold 	= 0.75				# quantile in distance threshold used to define epsilon in the construction of subsequent particle system
+
+file_root 	= flat_om_sigma8_w_			# root to output file name for subsequent particle systems
+screen          = 1                                     # rather or not to display outputs on screen
+ncores          = 2                                     # number of cores
+quantile_nodes  = 20                                    # number of quantile nodes in distance calculation 
+split_output    = 10                                    # number of subdivisions outputs for each particle system
+
+simulation_func = numcosmo_sim_cluster                  # simulation function
+distance_func	= distance_quantiles                    # distance function
