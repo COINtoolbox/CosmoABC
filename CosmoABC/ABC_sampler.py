@@ -7,7 +7,7 @@ Approximate Bayesian Computation sampler.
 __author__ = "E. E. O. Ishida, S. D. P. Vitenti, M. Penna-Lima, R. S. de Souza, J. Cisewski, A. M. M. Trindade, V. C. Busti, E. Cameron"
 __maintainer__ = "E. E. O. Ishida"
 __copyright__ = "Copyright 2015"
-__version__ = "0.1.18"
+__version__ = "0.1.19"
 __email__ = "emilleishida@gmail.com"
 __status__ = "Prototype"
 __license__ = "GPL"
@@ -125,7 +125,26 @@ class ABC(object):
 
         theta = []
 
-        for iteration in xrange(int(self.params['split_output'][0])):
+        #check if there are previous partial results
+        temp_files = [self.params['file_root'] + '0_p' + str(part) + '.dat'
+                                for part in xrange(int(self.params['split_output'][0]))]
+
+        file_list = os.listdir(os.getcwd())
+        if temp_files[0] in file_list:
+           for partial_calc in xrange(int(self.params['split_output'][0])):
+               if temp_files[partial_calc] in file_list:
+                   local_data = np.loadtxt(temp_files[partial_calc])
+                   for line in local_data:
+                       theta.append(line) 
+               else:
+                   begin_int = partial_calc
+                   print 'Found ' + str(len(theta)) + ' values in t = 0'
+                   print 'Calculations will begin in particle system t = 0 part ' + str(begin_int)
+                   break 
+        else:
+            begin_int = 0
+
+        for iteration in xrange(begin_int, int(self.params['split_output'][0])):
             time_ini = time.time()
             args = [self.params for item in xrange(self.params['Mini']/int(self.params['split_output'][0]))]
 
