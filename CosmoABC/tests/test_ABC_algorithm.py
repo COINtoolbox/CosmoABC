@@ -43,18 +43,25 @@ class TestABC(unittest.TestCase):
         self.params['quantile_nodes'] = 20
         self.params['split_output'] = [1]
         self.params['prior'] = {}
+        self.params['prior']['sequence'] = self.params['param_to_fit']
         self.params['prior']['mu'] = {}
         self.params['prior']['mu']['func'] = flat_prior
         self.params['prior']['mu']['pmin'] = 1.0
         self.params['prior']['mu']['pmax'] = 4.0
+        self.params['prior']['mu']['min'] = 1.0
+        self.params['prior']['mu']['max'] = 4.0
         self.params['prior']['sigma'] = {}
         self.params['prior']['sigma']['func'] = flat_prior
         self.params['prior']['sigma']['pmin'] = 0.001
         self.params['prior']['sigma']['pmax'] = 3.0
+        self.params['prior']['sigma']['min'] = 0.001
+        self.params['prior']['sigma']['max'] = 3.0 
         self.params['prior']['n'] = {}
         self.params['prior']['n']['func'] = flat_prior
         self.params['prior']['n']['pmin'] = 500
         self.params['prior']['n']['pmax'] = 1500
+        self.params['prior']['n']['min'] = 500
+        self.params['prior']['n']['max'] = 1500  
 
         #initiate ABC sampler
         self.sampler_ABC = ABC( self.params ) 
