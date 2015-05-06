@@ -44,11 +44,11 @@ def main( args ):
     user_input = read_input(args.input)
     m1 = imp.load_source(args.functions[:-3], args.functions)
 
-    user_input['simulation_func'] = m1.simulation
+    user_input['simulation_func'] = getattr(m1, user_input['simulation_func'][0])
 
 
     if  isinstance(user_input['distance_func'], list):
-        user_input['distance_func'] = m1.distance
+        user_input['distance_func'] = getattr(m1, user_input['distance_func'][0])
 
     for element in user_input['param_to_fit']:
         if isinstance(user_input['prior'][element]['func'], str):            

@@ -47,10 +47,10 @@ def main(args):
 
     m1 = imp.load_source(args.functions[:-3], args.functions)
 
-    user_input['simulation_func'] = m1.simulation
+    user_input['simulation_func'] = getattr(m1, user_input['simulation_func'][0])
 
     if isinstance(user_input['distance_func'][0], str):
-        user_input['distance_func'] = m1.distance
+        user_input['distance_func'] = getattr(m1, user_input['distance_func'][0])
 
     #check dimension of distance output
     dtemp = user_input['distance_func'](user_input['dataset1'], user_input)

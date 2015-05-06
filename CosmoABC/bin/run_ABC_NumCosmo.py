@@ -65,7 +65,7 @@ def main( args ):
         m1 = imp.load_source( args.functions[:-3], args.functions )
 
         if isinstance(user_input['distance_func'][0], str):
-            user_input['distance_func'] = m1.distance
+            user_input['distance_func'] = getattr(m1, user_input['distance_func'][0])
     
     for l1 in range(user_input['npar']):
         par = user_input['param_to_fit'][l1]
