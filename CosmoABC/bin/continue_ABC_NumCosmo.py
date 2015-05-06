@@ -49,7 +49,7 @@ except ImportError:
 def main( args ):
 
     user_input = read_input( args.input )
-    user_input['simulation_func'] = numcosmo_simulation
+    user_input['simulation_func'] = numcosmo_sim_cluster
 
     #initiate NumCosmo object necessary for simulation
     Cosmo=ChooseParamsInput()
