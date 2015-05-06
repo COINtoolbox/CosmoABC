@@ -38,8 +38,8 @@ The test outputs a file illustrating the evolution of the posterior.
 
 .. image:: nstatic/results_gaussian_sim.gif
 
-Examples
-********
+Input Parameter File
+********************
 
 Sample input in can be found in ``~CosmoABC/examples``. All example files mentioned in this section are available in that directory. 
 
@@ -91,7 +91,7 @@ Important notes on input parameters
 
 
 Simulation, distance and prior functions
------------------------------------------------------
+****************************************
 
 The most important ingredients in an ABC analysis are:
 
@@ -248,11 +248,11 @@ As always, the ``<user_input_file>`` must be provided.
 If you are using built-in cosmoabc functions, the ``-f`` option is not necessary and in case you forget to give an output filename, cosmoabc will ask you for it. 
 It will also ask you to input the number of points to be drawn from the parameter space in order to construct a grid. 
 
-Here is an example from using the built-in tool to check the suitability of distance function::
+Here is an example from using the built-in tool to check the suitability of the distance function described in section 3.1 of the paper::
 
     $ test_ABC_distance.py -i user_input_file.dat -f user_function_file.dat 
     $ Distance between identical cataloges = [ 0.]
-    $ New parameter value = [ 0.41054026  0.6364732  -0.73338263]
+    $ New parameter value = [ 0.41054026  0.6364732 ]
     $ Distance between observed and simulated data = [804.38711094885957]
     $ Enter number of draws in parameter grid: 5000            
     $ Particle index: 1
@@ -268,18 +268,10 @@ The output file will contain a plot like this:
 .. image:: nstatic/distance_toy_model.png
  
 
-The example above corresponds to a perfect distance definition. 
-It has two independent outputs: the first one is able to constraint parameters ``mean`` and ``std`` while the second one constraints parameter ``n``.
+The example above corresponds to a perfect distance definition, since it gets close to zero as parameters ``mean`` and ``std`` approaches the fiducial values and sharply increases for further values.
 
 This is what one should aim for in constructing a distance function. 
 How large a deviation from this is acceptable should be decided based on each particular problem and goal. 
-
-
-
-Documentation
-*************
-
-The complete documentation can be found in `Read the Docs <http://cosmoabc.readthedocs.org/en/latest/>`_ .
 
 
 Requirements
@@ -305,6 +297,29 @@ License
 ********
 
 * GNU General Public License (GPL>=3)
+
+
+The Cosmostatistics Initiative (COIN)
+*************************************
+
+The IAA Cosmostatistics Initiative (`COIN <https://asaip.psu.edu/organizations/iaa/iaa-working-group-of-cosmostatistics>`_) is a non-profit organization whose aim is to nourish the synergy between astrophysics, cosmology, statistics and machine learning communities. 
+This work is a product of the first COIN Summer Residence Program, Lisbon, August/2014.
+
+Acknowledgements
+****************
+
+In order to give proper credit to the online sources used in the development of this work, we list bellow the main web websites, foruns and blogs which were used in different parts of its development. We deeply thank all of those who contribute to open learning resources plataforms.
+
+`Multiprocessing and KeyboarInterrupt <http://bryceboe.com/2010/08/26/python-multiprocessing-and-keyboardinterrupt/>_`
+`Ordering gif <http://stackoverflow.com/questions/12339330/defining-the-file-order-for-imagemagick-convert>_`
+`Plotting <http://nbviewer.ipython.org/gist/tillahoffmann/f844bce2ec264c1c8cb5>_`
+`Remembering git commands <https://www.atlassian.com/git/tutorials/setting-up-a-repository/git-init>_`
+
+
+
+
+
+
 
 
 
