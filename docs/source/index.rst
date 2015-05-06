@@ -52,7 +52,7 @@ A simple example of user input file, using a simulator which takes 3 parameters 
     param_to_fit 	= mean 	std  	           # parameters to fit
     param_to_sim    	= mean  std  n	           # parameters needed for simulation
 
-    prior_func	        = prior prior              # one prior function for each parameter
+    prior_func	        = my_prior flat_prior      # one prior function for each parameter
                                                    # under consideration
 
     mean_prior_par_name      = pmin pmax           # parameters for prior distribution  
@@ -78,8 +78,8 @@ A simple example of user input file, using a simulator which takes 3 parameters 
     ncores          = 1				   # number of cores
     split_output    = 1                            # number of intermediate steps written to file
 
-    simulation_func = simulation                   # simulation function
-    distance_func   = distance                     # distance function
+    simulation_func = my_simulation                # simulation function
+    distance_func   = my_distance                     # distance function
 
 
 Important notes on input parameters
@@ -90,7 +90,7 @@ Important notes on input parameters
 * The parameter ``split_output`` determines how many sub-sets of particles you wish to generate for each particle system. Its goal is to avoid the lost of partial results for an enventual problem when dealing with very complex, and time consuming, simulators. If you are only making a quick test and has no intention to keep partial results, just set ``split_output = 1``. 
 
 
-User defined simulation, distance and prior functions
+Simulation, distance and prior functions
 -----------------------------------------------------
 
 The most important ingredients in an ABC analysis are:
@@ -137,6 +137,7 @@ At any time it is possible to plot the outcomes from ``N`` particle systems, who
     $ plot_ABC.py -i <user_input_file> -p N
 
 It is also possible to use it interactively.
+Considering we are using built-in simulation, prior and distance functions, 
 
 .. code-block:: python 
 
@@ -163,6 +164,47 @@ It is also possible to use it interactively.
     #plot results
     plot_2D( sampler_ABC.T, 'results.pdf' , params)
 
+
+If you are using your own distance function, remember to determine the dimension of its output manually,
+
+.. code-block:: python
+
+    from CosmoABC.priors import flat_prior
+    from CosmoABC.ABC_sampler import ABC
+    import numpy as np
+
+    from my_functions import my_distance
+     
+    #user input file
+    filename = 'my_input.dat'
+
+    #read  user input
+    Parameters = read_input(filename)
+
+    #calculate distance between 2 catalogues
+    dtemp = my_distance(Parameters['dataset1'], Parameters)
+    #determine dimension of distance output
+    Parameters['dist_dim'] = len(dtemp)
+
+    #initiate ABC sampler
+    sampler_ABC = ABC(params=Parameters) 
+
+    #build first particle system
+    sys1 = sampler_ABC.BuildFirstPSystem()
+
+    #update particle system until convergence
+    sampler_ABC.fullABC()
+
+.. warning:: 
+    When using your own **distance function** remember that it must take as input:
+    - a catalogue and
+    - a dictionary of input parameters
+
+    When using your own prior function, it must take as input:
+    - a dictionary of input parameters
+    - a boolean variable ``func`` (optional):
+      if ``func`` is ``False`` returns one realization of the prior PDF
+      if ``func`` is ``True`` returns the PDF itself
 
 
 NumCosmo simulations
