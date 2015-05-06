@@ -123,7 +123,7 @@ def read_input(filename):
 
         try: 
             from gi.repository import NumCosmo as Nc
-            from CosmoABC.sim_NumCosmo import NCountSimul, ChooseParamsInput, numcosmo_sim_cluster
+            from CosmoABC.sim_NumCosmo_cluster import NCountSimul, ChooseParamsInput, numcosmo_sim_cluster
         except ImportError:
             raise ImportError( 'You must have NumCosmo running to use the sim_NumCosmo simulation!' +
                                 '\n Please check your NumCosmo instalation.' )

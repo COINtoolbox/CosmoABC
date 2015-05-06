@@ -52,19 +52,19 @@ from CosmoABC.ABC_functions import SelectParamInnerLoop, DrawAllParams, SetDista
 
 try: 
     from gi.repository import NumCosmo as Nc
-    from CosmoABC.sim_NumCosmo  import NCountSimul, ChooseParamsInput, numcosmo_simulation
+    from CosmoABC.sim_NumCosmo_cluster  import NCountSimul, ChooseParamsInput, numcosmo_sim_cluster
 except ImportError:
     raise ImportError('You must have NumCosmo running to use the sim_NumCosmo simulation!' + 
                       '\n Please check your NumCosmo instalation.')
 
 def main( args ):
 
-    user_input = read_input( args.input )
+    user_input = read_input(args.input)
 
     if args.functions != None:
         m1 = imp.load_source( args.functions[:-3], args.functions )
 
-        if 'distance_func' not in user_input.keys():
+        if isinstance(user_input['distance_func'][0], str):
             user_input['distance_func'] = m1.distance
     
     for l1 in range(user_input['npar']):
@@ -75,7 +75,9 @@ def main( args ):
     #initiate ABC construct
     sampler_ABC = ABC(params=user_input) 
 
-    
+    print sampler_ABC.simulation
+    print sampler_ABC.prior
+
     #build first particle system
     sys1 = sampler_ABC.BuildFirstPSystem()
 
