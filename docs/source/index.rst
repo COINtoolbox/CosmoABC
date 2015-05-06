@@ -287,20 +287,20 @@ The code includes a built-in citation function which outputs the bibtex entry
 
 this will return::
 
-    |@ARTICLE{2015arXiv150406129I,
-    |author = {{Ishida}, E.~E.~O. and {Vitenti}, S.~D.~P. and {Penna-Lima}, M. and
-    |          {Cisewski}, J. and {de Souza}, R.~S. and {Trindade}, A.~M.~M. and
-    |          {Cameron}, E. and {V.~C.~Busti}},
-    |title = "{cosmoabc: Likelihood-free inference via Population Monte Carlo Approximate Bayesian Computation}",
-    |journal = {ArXiv e-prints},
-    |archivePrefix = "arXiv",
-    |eprint = {1504.06129},
-    |keywords = {Astrophysics - Cosmology and Nongalactic Astrophysics, Astrophysics - Instrumentation and Methods for Astrophysics},
-    |year = 2015,
-    |month = apr,
-    |adsurl = {http://adsabs.harvard.edu/abs/2015arXiv150406129I},
-    |adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-    |}
+    @ARTICLE{2015arXiv150406129I,
+    author = {{Ishida}, E.~E.~O. and {Vitenti}, S.~D.~P. and {Penna-Lima}, M. and
+              {Cisewski}, J. and {de Souza}, R.~S. and {Trindade}, A.~M.~M. and
+              {Cameron}, E. and {V.~C.~Busti}},
+    title = "{cosmoabc: Likelihood-free inference via Population Monte Carlo Approximate Bayesian Computation}",
+    journal = {ArXiv e-prints},
+    archivePrefix = "arXiv",
+    eprint = {1504.06129},
+    keywords = {Astrophysics - Cosmology and Nongalactic Astrophysics, Astrophysics - Instrumentation and Methods for Astrophysics},
+    year = 2015,
+    month = apr,
+    adsurl = {http://adsabs.harvard.edu/abs/2015arXiv150406129I},
+    adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+    }
 
         
 
@@ -341,7 +341,7 @@ Other projects developed under COIN can be found in the `COINtoolbox <http://coi
 Acknowledgements
 ****************
 
-In order to give proper credit to the online sources used in the development of this work, we list bellow the main web websites, foruns and blogs which were used in different parts of its development. We deeply thank all of those who contribute to open learning resources plataforms.
+In order to give proper credit to the online sources used in the development of this work, we list bellow the main web websites, foruns and blogs which were used in different parts of its development. We deeply thank all of those who contribute to open learning plataforms.
 
 `Multiprocessing and KeyboarInterrupt <http://bryceboe.com/2010/08/26/python-multiprocessing-and-keyboardinterrupt/>`_
 
