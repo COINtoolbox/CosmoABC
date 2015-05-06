@@ -2,15 +2,15 @@
 
 
 
-CosmoABC - Likelihood free inference for cosmology
+cosmoabc - Likelihood free inference for cosmology
 =============================================================
 
 
-``CosmoABC`` is a package which enables parameter inference using an Approximate Bayesian Computation (ABC) algorithm, as described in Ishida et al., 2015 [LINK].
+``cosmoabc`` is a package which enables parameter inference using an Approximate Bayesian Computation (ABC) algorithm, as described in `Ishida et al., 2015 <http://arxiv.org/abs/1504.06129>`_.
 
 The code was originally designed for cosmological parameter inference from galaxy clusters number counts based on Sunyaev-Zel'dovich measurements. In this context, the cosmological simulations were performed using the `NumCosmo library <http://www.nongnu.org/numcosmo/>`_ .
 
-Nevertheless, the user can easily take advantage of the ABC sampler along with his/her own simulator, as well as  test personalized prior distributions, summary statistics and distance functions. 
+Nevertheless, the user can easily take advantage of the ABC sampler along with his/her own simulator, as well as  test personalized prior distributions and distance functions. 
 
 
 Get it now!
@@ -18,9 +18,9 @@ Get it now!
 
 The package can be installed using the PyPI and pip::
 
-    $ pip install CosmoABC
+    $ pip install cosmoabc
 
-Or if the tarball or repository is downloaded, in the CosmoABC directory you can install and test it::
+Or if the tarball or repository is downloaded, in the cosmoabc directory you can install and test it::
 
     $ python setup.py install
 
@@ -34,7 +34,7 @@ You can run a few tests with::
 
     Make sure to run the tests in their own directory. 
 
-The test outputs a pdf file illustrating the evolution of the posterior.
+The test outputs a file illustrating the evolution of the posterior.
 
 .. image:: nstatic/results_gaussian_sim.gif
 
@@ -47,34 +47,47 @@ The user input file should contain all necessary variables for simulation as wel
 
 A simple example of user input file, using a simulator which takes 3 parameters as input (``mean``, ``std``, ``n``) from which we want to fit only two (``mean``, ``std``), would look like this ::
 
-    path_to_obs		= data.dat   	   # path to observed data. If None a simulated data set 
-                                           # will be generated on the fly and used in place of the observations 
+    path_to_obs		= None   	           # path to observed data 
 
-    param_to_fit 	= mean 	n  	   # parameters to fit
-    param_to_sim    	= mean  std  n	   # parameters needed for simulation
+    param_to_fit 	= mean 	std  	           # parameters to fit
+    param_to_sim    	= mean  std  n	           # parameters needed for simulation
 
-    n_lim		= 500  3000 	   # extreme limits for parametes
-    mean_lim            = -2.0  4.0
+    prior_func	        = prior prior              # one prior function for each parameter
+                                                   # under consideration
 
-    n_prior_par 	= 500  2000	   # parameters for prior distribution           
-    mean_prior_par      = -1.5  3.0
+    mean_prior_par_name      = pmin pmax           # parameters for prior distribution  
+    mean_prior_par_val       = -2.0  4.0           # values for prior distribution   
 
-    mean		= 1.0		   #fiducial parameters for simulation
-    std		        = 1.0
-    n		        = 1000
+    std_prior_par_name       = pmin  pmax          # parameters for prior distribution
+    std_prior_par_val        =  0.1  5.0           # values for prior distribution
+	
+    mean_lim                 = -2.0  4.0           # extreme limits for parametes
+    std_lim                  = 0.1  5.0            #
+		           
+    mean		     = 2.0                 # parameters values need for simulation
+    std		= 1.0                              #
+    n		= 1000                             #
 
-    M 	        	= 100			   # number of particle in each particle system
-    Mini                = 200                      # size of initial round
-    delta 		= 0.1		           # convergence criteria
-    qthreshold 	        = 0.75			   # quantile in distance threshold used to define epsilon in the construction of subsequent particle system
+    M  		= 100				   # number of particle in each particle system
+    Mini        = 200                              # number of draws for 1st particle system
+    delta       = 0.25				   # convergence criteria
+    qthreshold 	= 0.75				   # quantile in distance threshold 
 
-    file_root    	= example_1par_PS	   # root to output file name for subsequent particle systems
-    screen              = 1			   # rather (1) or not (0) to display intermediate steps on screen
-    ncores              = 1			   # number of cores
+    file_root 	    = toy_model_PS                 # root to output files names 
+    screen          = 0			           # rather (1) or not (0) to screen outputs
+    ncores          = 1				   # number of cores
+    split_output    = 1                            # number of intermediate steps written to file
 
-    simulation_func 	= simulation 				# simulation function
-    prior_func		= flat_prior flat_prior  flat_prior     # prior functions 
-    distance_func	= distance_quantiles 			# distance function
+    simulation_func = simulation                   # simulation function
+    distance_func   = distance                     # distance function
+
+
+Important notes on input parameters
+-----------------------------------
+
+* If you are using your own prior function, you are free to name the prior parameters as you wish, you only need to define ``<your_variable>_prior_name`` and ``<your_variable>_prior_val`` accordingly. If you have doubts about variable names, a quick comparison between the two example input files (toy model and NumCosmo) might help.  
+
+* The parameter ``split_output`` determines how many sub-sets of particles you wish to generate for each particle system. Its goal is to avoid the lost of partial results for an enventual problem when dealing with very complex, and time consuming, simulators. If you are only making a quick test and has no intention to keep partial results, just set ``split_output = 1``. 
 
 
 User defined simulation, distance and prior functions
@@ -99,59 +112,29 @@ Built-in option for simulations is:
 Built-in options for distance functions are:
 
 * Quantile-based distance with number of objects criteria
-* Gaussian Radial Basis Function distance (as descrived in Ishida et al., 2015 [LINK])
+* Gaussian Radial Basis Function distance (as descrived in Appendix B of `Ishida et al., 2015 <http://arxiv.org/abs/1504.06129>`_)
 
-Moreover, CosmoABC is also able to handle user defined functions for all three elements. 
-You will find example files in the corresponding directory which will help you tailor your functions for the ABC sampler. 
+Moreover, cosmoabc is also able to handle user defined functions for all three elements. 
+You will find example files which will help you tailor your functions for the ABC sampler. 
 
-
-Consider the ``<user_function_file>`` containing,
-
-.. code-block:: python 
-
-    import numpy
-
-    def simulation( v ):
-        """
-        Generates a Gaussian distributed catalog.
-        """
-
-        l1 = numpy.random.normal( loc=v['mean'], scale=v['std'], size=v['n'] )
-    
-        return numpy.atleast_2d( l1 ).T 
-
-
-    def distance( dataset1, dataset2, Parameters ):
-        """
-        Calculates distance between dataset1 and dataset2.        
-        """  
-
-        t1 = abs( numpy.mean( dataset1 ) - numpy.mean( dataset2 ) )
-        t2 = abs( numpy.std( dataset1 ) - numpy.std( dataset2 ) )
-
-        return t1 + t2
-
-
-The ABC sampler can be called from the command line::
+Once all the function definitions are determined, the ABC sampler can be called from the command line::
 
     $ run_ABC.py -i <user_input_file>  -f <user_function_file>
 
 This will run the algorithm until the convergence criteria is reached. A pdf file containing graphical representation of the results for each particle system is 
-given as output. 
+given as output, as well as numerical data files. 
 
 If the achieved result is not satisfactory, or if for some reason the calculation was stopped before reaching the convergence criteria, it is possible to run the ABC sampler beginning from the last completed particle system ``N``. 
-
-In case the convergence criteria was achieved but you wish to continue the run, remember to decrease the convergence criteria ``delta`` in the ``<user_input_file>`` before continuing. 
 
 From the command line::
 
     $ continue_ABC.py -i <user_input_file> -f <user_function_file> -p N
 
+In case the convergence criteria was achieved but you wish to continue the run, remember to decrease the convergence criteria ``delta`` in the ``<user_input_file>`` before continuing. 
 
 At any time it is possible to plot the outcomes from ``N`` particle systems, whose calculations were completed, using::
 
     $ plot_ABC.py -i <user_input_file> -p N
-
 
 It is also possible to use it interactively.
 
