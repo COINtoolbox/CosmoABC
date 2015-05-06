@@ -80,27 +80,29 @@ def read_input(filename):
     if len(params['prior_func']) == params['npar']:
 
         prior_dic = {}
+        prior_dic['sequence'] = params['param_to_fit']
         for i1 in xrange(params['npar']):
             element = params['param_to_fit'][i1]
             prior_dic[element] = {}
-            if element + '_par_lim' in params_ini.keys():
+            if element + '_lim' in params_ini.keys():
                 prior_dic[element]['min'] = float(params_ini[element + '_lim'][0])
                 prior_dic[element]['max'] = float(params_ini[element + '_lim'][1])
 
+            for name in params_ini[element + '_prior_par_name'][:params_ini[element + '_prior_par_name'].index('#')]:
+                indx = params_ini[element + '_prior_par_name'].index(name)
+                prior_dic[element][name] = float(params_ini[element + '_prior_par_val'][indx])
+
             if params['prior_func'][i1] == 'gaussian_prior':    
                 prior_dic[element]['func'] = dispatcher['gaussian_prior']
-                prior_dic[element]['mean'] = float(params_ini[element + '_prior_par'][0])
-                prior_dic[element]['std'] = float(params_ini[element + '_prior_par'][1])
 
             elif params['prior_func'][i1] == 'flat_prior':
                 prior_dic[element]['func'] = dispatcher['flat_prior']
-                prior_dic[element]['min'] = float(params_ini[element + '_prior_par'][0])
-                prior_dic[element]['max'] = float(params_ini[element + '_prior_par'][1])
-
+                
             elif params['prior_func'][i1] == 'beta_prior':
                 prior_dic[element]['func'] = dispatcher['beta_prior']
-                prior_dic[element]['alpha'] = float(params_ini[element + '_prior_par'][0])
-                prior_dic[element]['beta'] = float(params_ini[element + '_prior_par'][1])
+               
+            else:
+                prior_dic[element]['func'] = params['prior_func'][i1]
 
         params['prior'] = prior_dic
                     
@@ -281,8 +283,8 @@ def DrawAllParams(prior_dic):
     """
 
     pars = []
-    for key in prior_dic.keys():
-        p1 = prior_dic[key]['func'](prior_dic[key])   
+    for element in prior_dic['sequence']:
+        p1 = prior_dic[element]['func'](prior_dic[element])   
         pars.append(p1)
 
     return np.array(pars)

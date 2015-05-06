@@ -51,11 +51,11 @@ def main( args ):
         user_input['distance_func'] = m1.distance
 
     for element in user_input['param_to_fit']:
-        if isinstance(user_input['prior_func'][ l1 ], str):            
-            user_input['prior']['func'][ l1 ] = getattr(m1, user_input['prior_func'][ l1 ])
-            for pvar in user_input['prior_var']:
-                indx = user_input['prior_var'].index(pvar)
-                user_input['prior'][element][pvar] = float(user_input['prior_par'][indx])
+        if isinstance(user_input['prior'][element]['func'], str):            
+            user_input['prior'][element]['func'] = getattr(m1, user_input['prior'][element]['func'])
+            for pvar in user_input[element + '_prior_par_name'][:user_input[element + '_prior_par_name'].index('#')]:
+                indx = user_input[element + '_prior_par_name'].index(pvar)
+                user_input['prior'][element][pvar] = float(user_input[element + '_prior_par_val'][indx])
             
     #check if observed data exist, simulate in case negative
     if user_input['path_to_obs'] == 'None':

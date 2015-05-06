@@ -32,7 +32,7 @@ class TestABC(unittest.TestCase):
         self.params['simulation_func'] = ysim
         self.params['simulation_input'] = {'mu': self.mu, 'sigma':self.sigma, 'n':self.n} 
         self.params['dataset1'] = self.params['simulation_func']( self.params['simulation_input'] )
-        self.params['param_to_fit']=['mu', 'sigma']							
+        self.params['param_to_fit']=['mu', 'sigma', 'n']							
         self.params['screen'] = 0
         self.params['Mini'] = 200 							
         self.params['M'] = 100				
@@ -45,16 +45,16 @@ class TestABC(unittest.TestCase):
         self.params['prior'] = {}
         self.params['prior']['mu'] = {}
         self.params['prior']['mu']['func'] = flat_prior
-        self.params['prior']['mu']['min'] = 1.0
-        self.params['prior']['mu']['max'] = 4.0
+        self.params['prior']['mu']['pmin'] = 1.0
+        self.params['prior']['mu']['pmax'] = 4.0
         self.params['prior']['sigma'] = {}
         self.params['prior']['sigma']['func'] = flat_prior
-        self.params['prior']['sigma']['min'] = 0.001
-        self.params['prior']['sigma']['max'] = 3.0
-        #self.params['prior']['n'] = {}
-        #self.params['prior']['n']['func'] = flat_prior
-        #self.params['prior']['n']['min'] = 500
-        #self.params['prior']['n']['max'] = 1500
+        self.params['prior']['sigma']['pmin'] = 0.001
+        self.params['prior']['sigma']['pmax'] = 3.0
+        self.params['prior']['n'] = {}
+        self.params['prior']['n']['func'] = flat_prior
+        self.params['prior']['n']['pmin'] = 500
+        self.params['prior']['n']['pmax'] = 1500
 
         #initiate ABC sampler
         self.sampler_ABC = ABC( self.params ) 

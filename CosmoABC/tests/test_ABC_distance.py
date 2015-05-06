@@ -24,6 +24,7 @@ from CosmoABC.priors import flat_prior, gaussian_prior, beta_prior
 from CosmoABC.ABC_sampler import ABC
 from CosmoABC.ABC_functions import SelectParamInnerLoop, DrawAllParams, SetDistanceFromSimulation, read_input 
         
+import sys
 
 def main(args):
 
@@ -38,9 +39,9 @@ def main(args):
         if isinstance(params['simulation_func'], list):
             params['simulation_func'] = m1.simulation
 
-        for i1 in xrange(params['npar']):
-            if isinstance(params['prior_func'][i1], str):
-                params['prior_func'][i1] = m1.prior
+        for par in params['param_to_fit']:
+            if isinstance(params['prior'][par]['func'], str):
+                params['prior'][par]['func'] = m1.prior
 
     if not args.output:
         output_file = raw_input('Enter root for output files (no extension):  ')
@@ -59,7 +60,7 @@ def main(args):
         print 'Distance between identical cataloges = ' + str(distance_equal)
 
     #test a single distance calculation
-    new_sim_input = DrawAllParams(params)
+    new_sim_input = DrawAllParams(params['prior'])
 
     for j in xrange(params['npar']):
         params['simulation_input'][params['param_to_fit'][j]] = new_sim_input[j]
@@ -77,7 +78,7 @@ def main(args):
     
     #generate grid for distance behaviour inspection
     ngrid = int(raw_input('Enter number of draws in parameter grid: '))    
-    param_grid = [DrawAllParams(params) for j1 in xrange(ngrid)]
+    param_grid = [DrawAllParams(params['prior']) for j1 in xrange(ngrid)]
 
     #open output data file
     op = open(output_file + '.dat', 'w')
@@ -123,6 +124,7 @@ def main(args):
     
     n=0
     for par_indx in xrange(params['npar']):
+        p1 = params['param_to_fit'][par_indx]
         for dist_indx in xrange(len(distance_single)):
 
             n = n + 1
@@ -131,8 +133,8 @@ def main(args):
             plt.scatter(grid[:,par_indx], grid[:,params['npar'] + dist_indx])
             plt.xlabel(params['param_to_fit'][par_indx], fontsize=14)
             plt.ylabel('distance' + str(dist_indx + 1), fontsize=14)
-            plt.xticks(xrange(int(params['param_lim'][par_indx][0]) - 1, 
-                       int(params['param_lim'][par_indx][1]) + 1), fontsize=8)
+            #plt.xticks(range(int(params['prior'][p1]['min']) - 1, 
+            #           int(params['prior'][p1]['max']) + 1, int(params['prior'][p1]['max'] - params['prior'][p1]['min'] +2)/5), fontsize=8)
             plt.yticks(fontsize = 8)
             plt.ylim(-0.25*ylim, ylim)
    

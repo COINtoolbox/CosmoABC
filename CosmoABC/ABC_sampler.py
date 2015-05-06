@@ -7,7 +7,7 @@ Approximate Bayesian Computation sampler.
 __author__ = "E. E. O. Ishida, S. D. P. Vitenti, M. Penna-Lima, R. S. de Souza, J. Cisewski, A. M. M. Trindade, V. C. Busti, E. Cameron"
 __maintainer__ = "E. E. O. Ishida"
 __copyright__ = "Copyright 2015"
-__version__ = "0.1.16"
+__version__ = "0.1.18"
 __email__ = "emilleishida@gmail.com"
 __status__ = "Prototype"
 __license__ = "GPL"
@@ -442,8 +442,9 @@ class ABC(object):
                           for i1 in xrange(len(self.params['param_to_fit']) + self.params['dist_dim'])]) 
                                           for line in t1[1:]])
         
+
         #determine number of draws in previous particle system generation
-        K =  sum(int(line[list(t1[0]).index('NDraws')]) for line in t1[1:])
+        K =  int(sum(float(line[list(t1[0]).index('NDraws')]) for line in t1[1:]))
         print 'number of draws PS' + str(t) + ' = ' + str(K)
         
         if t > 0:        

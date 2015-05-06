@@ -35,7 +35,7 @@ def gaussian_prior(par, func=False):
 
     """
         
-    dist = norm(loc=par['mean'], scale=par['std'])
+    dist = norm(loc=par['pmean'], scale=par['pstd'])
     flag = False  
     while flag == False:   
         draw = dist.rvs() 
@@ -62,7 +62,7 @@ def flat_prior(par, func=False):
             uniform probability distribution function (if func=True)
 
     """
-    dist = uniform(loc=par['min'], scale=par['max']-par['min'])
+    dist = uniform(loc=par['pmin'], scale=par['pmax']-par['pmin'])
 
     draw = dist.rvs()
               

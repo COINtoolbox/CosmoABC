@@ -98,6 +98,8 @@ def plot_1p(T, file_output, Parameters):
             pdf.savefig()
             plt.close()
 
+            print 'Finished plotting particle system T=' + str(i + 1)
+
         convergence = np.array([float(Parameters['M'])/item  for item in ndraws_ev])
     
         #Plot epsilon evolution
@@ -133,7 +135,7 @@ def plot_1p(T, file_output, Parameters):
         pdf.savefig()
         plt.close()
 
-        print 'Finished plotting particle system T=' + str(i + 1)
+       
 
 def plot_2p(T, file_output, Parameters):
     """
@@ -184,8 +186,8 @@ def plot_2p(T, file_output, Parameters):
     zz0 = np.reshape(y30, xx.shape) 
 
     
-    kwargs = dict(extent=([Parameters['prior'][par]['min'] for par in Parameters['param_to_fit']] +
-                          [Parameters['prior'][par]['max'] for par in Parameters['param_to_fit']]), 
+    kwargs = dict(extent=(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'], 
+                          Parameters['prior'][p2]['min'], Parameters['prior'][p2]['max']), 
                           cmap='hot', origin='lower')
 
     epsilon_ev = []
@@ -219,14 +221,12 @@ def plot_2p(T, file_output, Parameters):
         axA.set_aspect('auto')     
         axA.tick_params(axis='both', which='major', labelsize=10)
 
-        p1 = Parameters['param_to_fit']
         ax1.plot(sampling[0], y01, color='blue')
         ax1.set_xlabel(Parameters['param_to_fit'][0])
         ax1.set_ylabel('density', fontsize=8)
         ax1.tick_params(axis='both', which='major', labelsize=8)
         ax1.set_xlim(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'])
 
-        p2 = Parameters['param_to_fit']
         ax2.plot(sampling[1], y02, color='blue')
         ax2.set_xlabel(Parameters['param_to_fit'][1])
         ax2.set_ylabel('density', fontsize = 8)

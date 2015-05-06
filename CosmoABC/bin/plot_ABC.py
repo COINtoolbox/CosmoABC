@@ -56,13 +56,14 @@ def main( args ):
         m1 = imp.load_source( args.functions[:-3], args.functions )
 
         for l1 in range( user_input['npar'] ):
-            if isinstance( user_input['prior_func'][ l1 ], str):            
-                user_input['prior_func'][ l1 ] = getattr( m1, user_input['prior_func'][ l1 ] )
+            par = user_input['param_to_fit'][l1]
+            if isinstance( user_input['prior'][par]['func'], str): 
+                user_input['prior'][par]['func'] = getattr(m1, user_input['prior_func'][l1])
 
-        if 'simulation_func' not in user_input.keys(): 
+        if isinstance(user_input['simulation_func'][0], str): 
             user_input['simulation_func'] = m1.simulation
 
-        if 'distance_func'  not in user_input.keys():
+        if  isinstance(user_input['distance_func'][0], str):
             user_input['distance_func'] = m1.distance
 
    
