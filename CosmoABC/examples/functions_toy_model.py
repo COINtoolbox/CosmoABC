@@ -2,7 +2,7 @@ import numpy as np
 from numpy.random import normal
 from scipy.stats import uniform
 
-def simulation(v):
+def my_simulation(v):
     """
     Toy model simulator.
     Samples a normally distributed random variable 
@@ -21,7 +21,7 @@ def simulation(v):
     return np.atleast_2d(l1).T
 
 
-def prior(par, func=False):
+def my_prior(par, func=False):
     """
     Flat prior.
     If func=False returns a random number beteween 
@@ -45,7 +45,7 @@ def prior(par, func=False):
     else:
         return pdf
 
-def distance(d2, p):
+def my_distance(d2, p):
     """
     Distance between observed and simulated catalogues. 
 

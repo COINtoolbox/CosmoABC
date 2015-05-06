@@ -3,7 +3,7 @@ path_to_obs		= None   	           # path to observed data
 param_to_fit 		= mean 	std  	           # parameters to fit
 param_to_sim    	= mean  std  n	           # parameters needed for simulation
 
-prior_func	        = prior prior              # one prior function for each parameter
+prior_func	        = my_prior flat_prior      # one prior function for each parameter
                                                    # under consideration 
 
 mean_prior_par_name      = pmin pmax               # parameters for prior distribution  

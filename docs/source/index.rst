@@ -200,7 +200,7 @@ If you are using your own distance function, remember to determine the dimension
     | - a catalogue and 
     | - a dictionary of input parameters
     |
-    | When using your own prior function, it must take as input:
+    | When using your own **prior function**, it must take as input:
     | - a dictionary of input parameters
     | - a boolean variable ``func`` (optional):
     |  if ``func`` is ``False`` returns one realization of the prior PDF
@@ -210,7 +210,7 @@ If you are using your own distance function, remember to determine the dimension
 NumCosmo simulations
 --------------------
 
-In order to reproduce the results of Ishida *et al.* 2015, first you need to make sure the NumCosmo library is running smoothly. 
+In order to reproduce the results of `Ishida et al., 2015 <http://arxiv.org/abs/1504.06129>`_, first you need to make sure the NumCosmo library is running smoothly. 
 Instructions for complete installation and tests can be found at the  `NumCosmo website <http://www.nongnu.org/numcosmo/>`_.
 
 An example of input file for NumCosmo simulations is provided in the corresponding directory.
@@ -219,9 +219,7 @@ Once the simulator is installed run the complete ABC sampler + NumCosmo cluster 
     $ run_ABC_NumCosmo.py -i <user_input_file>
 
 
-This will run the complete analysis presented in Ishida *et al.*, 2015.
-
-.. warning::  This might take a while! Be patient!
+This will run the complete analysis presented in the above paper.
 
 Analogously to what is available for the user defined simulations, we can also continue a NumCosmo calculation from particle system ``N`` with::
 
@@ -233,11 +231,11 @@ If we want to run the NumCosmo simulation with a different prior or distance fun
 
 Plots are generated exactly as explained above for the user defined functions.
 
-Useful tips
-************
+Testing Distances
+*****************
 
-If you are using a personalized simulation/prior/distance, make sure that the chosen functions apply to the particular problem you are facing. 
-Particularly, you need to be sure that the distance definition you adpoted yields increasingly larger distances for increasingly different catalogues. 
+If you are using a personalized distance, make sure that it applies to the particular problem you are facing. 
+You need to be sure that the distance definition you adpoted yields increasingly larger distances for increasingly different catalogues. 
 
 CosmoABC has a built-in script which allows you to visually test the performances of your choices. 
 In order to use it, prepare an appropriate user input and function files and, from the command line, do::
@@ -247,7 +245,7 @@ In order to use it, prepare an appropriate user input and function files and, fr
 Here, ``<output_filename>`` is where the distance behaviour for different set of parameter values will be plotted. 
 
 As always, the ``<user_input_file>`` must be provided. 
-If you are using built-in CosmoABC functions, the ``-f`` option is not necessary and in case you forget to give an output filename, CosmoABC will ask you for it. 
+If you are using built-in cosmoabc functions, the ``-f`` option is not necessary and in case you forget to give an output filename, cosmoabc will ask you for it. 
 It will also ask you to input the number of points to be drawn from the parameter space in order to construct a grid. 
 
 Here is an example from using the built-in tool to check the suitability of distance function::
@@ -256,16 +254,18 @@ Here is an example from using the built-in tool to check the suitability of dist
     $ Distance between identical cataloges = [ 0.]
     $ New parameter value = [ 0.41054026  0.6364732  -0.73338263]
     $ Distance between observed and simulated data = [804.38711094885957]
-    $ Enter number of draws in parameter grid: 4            
+    $ Enter number of draws in parameter grid: 5000            
     $ Particle index: 1
     $ Particle index: 2
     $ Particle index: 3
     $ Particle index: 4
+    $ ...
+    $ Particle index: 5000
     $ Figure containing distance results is stored in output.pdf
 
 The output file will contain a plot like this:
 
-.. image:: nstatic/test_distance_mean_std_n.jpeg
+.. image:: nstatic/distance_toy_model.png
  
 
 The example above corresponds to a perfect distance definition. 
