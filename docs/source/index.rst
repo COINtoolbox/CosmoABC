@@ -273,6 +273,37 @@ The example above corresponds to a perfect distance definition, since it gets cl
 This is what one should aim for in constructing a distance function. 
 How large a deviation from this is acceptable should be decided based on each particular problem and goal. 
 
+Bibtex entry 
+************
+
+If you use ``cosmoabc`` in you research, we kindly ask you to cite the original paper.
+The code includes a built-in citation function which outputs the bibtex entry
+
+.. code-block:: python
+
+    import cosmoabc
+    
+    cosmoabc.__cite__()
+
+this will return
+
+    |@ARTICLE{2015arXiv150406129I,
+    |author = {{Ishida}, E.~E.~O. and {Vitenti}, S.~D.~P. and {Penna-Lima}, M. and
+    |          {Cisewski}, J. and {de Souza}, R.~S. and {Trindade}, A.~M.~M. and
+    |          {Cameron}, E. and {V.~C.~Busti}},
+    |title = "{cosmoabc: Likelihood-free inference via Population Monte Carlo Approximate Bayesian Computation}",
+    |journal = {ArXiv e-prints},
+    |archivePrefix = "arXiv",
+    |eprint = {1504.06129},
+    |keywords = {Astrophysics - Cosmology and Nongalactic Astrophysics, Astrophysics - Instrumentation and Methods for Astrophysics},
+    |year = 2015,
+    |month = apr,
+    |adsurl = {http://adsabs.harvard.edu/abs/2015arXiv150406129I},
+    |adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+    |}
+
+        
+
 
 Requirements
 ************
@@ -305,15 +336,17 @@ The Cosmostatistics Initiative (COIN)
 The IAA Cosmostatistics Initiative (`COIN <https://asaip.psu.edu/organizations/iaa/iaa-working-group-of-cosmostatistics>`_) is a non-profit organization whose aim is to nourish the synergy between astrophysics, cosmology, statistics and machine learning communities. 
 This work is a product of the first COIN Summer Residence Program, Lisbon, August/2014.
 
+Other projects develop under COIN can be found in the `COINtoolbox <http://cointoolbox.github.io/>`_
+
 Acknowledgements
 ****************
 
 In order to give proper credit to the online sources used in the development of this work, we list bellow the main web websites, foruns and blogs which were used in different parts of its development. We deeply thank all of those who contribute to open learning resources plataforms.
 
-`Multiprocessing and KeyboarInterrupt <http://bryceboe.com/2010/08/26/python-multiprocessing-and-keyboardinterrupt/>_`
-`Ordering gif <http://stackoverflow.com/questions/12339330/defining-the-file-order-for-imagemagick-convert>_`
-`Plotting <http://nbviewer.ipython.org/gist/tillahoffmann/f844bce2ec264c1c8cb5>_`
-`Remembering git commands <https://www.atlassian.com/git/tutorials/setting-up-a-repository/git-init>_`
+`Multiprocessing and KeyboarInterrupt <http://bryceboe.com/2010/08/26/python-multiprocessing-and-keyboardinterrupt/>`_
+`Ordering gif <http://stackoverflow.com/questions/12339330/defining-the-file-order-for-imagemagick-convert>`_
+`Plotting <http://nbviewer.ipython.org/gist/tillahoffmann/f844bce2ec264c1c8cb5>`_
+`Remembering git commands <https://www.atlassian.com/git/tutorials/setting-up-a-repository/git-init>`_
 
 
 
