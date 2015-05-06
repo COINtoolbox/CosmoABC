@@ -85,7 +85,7 @@ A simple example of user input file, using a simulator which takes 3 parameters 
 Important notes on input parameters
 -----------------------------------
 
-* If you are using your own prior function, you are free to name the prior parameters as you wish, you only need to define ``<your_variable>_prior_name`` and ``<your_variable>_prior_val`` accordingly. If you have doubts about variable names, a quick comparison between the two example input files (toy model and NumCosmo) might help.  
+* If you are using your own prior function, you are free to name the prior parameters as you wish, you only need to define ``<your_variable>_prior_par_name`` and ``<your_variable>_prior_par_val`` accordingly. If you have doubts about variable names, a quick comparison between the two example input files (toy model and NumCosmo) might help.  
 
 * The parameter ``split_output`` determines how many sub-sets of particles you wish to generate for each particle system. Its goal is to avoid the lost of partial results for an enventual problem when dealing with very complex, and time consuming, simulators. If you are only making a quick test and has no intention to keep partial results, just set ``split_output = 1``. 
 
@@ -196,15 +196,15 @@ If you are using your own distance function, remember to determine the dimension
     sampler_ABC.fullABC()
 
 .. warning:: 
-    When using your own **distance function** remember that it must take as input:
-    - a catalogue and
-    - a dictionary of input parameters
-
-    When using your own prior function, it must take as input:
-    - a dictionary of input parameters
-    - a boolean variable ``func`` (optional):
-      if ``func`` is ``False`` returns one realization of the prior PDF
-      if ``func`` is ``True`` returns the PDF itself
+    | When using your own **distance function** remember that it must take as input:
+    | - a catalogue and 
+    | - a dictionary of input parameters
+    |
+    | When using your own prior function, it must take as input:
+    | - a dictionary of input parameters
+    | - a boolean variable ``func`` (optional):
+    |  if ``func`` is ``False`` returns one realization of the prior PDF
+    |  if ``func`` is ``True`` returns the PDF itself
 
 
 NumCosmo simulations
