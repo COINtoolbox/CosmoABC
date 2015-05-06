@@ -51,10 +51,11 @@ def main( args ):
     user_input = read_input( args.input )
     user_input['simulation_func'] = numcosmo_sim_cluster
 
+    if user_input['path_to_obs'] == 'None':
+        raise IOError('It is not possible to continue a process without determining a static data set.') 
+
     #initiate NumCosmo object necessary for simulation
     Cosmo=ChooseParamsInput()
-
- 
     Cosmo.params = user_input['simulation_input']
     Cosmo.params["OL"]  = 1.- Cosmo.params['Om']-Cosmo.params['Ob']
 
@@ -64,8 +65,10 @@ def main( args ):
     if args.functions != None:
         m1 = imp.load_source( args.functions[:-3], args.functions )
 
-        if 'distance_func' not in user_input.keys():
+        if isinstance(user_input['distance_func'][0], str):
             user_input['distance_func'] = m1.distance
+            dtemp = user_input['distance_func'](user_input['dataset1'], user_input)
+            user_input['dist_dim'] = len(dtemp)
     
     for par in user_input['param_to_fit']:
         l1 = user_input['param_to_fit'].index(par)

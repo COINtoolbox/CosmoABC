@@ -38,29 +38,37 @@ from CosmoABC.priors import flat_prior, gaussian_prior, beta_prior
 from CosmoABC.ABC_sampler import ABC
 from CosmoABC.ABC_functions import SelectParamInnerLoop, DrawAllParams, SetDistanceFromSimulation, read_input 
 
-def main( args ):
+def main(args):
 
-    user_input = read_input( args.input )
+    user_input = read_input(args.input)
 
-    m1 = imp.load_source( args.functions[:-3], args.functions )
+    if user_input['path_to_obs'] == 'None':
+        raise IOError('It is not possible to continue a process without determining a static data set.')    
+
+    m1 = imp.load_source(args.functions[:-3], args.functions)
 
     user_input['simulation_func'] = m1.simulation
 
-    if 'distance_func' not in user_input.keys():
+    if isinstance(user_input['distance_func'][0], str):
         user_input['distance_func'] = m1.distance
+
+    #check dimension of distance output
+    dtemp = user_input['distance_func'](user_input['dataset1'], user_input)
+    user_input['dist_dim'] = len(dtemp)
     
-    for l1 in range( user_input['npar'] ):
-        if isinstance( user_input['prior_func'][ l1 ], str):            
-            user_input['prior_func'][ l1 ] = getattr( m1, user_input['prior_func'][ l1 ] )
+    for l1 in range(user_input['npar']):
+        par = user_input['param_to_fit'][l1]
+        if isinstance(user_input['prior'][par]['func'], str):            
+            user_input['prior'][par]['func'] = getattr(m1, user_input['prior_func'][l1])
             
     #initiate ABC construct
-    sampler_ABC = ABC( params=user_input ) 
+    sampler_ABC = ABC(params=user_input) 
 
     #define finished particle system index
-    sampler_ABC.T = int( args.PS )
+    sampler_ABC.T = int(args.PS)
     
     #continue from previous run
-    sampler_ABC.ContinueStoppedRun( sampler_ABC.T , user_input['file_root'] )
+    sampler_ABC.ContinueStoppedRun(sampler_ABC.T)
 
 
 

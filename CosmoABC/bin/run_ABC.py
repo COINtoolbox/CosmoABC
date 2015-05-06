@@ -61,6 +61,14 @@ def main( args ):
     if user_input['path_to_obs'] == 'None':
         user_input['dataset1'] = user_input['simulation_func'](user_input['simulation_input'])
 
+        #save data to file 
+        op1 = open('synthetic_data.dat', 'w')
+        for line in user_input['dataset1']:
+            for item in line:
+                op1.write(str(item) + '    ')
+            op1.write('\n')
+        op1.close()
+
      
     if 'dist_dim' not in user_input.keys():    
         user_input['dist_dim'] = len(user_input['distance_func'](user_input['dataset1'], user_input))
