@@ -57,7 +57,7 @@ def plot_1p(T, file_output, Parameters):
         plt.title('Particle System: 0', fontsize=15)
         plt.plot(sampling[0], y00, color='blue')
 
-        if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][0] == 'Om':
+        if Parameters['param_to_fit'][0] == 'Om':
             plt.xlabel(r'$\Omega_c$')
         else:
             plt.xlabel(Parameters['param_to_fit'][0])
@@ -95,7 +95,7 @@ def plot_1p(T, file_output, Parameters):
             plt.figure()
             plt.title('Particle System: ' + str(i+1), fontsize=15)
             plt.plot(sampling[0], y1, color='blue')
-            if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][0] == 'Om':
+            if Parameters['param_to_fit'][0] == 'Om':
                 plt.xlabel(r'$\Omega_c$')
             else:
                 plt.xlabel(Parameters['param_to_fit'][0])
@@ -223,7 +223,7 @@ def plot_2p(T, file_output, Parameters):
 
         axA.set_title('Particle System t = 0')
         axA.imshow(zz0, **kwargs)
-        if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][0] == 'Om':
+        if Parameters['param_to_fit'][0] == 'Om':
             axA.set_xlabel(r'$\Omega_c$')
             axA.set_ylabel(r'$\sigma_8$')
         else:
@@ -242,7 +242,7 @@ def plot_2p(T, file_output, Parameters):
         ax1.set_xlim(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'])
 
         ax2.plot(sampling[1], y02, color='blue')
-        if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][1] == 'sigma8':
+        if Parameters['param_to_fit'][1] == 'sigma8':
             ax2.set_xlabel(r'$\sigma_8$')
         else:
             ax2.set_xlabel(Parameters['param_to_fit'][1])
@@ -303,7 +303,7 @@ def plot_2p(T, file_output, Parameters):
 
             axA.set_title('Particle System t = ' + str( i + 1))
             axA.imshow(zz, **kwargs)
-            if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][0] == 'Om':
+            if Parameters['param_to_fit'][0] == 'Om':
                 axA.set_xlabel(r'$\Omega_c$')
                 axA.set_ylabel(r'$\sigma_8$')
             else:
@@ -313,7 +313,7 @@ def plot_2p(T, file_output, Parameters):
             axA.tick_params(axis='both', which='major', labelsize=10)
 
             ax1.plot(sampling[0], y1, color='blue')
-            if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][0] == 'Om':
+            if Parameters['param_to_fit'][0] == 'Om':
                 ax1.set_xlabel(r'$\Omega_c$')
             else:
                 ax1.set_xlabel(Parameters['param_to_fit'][0])
@@ -322,7 +322,7 @@ def plot_2p(T, file_output, Parameters):
             ax1.set_xlim(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'])
 
             ax2.plot(sampling[1], y2, color='blue')
-            if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][1] == 'sigma8':
+            if Parameters['param_to_fit'][1] == 'sigma8':
                 ax2.set_xlabel(r'$\sigma_8$')
             else:
                 ax2.set_xlabel(Parameters['param_to_fit'][1])
@@ -483,9 +483,9 @@ def plot_3p(T, file_output, Parameters):
         f.add_subplot(ax6)
 
         ax1.imshow(zz012, **kwargs12)
-        if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][0] == 'Om':
+        if Parameters['param_to_fit'][0] == 'Om':
             ax1.set_xlabel(r'$\Omega_c$')
-            ax1.set_ylabel(r'\sigma_8')
+            ax1.set_ylabel(r'$\sigma_8$')
         else:
             ax1.set_xlabel(Parameters['param_to_fit'][0])
             ax1.set_ylabel(Parameters['param_to_fit'][1])    
@@ -494,7 +494,7 @@ def plot_3p(T, file_output, Parameters):
             
         ax2.set_title('Particle System t = 0')
         ax2.imshow(zz013, **kwargs13)
-        if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][0] == 'Om':
+        if Parameters['param_to_fit'][0] == 'Om':
             ax2.set_xlabel(r'$\Omega_c$')
         else: 
             ax2.set_xlabel(Parameters['param_to_fit'][0])
@@ -503,8 +503,8 @@ def plot_3p(T, file_output, Parameters):
         ax2.tick_params(axis='both', which='major', labelsize=8)
    
         ax3.imshow(zz023, **kwargs23)
-        if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][1] == 'sigma8': 
-            ax3.set_ylabel(r'\sigma_8')
+        if Parameters['param_to_fit'][1] == 'sigma8': 
+            ax3.set_xlabel(r'$\sigma_8$')
         else:
             ax3.set_xlabel(Parameters['param_to_fit'][1])
         ax3.set_ylabel(Parameters['param_to_fit'][2])    
@@ -512,7 +512,7 @@ def plot_3p(T, file_output, Parameters):
         ax3.tick_params(axis='both', which='major', labelsize=8) 
 
         ax4.plot(sampling[0], y01, color='blue')
-        if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][0] == 'Om':
+        if Parameters['param_to_fit'][0] == 'Om':
             ax4.set_xlabel(r'$\Omega_c$')
         else:
             ax4.set_xlabel(Parameters['param_to_fit'][0])
@@ -521,8 +521,8 @@ def plot_3p(T, file_output, Parameters):
         ax4.set_xlim(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'])
 
         ax5.plot(sampling[1], y02, color='red')
-        if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][1] == 'sigma8': 
-            ax5.set_ylabel(r'\sigma_8')
+        if Parameters['param_to_fit'][1] == 'sigma8': 
+            ax5.set_xlabel(r'$\sigma_8$')
         else:
             ax5.set_xlabel(Parameters['param_to_fit'][1])
         ax5.set_ylabel('density', fontsize = 8)
@@ -621,7 +621,7 @@ def plot_3p(T, file_output, Parameters):
             f.add_subplot(ax6)
 
             ax1.imshow(zz12, **kwargs12)
-            if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][0] == 'Om':
+            if Parameters['param_to_fit'][0] == 'Om':
                 ax1.set_xlabel(r'$\Omega_c$')
                 ax1.set_ylabel(r'$\sigma_8$')
             else:
@@ -632,7 +632,7 @@ def plot_3p(T, file_output, Parameters):
 
             ax2.set_title('Particle System t = ' + str(i + 1))
             ax2.imshow(zz13, **kwargs13)
-            if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][0] == 'Om':
+            if  Parameters['param_to_fit'][0] == 'Om':
                 ax2.set_xlabel(r'$\Omega_c$')
             else:
                 ax2.set_xlabel(Parameters['param_to_fit'][0])
@@ -641,8 +641,8 @@ def plot_3p(T, file_output, Parameters):
             ax2.tick_params(axis='both', which='major', labelsize=8)
 
             ax3.imshow(zz23, **kwargs23)
-            if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][1] == 'sigma8': 
-                ax3.set_ylabel(r'$\sigma_8$')
+            if  Parameters['param_to_fit'][1] == 'sigma8': 
+                ax3.set_xlabel(r'$\sigma_8$')
             else:
                 ax3.set_xlabel(Parameters['param_to_fit'][1])
             ax3.set_ylabel(Parameters['param_to_fit'][2])    
@@ -650,7 +650,7 @@ def plot_3p(T, file_output, Parameters):
             ax3.tick_params(axis='both', which='major', labelsize=8) 
 
             ax4.plot(sampling[0], y1, color='blue')
-            if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][0] == 'Om':
+            if Parameters['param_to_fit'][0] == 'Om':
                 ax4.set_xlabel(r'$\Omega_c$')
             else:
                 ax4.set_xlabel(Parameters['param_to_fit'][0])
@@ -659,8 +659,8 @@ def plot_3p(T, file_output, Parameters):
             ax4.set_xlim(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'])
 
             ax5.plot(sampling[1], y2, color='red')
-            if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][1] == 'sigma8': 
-                ax5.set_ylabel(r'$\sigma_8$')
+            if  Parameters['param_to_fit'][1] == 'sigma8': 
+                ax5.set_xlabel(r'$\sigma_8$')
             else: 
                 ax5.set_xlabel(Parameters['param_to_fit'][1])
             ax5.set_ylabel('density', fontsize = 8)
@@ -863,7 +863,7 @@ def plot_4p(T, file_output, Parameters):
         f.add_subplot(ax10)
 
         ax1.imshow(zz012, **kwargs12)
-        if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][0] == 'Om':
+        if Parameters['param_to_fit'][0] == 'Om':
             ax1.set_xlabel(r'$\Omega_c$')
             ax1.set_ylabel(r'$\sigma_8$')
         else:
@@ -874,7 +874,7 @@ def plot_4p(T, file_output, Parameters):
             
         ax2.set_title('Particle System t = 0')
         ax2.imshow(zz013, **kwargs13)
-        if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][0] == 'Om':
+        if  Parameters['param_to_fit'][0] == 'Om':
             ax2.set_xlabel(r'$\Omega_c$')
         else:
             ax2.set_xlabel(Parameters['param_to_fit'][0])
@@ -883,7 +883,7 @@ def plot_4p(T, file_output, Parameters):
         ax2.tick_params(axis='both', which='major', labelsize=8)
    
         ax3.imshow(zz014, **kwargs14)
-        if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][0] == 'Om':
+        if Parameters['param_to_fit'][0] == 'Om':
             ax3.set_xlabel(r'$\Omega_c$')
         else:
             ax3.set_xlabel(Parameters['param_to_fit'][0])
@@ -892,8 +892,8 @@ def plot_4p(T, file_output, Parameters):
         ax3.tick_params(axis='both', which='major', labelsize=8) 
 
         ax4.imshow(zz023, **kwargs23)
-        if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][1] == 'sigma8': 
-            ax4.set_ylabel(r'$\sigma_8$')
+        if  Parameters['param_to_fit'][1] == 'sigma8': 
+            ax4.set_xlabel(r'$\sigma_8$')
         else: 
             ax4.set_xlabel(Parameters['param_to_fit'][1])
         ax4.set_ylabel(Parameters['param_to_fit'][2])    
@@ -901,8 +901,8 @@ def plot_4p(T, file_output, Parameters):
         ax4.tick_params(axis='both', which='major', labelsize=8) 
 
         ax5.imshow(zz024, **kwargs24)
-        if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][1] == 'sigma8': 
-            ax5.set_ylabel(r'$\sigma_8$')
+        if  Parameters['param_to_fit'][1] == 'sigma8': 
+            ax5.set_xlabel(r'$\sigma_8$')
         else:
             ax5.set_xlabel(Parameters['param_to_fit'][1])
         ax5.set_ylabel(Parameters['param_to_fit'][3])    
@@ -916,7 +916,7 @@ def plot_4p(T, file_output, Parameters):
         ax6.tick_params(axis='both', which='major', labelsize=8) 
 
         ax7.plot(sampling[0], y01, color='blue')
-        if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][0] == 'Om':
+        if  Parameters['param_to_fit'][0] == 'Om':
             ax7.set_xlabel(r'$\Omega_c$')
         else:
             ax7.set_xlabel(Parameters['param_to_fit'][0])
@@ -925,8 +925,8 @@ def plot_4p(T, file_output, Parameters):
         ax7.set_xlim(Parameters['prior'][p1]['min'], Parameters['prior'][p1]['max'])
 
         ax8.plot(sampling[1], y02, color='red')
-        if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][1] == 'sigma8': 
-            ax8.set_ylabel(r'$\sigma_8$')
+        if  Parameters['param_to_fit'][1] == 'sigma8': 
+            ax8.set_xlabel(r'$\sigma_8$')
         else:
             ax8.set_xlabel(Parameters['param_to_fit'][1])
         ax8.set_ylabel('density', fontsize = 8)
@@ -1074,7 +1074,7 @@ def plot_4p(T, file_output, Parameters):
             f.add_subplot(ax10)
    
             ax1.imshow(zz12, **kwargs12)
-            if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][0] == 'Om':
+            if  Parameters['param_to_fit'][0] == 'Om':
                 ax1.set_xlabel(r'$\Omega_c$')
                 ax1.set_ylabel(r'$\sigma_8$')
             else:
@@ -1085,7 +1085,7 @@ def plot_4p(T, file_output, Parameters):
             
             ax2.set_title('Particle System t = ' + str(i + 1))
             ax2.imshow(zz13, **kwargs13)
-            if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][0] == 'Om':
+            if  Parameters['param_to_fit'][0] == 'Om':
                 ax2.set_xlabel(r'$\Omega_c$')
             else:
                 ax2.set_xlabel(Parameters['param_to_fit'][0])
@@ -1095,7 +1095,7 @@ def plot_4p(T, file_output, Parameters):
 
             ax3.set_title('Particle System t = ' + str(i + 1))
             ax3.imshow(zz14, **kwargs14)
-            if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][0] == 'Om':
+            if  Parameters['param_to_fit'][0] == 'Om':
                 ax3.set_xlabel(r'$\Omega_c$')
             else:
                 ax3.set_xlabel(Parameters['param_to_fit'][0])
@@ -1104,8 +1104,8 @@ def plot_4p(T, file_output, Parameters):
             ax3.tick_params(axis='both', which='major', labelsize=8)
 
             ax4.imshow(zz23, **kwargs23)
-            if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][1] == 'sigma8': 
-                ax4.set_ylabel(r'$\sigma_8$')
+            if Parameters['param_to_fit'][1] == 'sigma8': 
+                ax4.set_xlabel(r'$\sigma_8$')
             else:
                 ax4.set_xlabel(Parameters['param_to_fit'][1])
             ax4.set_ylabel(Parameters['param_to_fit'][2])    
@@ -1113,8 +1113,8 @@ def plot_4p(T, file_output, Parameters):
             ax4.tick_params(axis='both', which='major', labelsize=8) 
 
             ax5.imshow(zz24, **kwargs24)
-            if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][1] == 'sigma8': 
-                ax5.set_ylabel(r'$\sigma_8$')
+            if Parameters['param_to_fit'][1] == 'sigma8': 
+                ax5.set_xlabel(r'$\sigma_8$')
             else:
                 ax5.set_xlabel(Parameters['param_to_fit'][1])
             ax5.set_ylabel(Parameters['param_to_fit'][3])    
@@ -1128,7 +1128,7 @@ def plot_4p(T, file_output, Parameters):
             ax6.tick_params(axis='both', which='major', labelsize=8)
 
             ax7.plot(sampling[0], y1, color='blue')
-            if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][0] == 'Om':
+            if  Parameters['param_to_fit'][0] == 'Om':
                 ax7.set_xlabel(r'$\Omega_c$')
             else:
                 ax7.set_xlabel(Parameters['param_to_fit'][0])
@@ -1138,8 +1138,8 @@ def plot_4p(T, file_output, Parameters):
 
 
             ax8.plot(sampling[1], y2, color='red')
-            if Parameters['simulation_func'] == numcosmo_sim_cluster and Parameters['param_to_fit'][1] == 'sigma8': 
-                ax8.set_ylabel(r'$\sigma_8$')
+            if Parameters['param_to_fit'][1] == 'sigma8': 
+                ax8.set_xlabel(r'$\sigma_8$')
             else:
                 ax8.set_xlabel(Parameters['param_to_fit'][1])
             ax8.set_ylabel('density', fontsize = 8)

@@ -32,7 +32,7 @@ def GRBF(vec):
 
             core_exp = core_exp + vec[1]['const'] * term
   
-        return core_exp   
+        return np.log(core_exp)
 
     except KeyboardInterrupt, e:
         pass

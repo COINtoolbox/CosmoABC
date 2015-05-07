@@ -4,13 +4,6 @@
 Auxiliary script to test distance before using it in the ABC sampler. 
 
 Usage:  test_ABC_distance.py -i <input_parameters_file> -f <user_function_file>
-
-        ***WARNING***
-        at this point the distance function must be named 'distance'
-                      the simulation function must be named 'simulation'
-                      and if a personalized prior function is defined 
-                      it must be named 'prior'.                   
-
 """
 
 import numpy as np
