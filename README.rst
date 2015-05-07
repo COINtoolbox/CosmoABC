@@ -85,6 +85,10 @@ A simple example of user input file, using a simulator which takes 3 parameters 
 Important notes on input parameters
 -----------------------------------
 
+* In the current implementation, it is important  to include a `` # `` symbol preceded and followed by a white space after the definition of each variable in the input file. 
+
+* The variable ``path_to_obs`` can be set to ``None``, in this case, ``cosmoabc`` will generate one catalogue from the simulator and consider it as the *observed* catalogue. It will also output this catalogue to a data file, so it can be used for further scrutnity.
+
 * If you are using your own prior function, you are free to name the prior parameters as you wish, you only need to define ``<your_variable>_prior_par_name`` and ``<your_variable>_prior_par_val`` accordingly. If you have doubts about variable names, a quick comparison between the two example input files (toy model and NumCosmo) might help.  
 
 * The parameter ``split_output`` determines how many sub-sets of particles you wish to generate for each particle system. Its goal is to avoid the lost of partial results for an enventual problem when dealing with very complex, and time consuming, simulators. If you are only making a quick test and has no intention to keep partial results, just set ``split_output = 1``. 

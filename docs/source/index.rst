@@ -41,7 +41,7 @@ The test outputs a file illustrating the evolution of the posterior.
 Input Parameter File
 ********************
 
-Sample input in can be found in ``~CosmoABC/examples``. All example files mentioned in this section are available in that directory. 
+Sample input in can be found in ``~cosmoabc/examples``. All example files mentioned in this section are available in that directory. 
 
 The user input file should contain all necessary variables for simulation as well as for the ABC sampler.
 
@@ -79,11 +79,15 @@ A simple example of user input file, using a simulator which takes 3 parameters 
     split_output    = 1                            # number of intermediate steps written to file
 
     simulation_func = my_simulation                # simulation function
-    distance_func   = my_distance                     # distance function
+    distance_func   = my_distance                  # distance function
 
 
 Important notes on input parameters
 -----------------------------------
+
+* In the current implementation, it is important  to include a `` # `` symbol preceded and followed by a white space after the definition of each variable in the input file. 
+
+* The variable ``path_to_obs`` can be set to ``None``, in this case, ``cosmoabc`` will generate one catalogue from the simulator and consider it as the *observed* catalogue. It will also output this catalogue to a data file, so it can be used for further scrutnity.
 
 * If you are using your own prior function, you are free to name the prior parameters as you wish, you only need to define ``<your_variable>_prior_par_name`` and ``<your_variable>_prior_par_val`` accordingly. If you have doubts about variable names, a quick comparison between the two example input files (toy model and NumCosmo) might help.  
 
@@ -141,9 +145,9 @@ Considering we are using built-in simulation, prior and distance functions,
 
 .. code-block:: python 
 
-    from CosmoABC.priors import flat_prior
-    from CosmoABC.ABC_sampler import ABC
-    from CosmoABC.plots import plot_2D
+    from cosmoabc.priors import flat_prior
+    from cosmoabc.ABC_sampler import ABC
+    from cosmoabc.plots import plot_2D
     import numpy as np
      
     #user input file
@@ -169,8 +173,8 @@ If you are using your own distance function, remember to determine the dimension
 
 .. code-block:: python
 
-    from CosmoABC.priors import flat_prior
-    from CosmoABC.ABC_sampler import ABC
+    from cosmoabc.priors import flat_prior
+    from cosmoabc.ABC_sampler import ABC
     import numpy as np
 
     from my_functions import my_distance
