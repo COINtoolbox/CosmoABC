@@ -341,7 +341,7 @@ Other projects developed under COIN can be found in the `COINtoolbox <http://coi
 Acknowledgements
 ****************
 
-In order to give proper credit to the online sources used in the development of this work, we list bellow the main web websites, foruns and blogs which were used in different parts of its development. **We deeply thank all of those who contribute to open learning plataforms**.
+In order to give proper credit to the online sources used in the development of this work, we list bellow the main web websites, foruns and blogs which were used in different parts of its development. **We deeply thank everyone who contributes to open learning plataforms**.
 
 `Multiprocessing and KeyboarInterrupt <http://bryceboe.com/2010/08/26/python-multiprocessing-and-keyboardinterrupt/>`_
 
