@@ -3,7 +3,7 @@
 
 
 cosmoabc - Likelihood free inference for cosmology
-=============================================================
+==================================================
 
 
 ``cosmoabc`` is a package which enables parameter inference using an Approximate Bayesian Computation (ABC) algorithm, as described in `Ishida et al., 2015 <http://arxiv.org/abs/1504.06129>`_.
@@ -203,7 +203,7 @@ If you are using your own distance function, remember to determine the dimension
     | When using your own **prior function**, it must take as input:
     | - a dictionary of input parameters
     | - a boolean variable ``func`` (optional):
-    |  if ``func`` is ``False`` returns one realization of the prior PDF
+    |  if ``func`` is ``False`` returns one sampling of the underlying distribution
     |  if ``func`` is ``True`` returns the PDF itself
 
 
@@ -341,7 +341,7 @@ Other projects developed under COIN can be found in the `COINtoolbox <http://coi
 Acknowledgements
 ****************
 
-In order to give proper credit to the online sources used in the development of this work, we list bellow the main web websites, foruns and blogs which were used in different parts of its development. We deeply thank all of those who contribute to open learning plataforms.
+In order to give proper credit to the online sources used in the development of this work, we list bellow the main web websites, foruns and blogs which were used in different parts of its development. **We deeply thank all of those who contribute to open learning plataforms**.
 
 `Multiprocessing and KeyboarInterrupt <http://bryceboe.com/2010/08/26/python-multiprocessing-and-keyboardinterrupt/>`_
 
