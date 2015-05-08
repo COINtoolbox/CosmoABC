@@ -510,6 +510,7 @@ def plot_3p(T, file_output, Parameters):
         ax3.set_ylabel(Parameters['param_to_fit'][2])    
         ax3.set_aspect('auto')     
         ax3.tick_params(axis='both', which='major', labelsize=8) 
+        ax3.set_xticks(np.arange(Parameters['prior'][p2]['min'], Parameters[p2]['max'], (Parameters[p2]['max']-Parameters[p2]['min'])/4))
 
         ax4.plot(sampling[0], y01, color='blue')
         if Parameters['param_to_fit'][0] == 'Om':
