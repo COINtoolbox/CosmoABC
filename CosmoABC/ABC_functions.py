@@ -35,9 +35,9 @@ def read_input(filename):
     """
     Read user input from file and construct initial dictionary parameter. 
 
-    input:    filename (string) -> user input file parameter 
+    input: filename (string) -> user input file parameter 
 
-    output:   dictionary with formated user choices
+    output: dictionary with formated user choices
     """
 
     #read user input data
@@ -48,14 +48,17 @@ def read_input(filename):
     data1 = [elem.split() for elem in lin1]     
 
     #store options in params dictionary
-    params_ini = dict([(line[0], line[2:])  for line in data1 if len(line) > 1])
+    params_ini = dict([(line[0], line[2:]) 
+                        for line in data1 if len(line) > 1])
     
     params = {}
     params['path_to_obs'] = params_ini['path_to_obs'][0] 
     params['param_to_fit'] = [params_ini['param_to_fit'][i] 
-                             for i in xrange(params_ini['param_to_fit'].index('#'))]
+                             for i in xrange(
+                                 params_ini['param_to_fit'].index('#'))]
     params['param_to_sim'] = [params_ini['param_to_sim'][i] 
-                             for i in xrange(params_ini['param_to_sim'].index('#'))]
+                             for i in xrange(
+                                 params_ini['param_to_sim'].index('#'))]
     params['npar'] = len(params['param_to_fit'])
     params['M'] = int(params_ini['M'][0])
     params['Mini'] = int(params_ini['Mini'][0])
@@ -65,14 +68,15 @@ def read_input(filename):
     params['screen'] = bool(int(params_ini['screen'][0]))
     params['ncores'] = int(params_ini['ncores'][0])
     params['prior_func'] = [params_ini['prior_func'][i] 
-                             for i in xrange(params_ini['prior_func'].index('#'))]
+                             for i in xrange(
+                                 params_ini['prior_func'].index('#'))]
 
     #functions
-    ###### Update this if you include any new functions!!!!!  ##############
     from CosmoABC.distances import distance_GRBF
     dispatcher = {'flat_prior': flat_prior, 
                   'gaussian_prior': gaussian_prior, 'beta_prior': beta_prior, 
-                  'distance_quantiles': distance_quantiles, 'distance_GRBF': distance_GRBF}
+                  'distance_quantiles': distance_quantiles, 
+                  'distance_GRBF': distance_GRBF}
     
     if params_ini['simulation_func'][0] in dispatcher:
         params['simulation_func'] = dispatcher[params_ini['simulation_func'][0]]
@@ -82,51 +86,57 @@ def read_input(filename):
         prior_dic = {}
         prior_dic['sequence'] = params['param_to_fit']
         for i1 in xrange(params['npar']):
-            element = params['param_to_fit'][i1]
-            prior_dic[element] = {}
-            if element + '_lim' in params_ini.keys():
-                prior_dic[element]['min'] = float(params_ini[element + '_lim'][0])
-                prior_dic[element]['max'] = float(params_ini[element + '_lim'][1])
+            el = params['param_to_fit'][i1]
+            prior_dic[el] = {}
+            if el + '_lim' in params_ini.keys():
+                prior_dic[el]['min'] = float(params_ini[el + '_lim'][0])
+                prior_dic[el]['max'] = float(params_ini[el + '_lim'][1])
 
-            for name in params_ini[element + '_prior_par_name'][:params_ini[element + '_prior_par_name'].index('#')]:
-                indx = params_ini[element + '_prior_par_name'].index(name)
-                prior_dic[element][name] = float(params_ini[element + '_prior_par_val'][indx])
+            indx = params_ini[el + '_prior_par_name'].index('#')
+            for name in params_ini[el + '_prior_par_name'][:indx]:
+                indx = params_ini[el + '_prior_par_name'].index(name)
+                prior_dic[el][name] = float(params_ini[el + 
+                                            '_prior_par_val'][indx])
 
             if params['prior_func'][i1] == 'gaussian_prior':    
-                prior_dic[element]['func'] = dispatcher['gaussian_prior']
+                prior_dic[el]['func'] = dispatcher['gaussian_prior']
 
             elif params['prior_func'][i1] == 'flat_prior':
-                prior_dic[element]['func'] = dispatcher['flat_prior']
+                prior_dic[el]['func'] = dispatcher['flat_prior']
                 
             elif params['prior_func'][i1] == 'beta_prior':
-                prior_dic[element]['func'] = dispatcher['beta_prior']
+                prior_dic[el]['func'] = dispatcher['beta_prior']
                
             else:
-                prior_dic[element]['func'] = params['prior_func'][i1]
+                prior_dic[el]['func'] = params['prior_func'][i1]
 
         params['prior'] = prior_dic
                     
     else:
-        raise ValueError('Number of prior functions does not match number of parameters!') 
+        raise ValueError('Number of prior functions does not ' +
+                          'match number of parameters!') 
 
 
     #fiducial extra parameters
     sim_par = {}  
     for item in params['param_to_sim']:
         try:
-            par = float(params_ini[ item ][0])
-            sim_par[ item ] = par
+            par = float(params_ini[item][0])
+            sim_par[item] = par
         except ValueError:
-            sim_par[ item ] = params_ini[ item ][0] 
+            sim_par[item] = params_ini[ item ][0] 
 
     if params_ini['simulation_func'][0] == 'numcosmo_sim_cluster':
 
         try: 
             from gi.repository import NumCosmo as Nc
-            from CosmoABC.sim_NumCosmo_cluster import NCountSimul, ChooseParamsInput, numcosmo_sim_cluster
+            from CosmoABC.sim_NumCosmo_cluster import NCountSimul
+            from CosmoABC.sim_NumCosmo_cluster import ChooseParamsInput 
+            from CosmoABC.sim_NumCosmo_cluster import numcosmo_sim_cluster
         except ImportError:
-            raise ImportError( 'You must have NumCosmo running to use the sim_NumCosmo simulation!' +
-                                '\n Please check your NumCosmo instalation.' )
+            raise ImportError('You must have NumCosmo running to use the ' + 
+                              'sim_NumCosmo simulation!' +
+                              '\n Please check your NumCosmo instalation.')
 
         sim_par["OL"] = 1. - sim_par["Om"] - sim_par["Ob"]
         Cosmo=ChooseParamsInput()
@@ -146,20 +156,25 @@ def read_input(filename):
         op2.close()
 
         data2 = [elem.split() for elem in lin2[1:]]
-        params['dataset1'] = np.array([[float(item) for item in line ] for line in data2])  
+        params['dataset1'] = np.array([[float(item) for item in line] 
+                                        for line in data2])  
 
     elif 'simulation_func' in params.keys():
-        params['dataset1'] = params['simulation_func'](params['simulation_input'])
+        params['dataset1'] = params['simulation_func'](
+                                    params['simulation_input']
+                                    )
     
     if params_ini['distance_func'][0] in dispatcher.keys():
         params['distance_func'] = dispatcher[params_ini['distance_func'][0]]
 
         if params['distance_func'] == distance_GRBF:
-            from CosmoABC.distances import GRBF, logf, norm_GRBF, prep_GRBF, distance_GRBF
+            from CosmoABC.distances import GRBF, logf, norm_GRBF, prep_GRBF
+            from CosmoABC.distances import distance_GRBF
             params['s'] = float(params_ini['s'][0])
             params = prep_GRBF(params)
 
-        elif 'dataset1' in params and params['distance_func'] == distance_quantiles:
+        elif (('dataset1' in params) and 
+              (params['distance_func'] == distance_quantiles)):
             from CosmoABC.distances import summ_quantiles
             params['dist_dim'] = len(params['dataset1'][0]) + 1
             params['quantile_nodes'] = int(params_ini['quantile_nodes'][0])
@@ -173,20 +188,14 @@ def read_input(filename):
 
 def SelectParamInnerLoop(var1):
     """
-    Draw model parameters based on previous particle system and return those satisfying distance threshold.
+    Draw model parameters based on previous particle system and return those 
+    satisfying distance threshold.
 
-    :param	previous_particle_system:  model parameters surviving previous distance threshold
-                collumns -> [ param_to_fit[0], param_to_fit[1], .., param_to_fit[n], distance_from_dataset1 ] 	
+    input: var1 -> dictionary of input parameters	
 
-    :param	W:  vector of weights 
-
-    :param	previous_cov_matrix: covariance matrix based on previous particle system results
-    :param	cosmological_parameters: dictionary of necessary cosmological parameters
-		keys must include: [H0, Omegab, Omegam, Tgamma0, ns, sigma8, w]	
-
-    :param	epsilon: list of distance threshold to be satisfied	
-
-    :returns: vector -> [ surviving_model_parameters, distance, number_necessary_draws, computational_time (s), distance_threshold ]
+    output: vector of [surviving_model_parameters, distance, 
+                       number_necessary_draws, computational_time (s), 
+                       distance_threshold]
     """
 
     try:
@@ -198,9 +207,17 @@ def SelectParamInnerLoop(var1):
         time_start = time.time()
 
         #determine distance threshold
-        epsilon = [mquantiles(var1['previous_particle_system'][:, kk ], prob=var1['params']['qthreshold'])[0] 
-                      for kk in xrange(len(var1['params']['param_to_fit']), 
-                                   len(var1['params']['param_to_fit']) + var1['params']['dist_dim'])]
+        epsilon = [
+                   mquantiles(
+                             var1['previous_particle_system'][:, kk], 
+                             prob=var1['params']['qthreshold']
+                             )[0] 
+                      for kk in xrange(
+                                      len(var1['params']['param_to_fit']), 
+                                      len(var1['params']['param_to_fit']) + 
+                                      var1['params']['dist_dim']
+                                      )
+                  ]
 
         flag = [False for ii in xrange(var1['params']['dist_dim'])]
 
@@ -210,8 +227,10 @@ def SelectParamInnerLoop(var1):
             K = K + 1 
 
             #draw model parameters to serve as mean 
-            index_theta0 = np.random.choice(xrange(len(var1['W'])), p=var1['W'])
-            theta0 = np.atleast_2d(var1['previous_particle_system'][index_theta0][:len( var1['params']['param_to_fit'])])
+            index_theta0 = np.random.choice(xrange(len(var1['W'])), 
+                                            p=var1['W'])
+            indx = len(var1['params']['param_to_fit'])
+            theta0 = np.atleast_2d(var1['previous_particle_system'][index_theta0][:indx])
 
             #initialize boolean parmeter vector
             theta_t = [False for i in xrange(len(var1['params']['param_to_fit']))]
@@ -232,7 +251,8 @@ def SelectParamInnerLoop(var1):
                 for par in var1['params']['param_to_fit']:
                    
                     k1 = var1['params']['param_to_fit'].index(par)
-                    if  theta_t_try[k1] >= var1['params']['prior'][par]['min'] and theta_t_try[k1] <= var1['params']['prior'][par]['max']:
+                    if (theta_t_try[k1] >= var1['params']['prior'][par]['min'] 
+                    and theta_t_try[k1] <= var1['params']['prior'][par]['max']):
                         theta_t.append(True)
 
                     else:
@@ -241,10 +261,13 @@ def SelectParamInnerLoop(var1):
 
             #update parameter values in dictionary
             for i1 in range(len(var1['params']['param_to_fit'])):
-                var1['params']['simulation_input'][var1['params']['param_to_fit'][i1]] = theta_t_try[i1]
+                p = var1['params']['param_to_fit'][i1]
+                var1['params']['simulation_input'][p] = theta_t_try[i1]
 
             #generate simulation
-            DataSimul = var1['params']['simulation_func'](var1['params']['simulation_input'])
+            DataSimul = var1['params']['simulation_func'](
+                                          var1['params']['simulation_input']
+                                                          )
       
             #calculate distance
             dist = var1['params']['distance_func'](DataSimul, var1['params'])
@@ -278,8 +301,9 @@ def SelectParamInnerLoop(var1):
 def DrawAllParams(prior_dic):
     """
     Draw complete set of  parameters from prior.
-
-    :returns: array of parameters sampled from the prior
+  
+    input: dictionary of input parameters
+    output: array of parameters sampled from the prior
     """
 
     pars = []
@@ -291,11 +315,11 @@ def DrawAllParams(prior_dic):
    
 def SetDistanceFromSimulation(var):
     """
-    Draw cosmological parameter values from prior, generate simulation and calculate distance from a given comparison  catalog. 
-    In the context of Ishida et al., 2015 that translates into calculating the distance from the real to the simulated cataloges.
+    Draw cosmological parameter values from prior, generate simulation 
+    and calculate distance from a given comparison  catalog. 
 
-    :returns: scalar (distance between dataset1 and dataset2)
-    
+    input: dictionary of input parameters
+    output: distance between dataset1 and dataset2
     """
 
     try:

@@ -4,7 +4,9 @@
 Approximate Bayesian Computation sampler.
 """
 
-__author__ = "E. E. O. Ishida, S. D. P. Vitenti, M. Penna-Lima, R. S. de Souza, J. Cisewski, A. M. M. Trindade, V. C. Busti, E. Cameron"
+__author__ = ("E. E. O. Ishida, S. D. P. Vitenti, M. Penna-Lima," +
+             "R. S. de Souza, J. Cisewski, A. M. M. Trindade, " + 
+             "V. C. Busti, E. Cameron")
 __maintainer__ = "E. E. O. Ishida"
 __copyright__ = "Copyright 2015"
 __version__ = "0.1.21"
@@ -26,7 +28,8 @@ from statsmodels.stats.weightstats import DescrStatsW
 
 from multiprocessing import Pool 
 
-from ABC_functions import SelectParamInnerLoop, SetDistanceFromSimulation, DrawAllParams
+from ABC_functions import SelectParamInnerLoop, SetDistanceFromSimulation 
+from ABC_functions import DrawAllParams
 
 ################################################
 
@@ -66,59 +69,71 @@ class ABC(object):
 	BuildPSystem		-	Build subsequent particle system
 	UpdateWeights		-	Update weights 
 	fullABC			-	Run full ABC algorithm
-        ContinueStoppedRun	-	Continue algorithm using previously sttoped run
+        ContinueStoppedRun	-	Continue algorithm from previous  one
         """ 
 
-        self.params = params                                    #all parameters 
-        self.data = params['dataset1']                          #set of 2-dimensional arrays of "real" catalog.         
-        self.simulation = params['simulation_func']             #function which performs the simulation
-        self.distance = params['distance_func']     	        #distance function
-        self.prior = params['prior']                            #dictionary of prior parameters  
-        self.delta = params['delta']                            #convergence criteria 
-        self.M	= params['M']                                   #number of elements in each particle system
-        self.qthreshold	= params['qthreshold']                  #quantile to define the distance threshold for subsequent particle system
+        self.params = params                             
+        self.data = params['dataset1']                       
+        self.simulation = params['simulation_func']      
+        self.distance = params['distance_func']     	        
+        self.prior = params['prior']                             
+        self.delta = params['delta']                           
+        self.M	= params['M']                                   
+        self.qthreshold	= params['qthreshold']                  
 
         #check length of observed data
         if isinstance(self.data, bool):
             raise IOError('No real data catalog provided.')
 
         if len(self.data) < 2 :
-            raise IOError('Real data catalog too short. Table must contain more than 1 element.')
+            raise IOError('Real data catalog too short. '  +
+                          'Table must contain more than 1 element.')
 
         try:
             len(self.data[0])
         except TypeError:
-            raise TypeError('Real data catalog must be at least 2 dimensional.')
+            raise TypeError('Real data catalog must be at ' + 
+                            'least 2 dimensional.')
                 
         #check minimum keywords in params
-        self.min_keys = ['simulation_input', 'param_to_fit', 'prior', 'M', 'qthreshold', 'delta','file_root']  
+        self.min_keys = ['simulation_input', 'param_to_fit', 'prior', 
+                         'M', 'qthreshold', 'delta','file_root']  
         for item in self.min_keys:
             if item not in self.params.keys():
-                raise IOError('Keyword ' + str( item ) + '  is missing from inputed dictionary of parameters (params)!') 
+                raise IOError('Keyword ' + str(item) + 
+                              '  is missing from inputed dictionary of ' + 
+                              'parameters (params)!') 
 
         #check simulation function
         if not self.simulation:
-            raise IOError('Please, provide a valid simulation function. \n See file "simulation.py".')
+            raise IOError('Please, provide a valid simulation function.' + 
+                          '\n See file "simulation.py".')
 
         #check prior function
         if not self.prior:
-            raise IOError('Please provide a valid prior information for each variable parameter. \n "See file priors.py"')
+            raise IOError('Please provide a valid prior information ' + 
+                          'for each variable parameter. \n ' + 
+                          '"See file priors.py"')
 
         #check distance function
         if not self.distance:
-            raise IOError('Please provide a valid distance function. \n See file "distances.py"')
+            raise IOError('Please provide a valid distance function. ' + 
+                          '\n See file "distances.py"')
 
     def BuildFirstPSystem(self, output=True):
         """
-        Build the first particle system, storing the parameter values satisfying distance threshold. 
+        Build the first particle system, storing the parameter values 
+        satisfying distance threshold. 
 
-        :param 	output: optional, boolean (choose to write output data file, default is True)
+        input:  output (optional) -> choose to write output data file, 
+                                     default is True
                  
+        output:	[0] array containing first particle system
+	        collumns -> [ param_to_fit[0], param_to_fit[1], .., 
+                              param_to_fit[n], distance_from_dataset1 ] 	
 
-        :returns:	[0] array containing first particle system
-	                collumns -> [ param_to_fit[0], param_to_fit[1], .., param_to_fit[n], distance_from_dataset1 ] 	
-
-		        [1] integer -> total number of draws necessary to build the first particle system
+		[1] integer -> total number of draws necessary to build 
+                               the first particle system
         """
 
         print 'Building first particle system:'
@@ -127,7 +142,7 @@ class ABC(object):
 
         #check if there are previous partial results
         temp_files = [self.params['file_root'] + '0_p' + str(part) + '.dat'
-                                for part in xrange(int(self.params['split_output'][0]))]
+                      for part in xrange(int(self.params['split_output'][0]))]
 
         file_list = os.listdir(os.getcwd())
         if temp_files[0] in file_list:
@@ -139,14 +154,17 @@ class ABC(object):
                else:
                    begin_int = partial_calc
                    print 'Found ' + str(len(theta)) + ' values in t = 0'
-                   print 'Calculations will begin in particle system t = 0 part ' + str(begin_int)
+                   print ('Calculations will begin in particle system' + 
+                         ' t = 0 part ' + str(begin_int))
                    break 
         else:
             begin_int = 0
 
-        for iteration in xrange(begin_int, int(self.params['split_output'][0])):
+        for iteration in xrange(begin_int, 
+                                int(self.params['split_output'][0])):
             time_ini = time.time()
-            args = [self.params for item in xrange(self.params['Mini']/int(self.params['split_output'][0]))]
+            args = [self.params for item in xrange(self.params['Mini']/ \
+                                    int(self.params['split_output'][0]))]
 
             pool = Pool(processes=self.params['ncores'])
             p = pool.map_async(SetDistanceFromSimulation, args)
@@ -163,7 +181,8 @@ class ABC(object):
 
             total_time = time_end/self.M
 
-            #initiate variables to store total number of draws and surviving parameters 
+            #initiate variables to store total number of draws
+            #and surviving parameters 
             theta_local = []    
 
             for line in dist:
@@ -175,7 +194,8 @@ class ABC(object):
                 theta.append(theta_t)           
 
             if output:
-                ftemp = open(self.params['file_root'] + '0_p' + str(iteration) + '.dat', 'w')   
+                ftemp = open(self.params['file_root'] + '0_p' + 
+                             str(iteration) + '.dat', 'w')   
                 for line in theta_local:
                     for element in line:
                         ftemp.write(str(element) + '    ')
@@ -184,8 +204,10 @@ class ABC(object):
 
         #choose smaller distance 
         d1 = np.array([ np.sqrt(sum(line[j]**2 
-                         for j in xrange(len(self.params['param_to_fit']),len(self.params['param_to_fit']) 
-                                  + self.params['dist_dim']))) for line in theta])
+                         for j in xrange(len(self.params['param_to_fit']),
+                                         len(self.params['param_to_fit']) 
+                                         + self.params['dist_dim']))) 
+                                         for line in theta])
 
         d1B = list(d1) 
         d1.sort()
@@ -209,9 +231,10 @@ class ABC(object):
 
         for line in theta_new:
             for elem in line:
-                op.write(str( elem )  + '    ')
+                op.write(str(elem)  + '    ')
             for i3 in xrange(self.params['dist_dim']):
-                op.write(str( max(np.array(theta_new)[:,-self.params['dist_dim'] + i3])) + '    ')
+                indx = self.params['dist_dim'] + i3
+                op.write(str(max(np.array(theta_new)[:,-indx])) + '    ')
             op.write('\n')
         op.close()
 
@@ -226,7 +249,8 @@ class ABC(object):
         #erase temporary files 
         if output:
             for iteration in xrange(int(self.params['split_output'][0])):
-                os.remove(self.params['file_root'] + '0_p' + str(iteration) + '.dat')
+                os.remove(self.params['file_root'] + '0_p' + 
+                          str(iteration) + '.dat')
  
         return np.array(theta_new), self.params['Mini']
 
@@ -234,20 +258,26 @@ class ABC(object):
         """
         Build particle system. 
 
-        input: 	previous_particle_system -> model parameters surviving previous distance threshold
-	       	collumns -> [ param_to_fit[0], param_to_fit[1], .., param_to_fit[n], distance_from_dataset1 ] 	
+        input: 	previous_particle_system -> model parameters surviving 
+                                            previous distance threshold
+	                                    collumns -> [param_to_fit[0], 
+                                                         param_to_fit[1], ..,
+                                                         param_to_fit[n], 
+                                                       distance_from_dataset1] 	
 
                 W -> vector of weights
-
                 t -> particle system index
 
         output: updated particle system
-                collumns -> -> [ surviving_model_parameters, distance, number_necessary_draws, computational_time (s), distance_threshold ]
+                collumns -> [surviving_model_parameters, distance, 
+                             number_necessary_draws, computational_time (s), 
+                             distance_threshold]
 
         """
         
         #calculate weighted covariance matrix from previous particle system
-        ds = DescrStatsW(previous_particle_system[:,:len(self.params['param_to_fit'])], weights=W)
+        indx = len(self.params['param_to_fit'])
+        ds = DescrStatsW(previous_particle_system[:,:indx], weights=W)
         cov1 = ds.cov
     
         var = {}
@@ -258,8 +288,9 @@ class ABC(object):
         surv_param = []
 
         #check if there are previous partial results
-        temp_files = [self.params['file_root'] + str(t) + '_p' + str(part) + '.dat'
-                                for part in xrange(int(self.params['split_output'][0]))]
+        temp_files = [self.params['file_root'] + str(t) + '_p' + 
+                                                 str(part) + '.dat'
+                      for part in xrange(int(self.params['split_output'][0]))]
 
         file_list = os.listdir(os.getcwd())
         if temp_files[0] in file_list:
@@ -270,8 +301,10 @@ class ABC(object):
                        surv_param.append(line) 
                else:
                    begin_int = partial_calc
-                   print 'Found ' + str(len(surv_param)) + ' values in t = ' + str(t)
-                   print 'Calculations will begin in particle system t = ' + str(t) + ' part ' + str(begin_int)
+                   print ('Found ' + str(len(surv_param)) + 
+                         ' values in t = ' + str(t))
+                   print ('Calculations will begin in particle system t = ' + 
+                         str(t) + ' part ' + str(begin_int))
                    break 
         else:
             begin_int = 0
@@ -295,7 +328,8 @@ class ABC(object):
                 surv_param.append(item)
 
             if output:
-                ftemp = open(self.params['file_root'] + str(t) + '_p' + str(iteration) + '.dat', 'w')  
+                ftemp = open(self.params['file_root'] + str(t) + '_p' + 
+                             str(iteration) + '.dat', 'w')  
                 for line in surv_param_local:
                     for element in line:
                         ftemp.write(str(element) + '    ')
@@ -314,59 +348,78 @@ class ABC(object):
         op.write('\n')
         for line in surv_param:
             for elem in line:
-                op.write(str( elem ) + '    ')
+                op.write(str(elem) + '    ')
             op.write('\n')
         op.close()
 
         if output:
             for iteration in xrange(int(self.params['split_output'][0])):   
-                os.remove(self.params['file_root'] + str(t) + '_p' + str(iteration) + '.dat')
+                os.remove(self.params['file_root'] + str(t) + '_p' + 
+                          str(iteration) + '.dat')
 
         return np.array(surv_param)
 
 
-    def UpdateWeights(self, W, previous_particle_system, current_particle_system, output=True):   
+    def UpdateWeights(self, W, previous_particle_system, 
+                            current_particle_system, output=True):   
         """
         Update weights given new particle system.
 
         input: 	W ->  vector of current weights
 
-                previous_particle_system -> model parameters surviving previous distance threshold
-	       	collumns -> [ param_to_fit[0], param_to_fit[1], .., param_to_fit[n], distance_from_dataset1 ] 	
+                previous_particle_system -> model parameters surviving 
+                                            previous distance threshold
+	       	                            collumns -> [param_to_fit[0], 
+                                                         param_to_fit[1], .., 
+                                                         param_to_fit[n], 
+                                                       distance_from_dataset1] 	
 
-                current_particle_system -> model parameters surviving current distance threshold
-	       	collumns -> [ param_to_fit[0], param_to_fit[1], .., param_to_fit[n], distance_from_dataset1 ] 	
+                current_particle_system -> model parameters surviving 
+                                           current distance threshold
+	       	                           collumns -> [param_to_fit[0], 
+                                                        param_to_fit[1], .., 
+                                                        param_to_fit[n], 
+                                                       distance_from_dataset1] 	
 
-        output:   vector of updated weights      
-                 
+        output:   vector of updated weights                       
         """
 
         print 'updating weights'
 
         #calculate weighted covariance matrix from previous particle system
-        ds = DescrStatsW(previous_particle_system[:,:len(self.params['param_to_fit'])], weights=W)
+        indx = len(self.params['param_to_fit'])
+        ds = DescrStatsW(previous_particle_system[:,:indx], weights=W)
         cov1 = ds.cov
 
         new_weights = []
 
         #determine prior distributions
-        distributions = [self.prior[par]['func'](self.params['prior'][par], func=True) 
-                                        for par in self.params['param_to_fit']]
+        distributions = [self.prior[par]['func'](self.params['prior'][par], 
+                                                 func=True) 
+                                       for par in self.params['param_to_fit']]
 
         for i4 in range(len(current_particle_system)):
-            nominator = np.prod([distributions[i2].pdf(current_particle_system[i4][i2])  
-                                   for i2 in xrange(len(self.params['param_to_fit']))])
+            nominator = np.prod([distributions[i2].pdf(
+                                   current_particle_system[i4][i2]
+                                                      )  
+                                   for i2 in xrange(
+                                      len(self.params['param_to_fit'])
+                                                   )
+                                 ])
 
-            denominator = sum(W[i3]*multivariate_normal.pdf(current_particle_system[i4][:len(self.params['param_to_fit'])], 
-                              previous_particle_system[i3][:len(self.params['param_to_fit'])], cov=cov1)  
-                                                               for i3 in xrange(len(W)))
+            indx = len(self.params['param_to_fit'])
+            denominator = sum(W[i3]*multivariate_normal.pdf(
+                              current_particle_system[i4][:indx], 
+                              previous_particle_system[i3][:indx], cov=cov1) 
+                              for i3 in xrange(len(W)))
 
             new_weights.append(nominator/denominator)
 
         final_weights = [item/sum(new_weights) for item in new_weights]
 
         if output == True:
-            op = open(self.params['file_root'] + str(self.T) + 'weights.dat', 'w')
+            op = open(self.params['file_root'] + str(self.T) + 
+                      'weights.dat', 'w')
             for item in final_weights:
                 op.write(str(item) + '\n')
             op.close()
@@ -379,11 +432,15 @@ class ABC(object):
         """
         Run complete ABC sampler algorithm. 
 
-        input:	root_file_name -> root of file name to be used in all runs (string)
+        input:	root_file_name -> root of file name to be used 
+                                  in all runs (string)
 
-		build_first_system (optional) -> boolean  (read or generate first particle system). Default is False.
+		build_first_system (optional) -> boolean (read or generate 
+                                                 first particle system). 
+                                                 Default is False.
    	
-        output:	particle systems and corresponding weights written in data files.
+        output:	particle systems and corresponding 
+                weights written in data files.
         """
 
         #determine initial weights
@@ -401,11 +458,13 @@ class ABC(object):
         t1 = np.atleast_2d([elem.split() for elem in lin[1:]])
 
         sys1 = np.array([np.array([float(line[i1]) 
-                           for i1 in xrange(len(self.params['param_to_fit']) + self.params['dist_dim'])]) 
-                                            for line in t1 ])
+                         for i1 in xrange(len(self.params['param_to_fit']) 
+                                        + self.params['dist_dim'])]) 
+                              for line in t1])
 
         #determine number of draws in previous particle system generation
-        K =  sum(int(line[len(self.params['param_to_fit']) + self.params['dist_dim']]) for line in t1)
+        K =  sum(int(line[len(self.params['param_to_fit']) + 
+                 self.params['dist_dim']]) for line in t1)
 
         if self.params['screen']:
             print 'number of draws PS0 = ' + str(K)
@@ -425,7 +484,8 @@ class ABC(object):
             W2 = self.UpdateWeights(W1, sys1, sys_new)
 
  
-            K = sum(sys_new[:, len(self.params['param_to_fit']) + self.params['dist_dim']])
+            K = sum(sys_new[:, len(self.params['param_to_fit']) + 
+                    self.params['dist_dim']])
 
             del sys1, W1
 
@@ -434,7 +494,8 @@ class ABC(object):
 
             del sys_new, W2 
 
-            print ' finished PS ' + str(t) + ',    convergence = ' + str(float(self.M)/K)
+            print (' finished PS ' + str(t) + ',    convergence = ' + 
+                   str(float(self.M)/K))
            
         self.T = t
 
@@ -445,25 +506,26 @@ class ABC(object):
 
         input: 	t -> index of last completed particle system (int)
 
-		root_file_name -> root of file name to be used in all subsequent runs (string)
-	
-	output:	subsequent particle systems and corresponding weights written in data files.
+	output:	subsequent particle systems and corresponding weights 
+                written in data files.
         """
  
 
-        op = open(self.params['file_root'] + str(t) + '.dat', 'r' )
+        op = open(self.params['file_root'] + str(t) + '.dat', 'r')
         lin = op.readlines()
         op.close()
 
         t1 = [elem.split() for elem in lin]
         
         sys1 = np.array([np.array([float(line[i1]) 
-                          for i1 in xrange(len(self.params['param_to_fit']) + self.params['dist_dim'])]) 
-                                          for line in t1[1:]])
+                          for i1 in xrange(len(self.params['param_to_fit']) + 
+                                           self.params['dist_dim'])]) 
+                                            for line in t1[1:]])
         
 
         #determine number of draws in previous particle system generation
-        K =  int(sum(float(line[list(t1[0]).index('NDraws')]) for line in t1[1:]))
+        K =  int(sum(float(line[list(t1[0]).index('NDraws')]) 
+                     for line in t1[1:]))
         print 'number of draws PS' + str(t) + ' = ' + str(K)
         
         if t > 0:        
@@ -483,7 +545,8 @@ class ABC(object):
             W2 = self.UpdateWeights(W1, sys1, sys_new)
 
  
-            K = sum(sys_new[:, len(self.params['param_to_fit' ]) + self.params['dist_dim']])
+            K = sum(sys_new[:, len(self.params['param_to_fit' ]) + 
+                                   self.params['dist_dim']])
 
             del sys1, W1
 
@@ -493,7 +556,8 @@ class ABC(object):
             del sys_new, W2 
 
 
-            print ' finished PS' + str(t) + ',    convergence = ' + str(float(self.M)/K)
+            print (' finished PS' + str(t) + ',    convergence = ' + 
+                   str(float(self.M)/K))
         
                   
         self.T = t

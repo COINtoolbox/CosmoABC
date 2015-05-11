@@ -152,20 +152,20 @@ def distance_quantiles(dataset2, Parameters):
     """
 
 
-    qlist = np.arange( 0.05, 1.0, 0.95/Parameters['quantile_nodes'] )
+    qlist = np.arange(0.05, 1.0, 0.95/Parameters['quantile_nodes'])
 
 
     qd = []
-    for j1 in xrange( len( dataset2[0] ) ):
-        qd.append( np.array([ mquantiles( dataset2[:, j1 ], prob=item ) 
-                              for item in qlist ]) )
+    for j1 in xrange(len(dataset2[0])):
+        qd.append(np.array([mquantiles(dataset2[:, j1 ], prob=item) 
+                              for item in qlist]))
         
 
-    l1 = len( Parameters['dataset1'] )
-    l2 = len( dataset2 )
+    l1 = len(Parameters['dataset1'])
+    l2 = len(dataset2)
 
     d = []
-    for j2 in xrange( len( dataset2[0] ) ):
+    for j2 in xrange(len(dataset2[0])):
         d.append(np.linalg.norm(Parameters['extra'][ j2] - qd[j2]))
 
     

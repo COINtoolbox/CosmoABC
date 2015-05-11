@@ -153,7 +153,9 @@ class gaussian_kde(object):
             self.weights = np.ones(self.n) / self.n
             
         # Compute the effective sample size 
-        # http://surveyanalysis.org/wiki/Design_Effects_and_Effective_Sample_Size#Kish.27s_approximate_formula_for_computing_effective_sample_size
+        # http://surveyanalysis.org/wiki/Design_Effects_and_
+        # Effective_Sample_Size#Kish.27s_approximate_formula_for_computing_
+        # effective_sample_size
         self.neff = 1.0 / np.sum(self.weights ** 2)
 
         self.set_bandwidth(bw_method=bw_method)

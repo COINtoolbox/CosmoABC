@@ -44,14 +44,19 @@ from priors import flat_prior, gaussian_prior, beta_prior
 def __cite__():
 
     print '@ARTICLE{2015arXiv150406129I,'
-    print 'author = {{Ishida}, E.~E.~O. and {Vitenti}, S.~D.~P. and {Penna-Lima}, M. and'
-    print '          {Cisewski}, J. and {de Souza}, R.~S. and {Trindade}, A.~M.~M. and'
+    print ('author = {{Ishida}, E.~E.~O. and {Vitenti}, S.~D.~P. ' + 
+          'and {Penna-Lima}, M. and')
+    print ('          {Cisewski}, J. and {de Souza}, R.~S. and {Trindade},' + 
+          ' A.~M.~M. and')
     print '          {Cameron}, E. and {V.~C.~Busti}},'
-    print '          title = "{cosmoabc: Likelihood-free inference via Population Monte Carlo Approximate Bayesian Computation}",'
+    print ('          title = "{cosmoabc: Likelihood-free inference via ' + 
+           'Population Monte Carlo Approximate Bayesian Computation}",')
     print 'journal = {ArXiv e-prints},'
     print 'archivePrefix = "arXiv",'
     print 'eprint = {1504.06129},'
-    print 'keywords = {Astrophysics - Cosmology and Nongalactic Astrophysics, Astrophysics - Instrumentation and Methods for Astrophysics},'
+    print ('keywords = {Astrophysics - Cosmology and Nongalactic ' + 
+           'Astrophysics, Astrophysics - Instrumentation and Methods' + 
+           ' for Astrophysics},')
     print 'year = 2015,'
     print 'month = apr,'
     print 'adsurl = {http://adsabs.harvard.edu/abs/2015arXiv150406129I},'

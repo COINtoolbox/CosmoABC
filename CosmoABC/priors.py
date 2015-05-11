@@ -2,11 +2,13 @@
 Functions for initial prior distributions. 
 
 ***
-To insert a new family of prior distribution, insert your function in this file.
-All functions must depend on 2 variables:
-One defining the parameters characterizing the distribution (par)
-and another determining the acceptable extreme bounds ( par_lim ). 
-There must also be an optional variable regulating the output (rather a draw or a pdf)
+All functions must have take as input a dictionary of parameters 
+and have one optional variable called 'func'
+If 'func' is False -> return one sampling of the pdf
+If 'func' is True -> return the pdf itself
+the dictionary of input parameters must contain 2 keywords:
+min and max, which are reserved for delimiting the parameter domain. 
+Other variables should have different names.
 ***
 
 """
