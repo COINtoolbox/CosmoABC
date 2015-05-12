@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# CosmoABC documentation build configuration file, created by
+# cosmoabc documentation build configuration file, created by
 # sphinx-quickstart on Thu Jan 15 00:36:37 2015.
 #
 # This file is execfile()d with the current directory set to its
@@ -45,7 +45,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'CosmoABC'
+project = u'cosmoabc'
 copyright = u'2015, Emille E.O.Ishida'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -178,7 +178,7 @@ html_static_path = ['nstatic']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'CosmoABCdoc'
+htmlhelp_basename = 'cosmoabcdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -198,7 +198,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'CosmoABC.tex', u'CosmoABC Documentation',
+  ('index', 'cosmoabc.tex', u'cosmoabc Documentation',
    u'Emille E.O.Ishida', 'manual'),
 ]
 
@@ -228,7 +228,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'cosmoabc', u'CosmoABC Documentation',
+    ('index', 'cosmoabc', u'cosmoabc Documentation',
      [u'Emille E.O.Ishida'], 1)
 ]
 
@@ -242,8 +242,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'CosmoABC', u'CosmoABC Documentation',
-   u'Emille E.O.Ishida', 'CosmoABC', 'One line description of project.',
+  ('index', 'cosmoabc', u'cosmoabc Documentation',
+   u'Emille E.O.Ishida', 'cosmoabc', 'One line description of project.',
    'Miscellaneous'),
 ]
 
