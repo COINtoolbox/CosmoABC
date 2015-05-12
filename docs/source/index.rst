@@ -147,7 +147,7 @@ Considering we are using built-in simulation, prior and distance functions,
 
     from cosmoabc.priors import flat_prior
     from cosmoabc.ABC_sampler import ABC
-    from cosmoabc.plots import plot_2D
+    from cosmoabc.plots import plot_2p
     import numpy as np
      
     #user input file
@@ -166,7 +166,7 @@ Considering we are using built-in simulation, prior and distance functions,
     sampler_ABC.fullABC()
 
     #plot results
-    plot_2D( sampler_ABC.T, 'results.pdf' , params)
+    plot_2p( sampler_ABC.T, 'results.pdf' , params)
 
 
 If you are using your own distance function, remember to determine the dimension of its output manually,
