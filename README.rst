@@ -41,7 +41,7 @@ The test outputs a file illustrating the evolution of the posterior.
 Input Parameter File
 ********************
 
-Sample input in can be found in ``~CosmoABC/examples``. All example files mentioned in this section are available in that directory. 
+Sample input in can be found in ``~cosmoabc/examples``. All example files mentioned in this section are available in that directory. 
 
 The user input file should contain all necessary variables for simulation as well as for the ABC sampler.
 
@@ -118,7 +118,7 @@ Built-in options for distance functions are:
 * Quantile-based distance with number of objects criteria
 * Gaussian Radial Basis Function distance (as descrived in Appendix B of `Ishida et al., 2015 <http://arxiv.org/abs/1504.06129>`_)
 
-Moreover, cosmoabc is also able to handle user defined functions for all three elements. 
+Moreover, ``cosmoabc`` is also able to handle user defined functions for all three elements. 
 You will find example files which will help you tailor your functions for the ABC sampler. 
 
 Once all the function definitions are determined, the ABC sampler can be called from the command line::
@@ -145,9 +145,9 @@ Considering we are using built-in simulation, prior and distance functions,
 
 .. code-block:: python 
 
-    from CosmoABC.priors import flat_prior
-    from CosmoABC.ABC_sampler import ABC
-    from CosmoABC.plots import plot_2D
+    from cosmoabc.priors import flat_prior
+    from cosmoabc.ABC_sampler import ABC
+    from cosmoabc.plots import plot_2D
     import numpy as np
      
     #user input file
@@ -173,8 +173,8 @@ If you are using your own distance function, remember to determine the dimension
 
 .. code-block:: python
 
-    from CosmoABC.priors import flat_prior
-    from CosmoABC.ABC_sampler import ABC
+    from cosmoabc.priors import flat_prior
+    from cosmoabc.ABC_sampler import ABC
     import numpy as np
 
     from my_functions import my_distance
@@ -241,7 +241,7 @@ Testing Distances
 If you are using a personalized distance, make sure that it applies to the particular problem you are facing. 
 You need to be sure that the distance definition you adpoted yields increasingly larger distances for increasingly different catalogues. 
 
-CosmoABC has a built-in script which allows you to visually test the performances of your choices. 
+``cosmoabc`` has a built-in script which allows you to visually test the performances of your choices. 
 In order to use it, prepare an appropriate user input and function files and, from the command line, do::
 
     $ test_ABC_distance.py -i <user_input_file> -f <user_function_file> -o <output_filename>
@@ -249,7 +249,7 @@ In order to use it, prepare an appropriate user input and function files and, fr
 Here, ``<output_filename>`` is where the distance behaviour for different set of parameter values will be plotted. 
 
 As always, the ``<user_input_file>`` must be provided. 
-If you are using built-in cosmoabc functions, the ``-f`` option is not necessary and in case you forget to give an output filename, cosmoabc will ask you for it. 
+If you are using built-in ``cosmoabc`` functions, the ``-f`` option is not necessary and in case you forget to give an output filename, ``cosmoabc`` will ask you for it. 
 It will also ask you to input the number of points to be drawn from the parameter space in order to construct a grid. 
 
 Here is an example from using the built-in tool to check the suitability of the distance function described in section 3.1 of the paper::
