@@ -12,10 +12,10 @@ import argparse
 import imp
 import os
 
-from CosmoABC.distances import distance_quantiles, distance_GRBF 
-from CosmoABC.priors import flat_prior, gaussian_prior, beta_prior
-from CosmoABC.ABC_sampler import ABC
-from CosmoABC.ABC_functions import SelectParamInnerLoop, DrawAllParams, SetDistanceFromSimulation, read_input 
+from cosmoabc.distances import distance_quantiles, distance_GRBF 
+from cosmoabc.priors import flat_prior, gaussian_prior, beta_prior
+from cosmoabc.ABC_sampler import ABC
+from cosmoabc.ABC_functions import SelectParamInnerLoop, DrawAllParams, SetDistanceFromSimulation, read_input 
         
 import sys
 

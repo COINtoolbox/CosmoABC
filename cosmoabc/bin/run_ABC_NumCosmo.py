@@ -31,28 +31,19 @@ Optional external dependences:
 """
 
 
-__author__ = "E. E. O. Ishida"
-__maintainer__ = "E. E. O. Ishida"
-__copyright__ = "Copyright 2015"
-__email__ = "emilleishida@gmail.com"
-__status__ = "Prototype"
-__license__ = "GPL"
-
-
-
 import argparse
 import numpy
 import imp
 import os
 
-from CosmoABC.distances import distance_quantiles, distance_GRBF 
-from CosmoABC.priors import flat_prior, gaussian_prior, beta_prior
-from CosmoABC.ABC_sampler import ABC
-from CosmoABC.ABC_functions import SelectParamInnerLoop, DrawAllParams, SetDistanceFromSimulation, read_input 
+from cosmoabc.distances import distance_quantiles, distance_GRBF 
+from cosmoabc.priors import flat_prior, gaussian_prior, beta_prior
+from cosmoabc.ABC_sampler import ABC
+from cosmoabc.ABC_functions import SelectParamInnerLoop, DrawAllParams, SetDistanceFromSimulation, read_input 
 
 try: 
     from gi.repository import NumCosmo as Nc
-    from CosmoABC.sim_NumCosmo_cluster  import NCountSimul, ChooseParamsInput, numcosmo_sim_cluster
+    from cosmoabc.sim_NumCosmo_cluster  import NCountSimul, ChooseParamsInput, numcosmo_sim_cluster
 except ImportError:
     raise ImportError('You must have NumCosmo running to use the sim_NumCosmo simulation!' + 
                       '\n Please check your NumCosmo instalation.')
@@ -74,9 +65,6 @@ def main( args ):
 
     #initiate ABC construct
     sampler_ABC = ABC(params=user_input) 
-
-    print sampler_ABC.simulation
-    print sampler_ABC.prior
 
     #build first particle system
     sys1 = sampler_ABC.BuildFirstPSystem()

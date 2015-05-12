@@ -34,14 +34,14 @@ import argparse
 import numpy
 import imp
 
-from CosmoABC.distances import distance_quantiles, distance_GRBF
-from CosmoABC.priors import flat_prior, gaussian_prior, beta_prior
-from CosmoABC.ABC_sampler import ABC
-from CosmoABC.ABC_functions import SelectParamInnerLoop, DrawAllParams, SetDistanceFromSimulation, read_input 
+from cosmoabc.distances import distance_quantiles, distance_GRBF
+from cosmoabc.priors import flat_prior, gaussian_prior, beta_prior
+from cosmoabc.ABC_sampler import ABC
+from cosmoabc.ABC_functions import SelectParamInnerLoop, DrawAllParams, SetDistanceFromSimulation, read_input 
 
 try: 
     from gi.repository import NumCosmo as Nc
-    from CosmoABC.sim_NumCosmo_cluster import NCountSimul, ChooseParamsInput, numcosmo_sim_cluster
+    from cosmoabc.sim_NumCosmo_cluster import NCountSimul, ChooseParamsInput, numcosmo_sim_cluster
 except ImportError:
     raise ImportError( 'You must have NumCosmo running to use the sim_NumCosmo simulation! \n Please check your NumCosmo instalation.' )
     

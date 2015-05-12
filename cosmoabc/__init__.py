@@ -35,6 +35,18 @@ Using any of these subpackages requires an explicit import.  For example,
 
 """
 
+__author__ = ("E. E. O. Ishida, S. D. P. Vitenti, M. Penna-Lima," +
+             "J. Cisewski, R. S. de Souza, A. M. M. Trindade, " + 
+             "V. C. Busti, E. Cameron")
+__maintainer__ = "E. E. O. Ishida"
+__copyright__ = "Copyright 2015"
+__version__ = "1.0"
+__email__ = "emilleishida@gmail.com"
+__status__ = "Prototype"
+__license__ = "GPL3"
+
+
+
 from ABC_functions import SelectParamInnerLoop, SetDistanceFromSimulation, DrawAllParams
 from ABC_sampler import ABC
 from distances import distance_quantiles, distance_GRBF

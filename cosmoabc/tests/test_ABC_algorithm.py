@@ -7,11 +7,11 @@ import sys
 
 from statsmodels.stats.weightstats import DescrStatsW
 
-from CosmoABC.distances import distance_quantiles, summ_quantiles
-from CosmoABC.priors import flat_prior
-from CosmoABC.ABC_sampler import ABC
-from CosmoABC.ABC_functions import SelectParamInnerLoop, SetDistanceFromSimulation, DrawAllParams, get_cores
-from CosmoABC.plots import plot_1p, plot_2p, plot_3p, plot_4p
+from cosmoabc.distances import distance_quantiles, summ_quantiles
+from cosmoabc.priors import flat_prior
+from cosmoabc.ABC_sampler import ABC
+from cosmoabc.ABC_functions import SelectParamInnerLoop, SetDistanceFromSimulation, DrawAllParams, get_cores
+from cosmoabc.plots import plot_1p, plot_2p, plot_3p, plot_4p
 
 
 def ysim(v):

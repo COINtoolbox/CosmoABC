@@ -33,11 +33,11 @@ Optional external dependences:
 import argparse
 import imp
 
-from CosmoABC.distances import distance_quantiles, distance_GRBF
-from CosmoABC.priors import flat_prior, gaussian_prior, beta_prior
-from CosmoABC.ABC_sampler import ABC
-from CosmoABC.plots import plot_1p, plot_2p, plot_3p, plot_4p  
-from CosmoABC.ABC_functions import read_input, get_cores, DrawAllParams, SetDistanceFromSimulation, SelectParamInnerLoop
+from cosmoabc.distances import distance_quantiles, distance_GRBF
+from cosmoabc.priors import flat_prior, gaussian_prior, beta_prior
+from cosmoabc.ABC_sampler import ABC
+from cosmoabc.plots import plot_1p, plot_2p, plot_3p, plot_4p  
+from cosmoabc.ABC_functions import read_input, get_cores, DrawAllParams, SetDistanceFromSimulation, SelectParamInnerLoop
 
 def main( args ):
 

@@ -4,16 +4,6 @@
 Approximate Bayesian Computation sampler.
 """
 
-__author__ = ("E. E. O. Ishida, S. D. P. Vitenti, M. Penna-Lima," +
-             "R. S. de Souza, J. Cisewski, A. M. M. Trindade, " + 
-             "V. C. Busti, E. Cameron")
-__maintainer__ = "E. E. O. Ishida"
-__copyright__ = "Copyright 2015"
-__version__ = "0.1.21"
-__email__ = "emilleishida@gmail.com"
-__status__ = "Prototype"
-__license__ = "GPL"
-
 import numpy as np
 import time
 import sys
@@ -483,9 +473,8 @@ class ABC(object):
         
             W2 = self.UpdateWeights(W1, sys1, sys_new)
 
- 
-            K = sum(sys_new[:, len(self.params['param_to_fit']) + 
-                    self.params['dist_dim']])
+            K = sum(sys_new[:, (len(self.params['param_to_fit']) + 
+                    self.params['dist_dim'])])
 
             del sys1, W1
 
