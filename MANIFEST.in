@@ -1,6 +1,6 @@
 include README.rst
 include CHANGES.md
-include CosmoABC/data/SPT.dat
-include CosmoABC/examples/input_NumCosmo.txt
-include CosmoABC/examples/data_format_SZ.dat
-include CosmoABC/examples/input_toy_model.txt
+include cosmoabc/data/SPT.dat
+include cosmoabc/examples/input_NumCosmo.txt
+include cosmoabc/examples/data_format_SZ.dat
+include cosmoabc/examples/input_toy_model.txt

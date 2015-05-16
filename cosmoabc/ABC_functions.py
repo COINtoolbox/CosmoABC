@@ -17,8 +17,8 @@ from scipy.stats import norm
 
 from statsmodels.stats.weightstats import DescrStatsW
 
-from CosmoABC.distances import distance_quantiles, distance_GRBF 
-from CosmoABC.priors import flat_prior, gaussian_prior, beta_prior
+from distances import distance_quantiles, distance_GRBF 
+from priors import flat_prior, gaussian_prior, beta_prior
 
 
 ################################################
@@ -72,7 +72,7 @@ def read_input(filename):
                                  params_ini['prior_func'].index('#'))]
 
     #functions
-    from CosmoABC.distances import distance_GRBF
+    from distances import distance_GRBF
     dispatcher = {'flat_prior': flat_prior, 
                   'gaussian_prior': gaussian_prior, 'beta_prior': beta_prior, 
                   'distance_quantiles': distance_quantiles, 
@@ -130,9 +130,9 @@ def read_input(filename):
 
         try: 
             from gi.repository import NumCosmo as Nc
-            from CosmoABC.sim_NumCosmo_cluster import NCountSimul
-            from CosmoABC.sim_NumCosmo_cluster import ChooseParamsInput 
-            from CosmoABC.sim_NumCosmo_cluster import numcosmo_sim_cluster
+            from sim_NumCosmo_cluster import NCountSimul
+            from sim_NumCosmo_cluster import ChooseParamsInput 
+            from sim_NumCosmo_cluster import numcosmo_sim_cluster
         except ImportError:
             raise ImportError('You must have NumCosmo running to use the ' + 
                               'sim_NumCosmo simulation!' +
@@ -168,14 +168,14 @@ def read_input(filename):
         params['distance_func'] = dispatcher[params_ini['distance_func'][0]]
 
         if params['distance_func'] == distance_GRBF:
-            from CosmoABC.distances import GRBF, logf, norm_GRBF, prep_GRBF
-            from CosmoABC.distances import distance_GRBF
+            from distances import GRBF, logf, norm_GRBF, prep_GRBF
+            from distances import distance_GRBF
             params['s'] = float(params_ini['s'][0])
             params = prep_GRBF(params)
 
         elif (('dataset1' in params) and 
               (params['distance_func'] == distance_quantiles)):
-            from CosmoABC.distances import summ_quantiles
+            from distances import summ_quantiles
             params['dist_dim'] = len(params['dataset1'][0]) + 1
             params['quantile_nodes'] = int(params_ini['quantile_nodes'][0])
             params = summ_quantiles(params['dataset1'], params)

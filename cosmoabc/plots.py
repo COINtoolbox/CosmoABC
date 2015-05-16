@@ -11,7 +11,6 @@ import matplotlib.gridspec as gridspec
 
 from weighted_gaussian_kde import gaussian_kde
 
-
 def plot_1p(T, file_output, Parameters):
     """
     Make 1 free parameter plot for ABC results. 

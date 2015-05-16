@@ -30,22 +30,14 @@ Optional external dependences:
  -	NumCosmo:			For cosmological simulations.	
 """
 
-__author__ = "E. E. O. Ishida, S. D. P. Vitenti, M. Penna-Lima, R. S. de Souza, J. Cisewski, E. Cameron, V. C. Busti"
-__maintainer__ = "E. E. O. Ishida"
-__copyright__ = "Copyright 2015"
-__version__ = "0.1"
-__email__ = "emilleishida@gmail.com"
-__status__ = "Prototype"
-__license__ = "GPL"
-
 import argparse
 import numpy as np
 import imp
 
-from CosmoABC.distances import distance_quantiles, distance_GRBF
-from CosmoABC.priors import flat_prior, gaussian_prior, beta_prior
-from CosmoABC.plots import plot_1p, plot_2p, plot_3p, plot_4p
-from CosmoABC.ABC_functions import read_input
+from cosmoabc.distances import distance_quantiles, distance_GRBF
+from cosmoabc.priors import flat_prior, gaussian_prior, beta_prior
+from cosmoabc.plots import plot_1p, plot_2p, plot_3p, plot_4p
+from cosmoabc.ABC_functions import read_input
 
 
 def main( args ):
