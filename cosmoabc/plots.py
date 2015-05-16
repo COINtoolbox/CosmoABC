@@ -11,11 +11,6 @@ import matplotlib.gridspec as gridspec
 
 from weighted_gaussian_kde import gaussian_kde
 
-from gi.repository import NumCosmo as Nc
-from sim_NumCosmo_cluster import NCountSimul
-from sim_NumCosmo_cluster import ChooseParamsInput 
-from sim_NumCosmo_cluster import numcosmo_sim_cluster
-
 
 def plot_1p(T, file_output, Parameters):
     """
