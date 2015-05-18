@@ -57,11 +57,16 @@ def plot_1p(T, file_output, Parameters):
     marker = ['*', '+', 'x', 'o', '^', 'd', '<']
     color = ['red', 'green', 'blue','brown', 'gray', 'purple']
 
+    p1 = Parameters['param_to_fit'][0]
+
     with PdfPages(file_output) as pdf:
 
         plt.figure()
-        plt.text(0.3, 1.5, 'Priors', 
-                 horizontalalignment='center', fontsize=15)
+        plt.text((Parameters['prior'][p1]['max'] - \
+                       Parameters['prior'][p1]['min'])/2.0, 
+                       max(y00) + 0.35, 
+                       'Particle System t = ' + str(i), 
+                       horizontalalignment='center', fontsize=15)
         plt.plot(sampling[0], y00, color='blue')
 
         if Parameters['param_to_fit'][0] == 'Om':
@@ -105,8 +110,11 @@ def plot_1p(T, file_output, Parameters):
 
             #### Plot posteriors
             plt.figure()
-            plt.text(0.3, 1.5, 'Particle System t = ' + str(i), 
-                 horizontalalignment='center', fontsize=15)
+            plt.text((Parameters['prior'][p1]['max'] - \
+                       Parameters['prior'][p1]['min'])/2.0, 
+                       max(y00) + 0.35, 
+                       'Particle System t = ' + str(i), 
+                       horizontalalignment='center', fontsize=15)
             plt.plot(sampling[0], y1, color='blue')
             if Parameters['param_to_fit'][0] == 'Om':
                 plt.xlabel(r'$\Omega_c$')
@@ -249,8 +257,11 @@ def plot_2p(T, file_output, Parameters):
         ax2 = plt.Subplot(f, gs2[1])
         f.add_subplot(ax2)
 
-        axA.text(0.3, 1.5, 'Priors', 
-                 horizontalalignment='center', fontsize=15)
+        axA.text((Parameters['prior'][p1]['max'] - \
+                       Parameters['prior'][p1]['min'])/2.0, 
+                       Parameters['prior'][p2]['max'] + 0.35, 
+                       'Particle System t = ' + str(i), 
+                       horizontalalignment='center', fontsize=15)
         axA.imshow(zz0, **kwargs)
         if Parameters['param_to_fit'][0] == 'Om':
             axA.set_xlabel(r'$\Omega_c$')
@@ -341,8 +352,11 @@ def plot_2p(T, file_output, Parameters):
             f.add_subplot(ax2)
     
            
-            axA.text(0.3, 1.5, 'Particle System t = ' + str(i), 
-                 horizontalalignment='center', fontsize=15)
+            axA.text((Parameters['prior'][p1]['max'] - \
+                       Parameters['prior'][p1]['min'])/2.0, 
+                       Parameters['prior'][p2]['max'] + 0.35, 
+                       'Particle System t = ' + str(i), 
+                       horizontalalignment='center', fontsize=15)
             axA.imshow(zz, **kwargs)
             if Parameters['param_to_fit'][0] == 'Om':
                 axA.set_xlabel(r'$\Omega_c$')
@@ -549,8 +563,11 @@ def plot_3p(T, file_output, Parameters):
         ax1.set_aspect('auto')     
         ax1.tick_params(axis='both', which='major', labelsize=8)
             
-        ax2.text(0.3, 1.5, 'Priors', 
-                 horizontalalignment='center', fontsize=15)  
+        ax2.text((Parameters['prior'][p1]['max'] - \
+                       Parameters['prior'][p1]['min'])/2.0, 
+                       Parameters['prior'][p3]['max'] + 0.35, 
+                       'Particle System t = ' + str(i), 
+                       horizontalalignment='center', fontsize=15)
         ax2.imshow(zz013, **kwargs13)
         if Parameters['param_to_fit'][0] == 'Om':
             ax2.set_xlabel(r'$\Omega_c$')
@@ -714,8 +731,11 @@ def plot_3p(T, file_output, Parameters):
             ax1.set_aspect('auto')     
             ax1.tick_params(axis='both', which='major', labelsize=8)
 
-            ax2.text(0.3, 1.5, 'Particle System t = ' + str(i), 
-                 horizontalalignment='center', fontsize=15)
+            ax2.text((Parameters['prior'][p1]['max'] - \
+                       Parameters['prior'][p1]['min'])/2.0, 
+                       Parameters['prior'][p3]['max'] + 0.35, 
+                       'Particle System t = ' + str(i), 
+                       horizontalalignment='center', fontsize=15)
             ax2.imshow(zz13, **kwargs13)
             if  Parameters['param_to_fit'][0] == 'Om':
                 ax2.set_xlabel(r'$\Omega_c$')
@@ -998,8 +1018,11 @@ def plot_4p(T, file_output, Parameters):
         ax1.set_aspect('auto')     
         ax1.tick_params(axis='both', which='major', labelsize=8)
             
-        ax2.text(0.3, 1.5, 'Priors', 
-                 horizontalalignment='center', fontsize=15)
+        ax2.text((Parameters['prior'][p1]['max'] - \
+                       Parameters['prior'][p1]['min'])/2.0, 
+                       Parameters['prior'][p3]['max'] + 0.35, 
+                       'Particle System t = ' + str(i), 
+                       horizontalalignment='center', fontsize=15)
         ax2.imshow(zz013, **kwargs13)
         if  Parameters['param_to_fit'][0] == 'Om':
             ax2.set_xlabel(r'$\Omega_c$')
@@ -1231,8 +1254,11 @@ def plot_4p(T, file_output, Parameters):
             ax1.set_aspect('auto')     
             ax1.tick_params(axis='both', which='major', labelsize=8)
             
-            ax2.text(0.3, 1.5, 'Particle System t = ' + str(i), 
-                 horizontalalignment='center', fontsize=15) 
+            ax2.text((Parameters['prior'][p1]['max'] - \
+                       Parameters['prior'][p1]['min'])/2.0, 
+                       Parameters['prior'][p3]['max'] + 0.35, 
+                       'Particle System t = ' + str(i), 
+                       horizontalalignment='center', fontsize=15)
             ax2.imshow(zz13, **kwargs13)
             if  Parameters['param_to_fit'][0] == 'Om':
                 ax2.set_xlabel(r'$\Omega_c$')
