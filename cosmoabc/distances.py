@@ -49,16 +49,7 @@ def logf(var):
     """
     args = [[line, var] for line in var['dataset1']]
 
-    pool = Pool(processes=var['ncores'])
-    p = pool.map_async(GRBF, args)
-    try:
-        result = p.get(0xFFFF)
-    except KeyboardInterrupt:
-        print 'Interruputed by the user!'
-        sys.exit()
-
-    pool.close()
-    pool.join()
+    result = [GRBF(item) for item in args]
 
     output = sum(result) - len(var['sim'])
 
