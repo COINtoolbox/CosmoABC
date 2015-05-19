@@ -1,3 +1,4 @@
+v1.0.4 May 19 2015 -- Fixed random seed call in priors.
 v1.0.3 May 17 2015 -- Fixed plot titles bug. 
                    -- Removed child paralelization from distance GRBF function.   
 v1.0.2 May 16 2015 -- Remove wrong call for NumCosmo in plotting functions. 
