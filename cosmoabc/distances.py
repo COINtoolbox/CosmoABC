@@ -5,7 +5,6 @@ Created by Emille Ishida in 2015.
 
 import numpy as np
 import sys
-from multiprocessing import Pool
 from scipy.stats.mstats import mquantiles
 
 
@@ -42,8 +41,7 @@ def logf(var):
     Log of GRBF between 2 data sets. 
     Equation B.3 of Ishida et al, 2015.
 
-    input: dataset2 -> array of simulated catalogue
-           var -> dictionary of parameters
+    input: var -> dictionary of parameters
 
     output: scalar  
     """

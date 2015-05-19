@@ -36,7 +36,8 @@ def gaussian_prior(par, func=False):
             gaussian probability distribution function (if func=True)
 
     """
-        
+
+    np.random.seed()    
     dist = norm(loc=par['pmean'], scale=par['pstd'])
     flag = False  
     while flag == False:   
@@ -64,6 +65,8 @@ def flat_prior(par, func=False):
             uniform probability distribution function (if func=True)
 
     """
+
+    np.random.seed()
     dist = uniform(loc=par['pmin'], scale=par['pmax']-par['pmin'])
 
     draw = dist.rvs()
@@ -87,7 +90,7 @@ def beta_prior(par, func=False):
             beta probability distribution function (if func=True)
 
     """
-
+    np.random.seed()
     rv = beta(par['alpha'], par['beta'])
     draw = beta.rvs(par['alpha'], par['beta']) 
 
