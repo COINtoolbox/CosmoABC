@@ -991,8 +991,8 @@ def plot_4p(T, file_output, Parameters):
         #### Plot posteriors
         f = plt.figure()           
             
-        gs0 = gridspec.GridSpec(3, 4, left=0.075, right=0.975, 
-                                wspace=0.35, hspace=0.3)
+        gs0 = gridspec.GridSpec(3, 4, left=0.08, right=0.975, 
+                                wspace=0.45, hspace=0.35)
             
         ax1 = plt.Subplot(f, gs0[0])
         f.add_subplot(ax1)
@@ -1033,7 +1033,7 @@ def plot_4p(T, file_output, Parameters):
             ax1.set_xlabel(Parameters['param_to_fit'][0])
             ax1.set_ylabel(Parameters['param_to_fit'][1])    
         ax1.set_aspect('auto')     
-        ax1.tick_params(axis='both', which='major', labelsize=8)
+        ax1.tick_params(axis='both',  labelsize=8)
             
         ax2.text(Parameters['prior'][p1]['min'] + \
 		 (Parameters['prior'][p1]['max'] - \
@@ -1041,7 +1041,7 @@ def plot_4p(T, file_output, Parameters):
                        Parameters['prior'][p3]['max'] + 
                        0.1 * (Parameters['prior'][p3]['max'] - \
 			      Parameters['prior'][p3]['min']), 
-                       'Particle System t = ' + str(i), 
+                       'Priors', 
                        horizontalalignment='center', fontsize=15)
         ax2.imshow(zz013, **kwargs13)
         if  (Parameters['simulation_func'].__name__ == 'numcosmo_sim_cluster' and 
@@ -1051,7 +1051,7 @@ def plot_4p(T, file_output, Parameters):
             ax2.set_xlabel(Parameters['param_to_fit'][0])
         ax2.set_ylabel(Parameters['param_to_fit'][2])    
         ax2.set_aspect('auto')     
-        ax2.tick_params(axis='both', which='major', labelsize=8)
+        ax2.tick_params(axis='both',  labelsize=8)
    
         ax3.imshow(zz014, **kwargs14)
         if (Parameters['param_to_fit'][0] == 'Om' and 
@@ -1061,7 +1061,7 @@ def plot_4p(T, file_output, Parameters):
             ax3.set_xlabel(Parameters['param_to_fit'][0])
         ax3.set_ylabel(Parameters['param_to_fit'][3])    
         ax3.set_aspect('auto')     
-        ax3.tick_params(axis='both', which='major', labelsize=8) 
+        ax3.tick_params(axis='both',labelsize=8) 
 
         ax4.imshow(zz023, **kwargs23)
         if  Parameters['param_to_fit'][1] == 'sigma8': 
@@ -1070,7 +1070,7 @@ def plot_4p(T, file_output, Parameters):
             ax4.set_xlabel(Parameters['param_to_fit'][1])
         ax4.set_ylabel(Parameters['param_to_fit'][2])    
         ax4.set_aspect('auto')     
-        ax4.tick_params(axis='both', which='major', labelsize=8) 
+        ax4.tick_params(axis='both', labelsize=8) 
 
         ax5.imshow(zz024, **kwargs24)
         if  Parameters['param_to_fit'][1] == 'sigma8': 
@@ -1079,13 +1079,13 @@ def plot_4p(T, file_output, Parameters):
             ax5.set_xlabel(Parameters['param_to_fit'][1])
         ax5.set_ylabel(Parameters['param_to_fit'][3])    
         ax5.set_aspect('auto')     
-        ax5.tick_params(axis='both', which='major', labelsize=8)  
+        ax5.tick_params(axis='both',labelsize=8)  
 
         ax6.imshow(zz034, **kwargs34)
         ax6.set_xlabel(Parameters['param_to_fit'][2])
         ax6.set_ylabel(Parameters['param_to_fit'][3])    
         ax6.set_aspect('auto')     
-        ax6.tick_params(axis='both', which='major', labelsize=8) 
+        ax6.tick_params(axis='both',  labelsize=8) 
 
         ax7.plot(samp[0], y01, color='blue')
         if  (Parameters['param_to_fit'][0] == 'Om' and 
@@ -1094,7 +1094,7 @@ def plot_4p(T, file_output, Parameters):
         else:
             ax7.set_xlabel(Parameters['param_to_fit'][0])
         ax7.set_ylabel('density', fontsize=8)
-        ax7.tick_params(axis='both', which='major', labelsize=8)
+        ax7.tick_params(axis='both',  labelsize=8)
         ax7.set_xlim(Parameters['prior'][p1]['min'], 
                      Parameters['prior'][p1]['max'])
 
@@ -1104,21 +1104,19 @@ def plot_4p(T, file_output, Parameters):
         else:
             ax8.set_xlabel(Parameters['param_to_fit'][1])
         ax8.set_ylabel('density', fontsize=8)
-        ax8.tick_params(axis='both', which='major', labelsize=8)
+        ax8.tick_params(axis='both',  labelsize=8)
         ax8.set_xlim(Parameters['prior'][p2]['min'], 
                      Parameters['prior'][p2]['max']) 
 
         ax9.plot(samp[2], y03, color='green')
         ax9.set_xlabel(Parameters['param_to_fit'][2])
         ax9.set_ylabel('density', fontsize=8)
-        ax9.tick_params(axis='both', which='major', labelsize=8)
         ax9.set_xlim(Parameters['prior'][p3]['min'], 
                      Parameters['prior'][p3]['max']) 
 
         ax10.plot(samp[3], y04, color='purple')
         ax10.set_xlabel(Parameters['param_to_fit'][2])
         ax10.set_ylabel('density', fontsize=8)
-        ax10.tick_params(axis='both', which='major', labelsize=8)
         ax10.set_xlim(Parameters['prior'][p4]['min'], 
                       Parameters['prior'][p4]['max'])
 
