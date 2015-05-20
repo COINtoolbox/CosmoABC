@@ -1,0 +1,26 @@
+cosmoabc - Likelihood-free inference via Population Monte Carlo Approximate Bayesian Computation 
+
+cosmoabc is a package which enables parameter inference using an Approximate Bayesian Computation (ABC) 
+algorithm, as described in Ishida et al., 2015 (http://arxiv.org/abs/1504.06129).
+
+The code was originally designed for cosmological parameter inference from galaxy clusters number 
+counts based on Sunyaev-Zel’dovich measurements. In this context, the cosmological simulations 
+were performed using the NumCosmo library (http://www.nongnu.org/numcosmo/).
+
+Nevertheless, the user can easily take advantage of the ABC sampler along with his/her own simulator, 
+as well as test personalized prior distributions and distance functions.
+
+
+Copyright (C) 2015  Emille E. O. Ishida
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    See <http://www.gnu.org/licenses/>
