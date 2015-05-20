@@ -254,7 +254,9 @@ def plot_2p(T, file_output, Parameters):
         axA.text(Parameters['prior'][p1]['min']  +
 		  (Parameters['prior'][p1]['max'] - \
                        Parameters['prior'][p1]['min'])/2.0, 
-                       Parameters['prior'][p2]['max'] + 0.35, 
+                       Parameters['prior'][p2]['max'] + 
+                       0.1*(Parameters['prior'][p2]['max'] - \
+			 Parameters['prior'][p2]['min']), 
                        'Priors', 
                        horizontalalignment='center', fontsize=15)
         axA.imshow(zz0, **kwargs)
@@ -351,7 +353,9 @@ def plot_2p(T, file_output, Parameters):
             axA.text(Parameters['prior'][p1]['min'] + \
 	            (Parameters['prior'][p1]['max'] - \
                        Parameters['prior'][p1]['min'])/2.0, 
-                       Parameters['prior'][p2]['max'] + 0.35, 
+                       Parameters['prior'][p2]['max'] + 
+                       0.1*(Parameters['prior'][p2]['max'] - \
+			    Parameters['prior'][p2]['min']), 
                        'Particle System t = ' + str(i), 
                        horizontalalignment='center', fontsize=15)
             axA.imshow(zz, **kwargs)
@@ -564,11 +568,13 @@ def plot_3p(T, file_output, Parameters):
         ax1.set_aspect('auto')     
         ax1.tick_params(axis='both', which='major', labelsize=8)
             
-        ax2.text(Parameters['prior'][p1]['min'] + \
+        ax2.text(Parameters['prior'][p1]['min'] + 
 	        (Parameters['prior'][p1]['max'] - \
-                       Parameters['prior'][p1]['min'])/2.0, 
-                       Parameters['prior'][p3]['max'] + 0.35, 
-                       'Particle System t = ' + str(i), 
+                       Parameters['prior'][p1]['min'])/2.0,
+	               Parameters['prior'][p3]['max'] + 
+                       0.1 * (Parameters['prior'][p3]['max'] - \
+			      Parameters['prior'][p3]['min']), 
+                       'Prior', 
                        horizontalalignment='center', fontsize=15)
         ax2.imshow(zz013, **kwargs13)
         if (Parameters['simulation_func'].__name__ == 'numcosmo_sim_cluster' and 
@@ -736,10 +742,12 @@ def plot_3p(T, file_output, Parameters):
             ax1.set_aspect('auto')     
             ax1.tick_params(axis='both', which='major', labelsize=8)
 
-            ax2.text(Parameters['prior'][p1]['min'] + \
+            ax2.text(Parameters['prior'][p1]['min'] + 
 	            (Parameters['prior'][p1]['max'] - \
                        Parameters['prior'][p1]['min'])/2.0, 
-                       Parameters['prior'][p3]['max'] + 0.35, 
+                       Parameters['prior'][p3]['max'] +                       
+                        0.1 * (Parameters['prior'][p3]['max'] - \
+			      Parameters['prior'][p3]['min']), 
                        'Particle System t = ' + str(i), 
                        horizontalalignment='center', fontsize=15)
             ax2.imshow(zz13, **kwargs13)
@@ -1030,7 +1038,9 @@ def plot_4p(T, file_output, Parameters):
         ax2.text(Parameters['prior'][p1]['min'] + \
 		 (Parameters['prior'][p1]['max'] - \
                        Parameters['prior'][p1]['min'])/2.0, 
-                       Parameters['prior'][p3]['max'] + 0.35, 
+                       Parameters['prior'][p3]['max'] + 
+                       0.1 * (Parameters['prior'][p3]['max'] - \
+			      Parameters['prior'][p3]['min']), 
                        'Particle System t = ' + str(i), 
                        horizontalalignment='center', fontsize=15)
         ax2.imshow(zz013, **kwargs13)
@@ -1271,7 +1281,9 @@ def plot_4p(T, file_output, Parameters):
             ax2.text(Parameters['prior'][p1]['min'] + \
 	            (Parameters['prior'][p1]['max'] - \
                        Parameters['prior'][p1]['min'])/2.0, 
-                       Parameters['prior'][p3]['max'] + 0.35, 
+                       Parameters['prior'][p3]['max'] + 
+                       0.1 * (Parameters['prior'][p3]['max'] - \
+			      Parameters['prior'][p3]['min']), 
                        'Particle System t = ' + str(i), 
                        horizontalalignment='center', fontsize=15)
             ax2.imshow(zz13, **kwargs13)
