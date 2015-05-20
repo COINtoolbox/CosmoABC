@@ -235,8 +235,8 @@ def plot_2p(T, file_output, Parameters):
 
         #### Plot posteriors
         f = plt.figure()
-        gs0 = gridspec.GridSpec(3, 1, left=0.075, right=0.975, 
-                                wspace=0.35, hspace=0.3)
+        gs0 = gridspec.GridSpec(3, 1, left=0.1, right=0.95, 
+                                    wspace=0.2, hspace=0.5)
         gs1 = gridspec.GridSpecFromSubplotSpec(2,2, subplot_spec=gs0[:-1], 
                                                wspace=0.0, hspace=0.0)
         
@@ -348,7 +348,8 @@ def plot_2p(T, file_output, Parameters):
             f.add_subplot(ax2)
     
            
-            axA.text((Parameters['prior'][p1]['max'] - \
+            axA.text(Parameters['prior'][p1]['min'] + \
+	            (Parameters['prior'][p1]['max'] - \
                        Parameters['prior'][p1]['min'])/2.0, 
                        Parameters['prior'][p2]['max'] + 0.35, 
                        'Particle System t = ' + str(i), 
@@ -563,7 +564,8 @@ def plot_3p(T, file_output, Parameters):
         ax1.set_aspect('auto')     
         ax1.tick_params(axis='both', which='major', labelsize=8)
             
-        ax2.text((Parameters['prior'][p1]['max'] - \
+        ax2.text(Parameters['prior'][p1]['min'] + \
+	        (Parameters['prior'][p1]['max'] - \
                        Parameters['prior'][p1]['min'])/2.0, 
                        Parameters['prior'][p3]['max'] + 0.35, 
                        'Particle System t = ' + str(i), 
@@ -734,7 +736,8 @@ def plot_3p(T, file_output, Parameters):
             ax1.set_aspect('auto')     
             ax1.tick_params(axis='both', which='major', labelsize=8)
 
-            ax2.text((Parameters['prior'][p1]['max'] - \
+            ax2.text(Parameters['prior'][p1]['min'] + \
+	            (Parameters['prior'][p1]['max'] - \
                        Parameters['prior'][p1]['min'])/2.0, 
                        Parameters['prior'][p3]['max'] + 0.35, 
                        'Particle System t = ' + str(i), 
@@ -1024,7 +1027,8 @@ def plot_4p(T, file_output, Parameters):
         ax1.set_aspect('auto')     
         ax1.tick_params(axis='both', which='major', labelsize=8)
             
-        ax2.text((Parameters['prior'][p1]['max'] - \
+        ax2.text(Parameters['prior'][p1]['min'] + \
+		 (Parameters['prior'][p1]['max'] - \
                        Parameters['prior'][p1]['min'])/2.0, 
                        Parameters['prior'][p3]['max'] + 0.35, 
                        'Particle System t = ' + str(i), 
@@ -1264,7 +1268,8 @@ def plot_4p(T, file_output, Parameters):
             ax1.set_aspect('auto')     
             ax1.tick_params(axis='both', which='major', labelsize=8)
             
-            ax2.text((Parameters['prior'][p1]['max'] - \
+            ax2.text(Parameters['prior'][p1]['min'] + \
+	            (Parameters['prior'][p1]['max'] - \
                        Parameters['prior'][p1]['min'])/2.0, 
                        Parameters['prior'][p3]['max'] + 0.35, 
                        'Particle System t = ' + str(i), 
