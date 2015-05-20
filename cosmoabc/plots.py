@@ -62,11 +62,7 @@ def plot_1p(T, file_output, Parameters):
     with PdfPages(file_output) as pdf:
 
         plt.figure()
-        plt.text((Parameters['prior'][p1]['max'] - \
-                       Parameters['prior'][p1]['min'])/2.0, 
-                       max(y00) + 0.35, 
-                       'Particle System t = ' + str(i), 
-                       horizontalalignment='center', fontsize=15)
+        plt.title('Prior', fontsize=15)
         plt.plot(sampling[0], y00, color='blue')
 
         if (Parameters['param_to_fit'][0] == 'Om' and 
@@ -111,11 +107,7 @@ def plot_1p(T, file_output, Parameters):
 
             #### Plot posteriors
             plt.figure()
-            plt.text((Parameters['prior'][p1]['max'] - \
-                       Parameters['prior'][p1]['min'])/2.0, 
-                       max(y00) + 0.35, 
-                       'Particle System t = ' + str(i), 
-                       horizontalalignment='center', fontsize=15)
+            plt.title('Particle System t = ' + str(i), fontsize=15)
             plt.plot(sampling[0], y1, color='blue')
             if (Parameters['param_to_fit'][0] == 'Om' and 
 		Parameters['simulation_func'].__name__ == 'numcosmo_sim_cluster'):
@@ -259,10 +251,11 @@ def plot_2p(T, file_output, Parameters):
         ax2 = plt.Subplot(f, gs2[1])
         f.add_subplot(ax2)
 
-        axA.text((Parameters['prior'][p1]['max'] - \
+        axA.text(Parameters['prior'][p1]['min']  +
+		  (Parameters['prior'][p1]['max'] - \
                        Parameters['prior'][p1]['min'])/2.0, 
                        Parameters['prior'][p2]['max'] + 0.35, 
-                       'Particle System t = ' + str(i), 
+                       'Priors', 
                        horizontalalignment='center', fontsize=15)
         axA.imshow(zz0, **kwargs)
         if (Parameters['simulation_func'].__name__ == 'numcosmo_sim_cluster' and 
