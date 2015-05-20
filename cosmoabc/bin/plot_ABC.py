@@ -53,10 +53,10 @@ def main( args ):
                 user_input['prior'][par]['func'] = getattr(m1, user_input['prior_func'][l1])
 
         if isinstance(user_input['simulation_func'][0], str): 
-            user_input['simulation_func'] = m1.simulation
+            user_input['simulation_func'] = getattr(m1, user_input['simulation_func'][0])
 
         if  isinstance(user_input['distance_func'][0], str):
-            user_input['distance_func'] = m1.distance
+            user_input['distance_func'] = getattr(m1, user_input['distance_func'][0])
 
    
     #check if observed data exist, simulate in case negative
