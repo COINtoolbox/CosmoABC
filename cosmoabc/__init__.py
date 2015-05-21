@@ -51,7 +51,7 @@ from ABC_functions import SelectParamInnerLoop, SetDistanceFromSimulation, DrawA
 from ABC_sampler import ABC
 from distances import distance_quantiles, distance_GRBF
 from priors import flat_prior, gaussian_prior, beta_prior
-from plots import plot_1p, plot_2p, plot_3p, plot_4p
+from plots import plot_1p, plot_2p, plot_3p
 
 
 def __cite__():

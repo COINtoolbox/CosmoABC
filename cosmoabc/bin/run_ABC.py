@@ -36,7 +36,7 @@ import imp
 from cosmoabc.distances import distance_quantiles, distance_GRBF
 from cosmoabc.priors import flat_prior, gaussian_prior, beta_prior
 from cosmoabc.ABC_sampler import ABC
-from cosmoabc.plots import plot_1p, plot_2p, plot_3p, plot_4p  
+from cosmoabc.plots import plot_1p, plot_2p, plot_3p 
 from cosmoabc.ABC_functions import read_input, get_cores, DrawAllParams, SetDistanceFromSimulation, SelectParamInnerLoop
 
 def main( args ):
@@ -90,13 +90,10 @@ def main( args ):
         plot_2p(sampler_ABC.T, 'results.pdf', user_input)      
 
     elif len(user_input['param_to_fit'] ) == 3 :
-        plot_3p(sampler_ABC.T, 'results.pdf', user_input) 
-
-    elif len(user_input['param_to_fit']) == 4:
-        plot_4p(sampler_ABC.T, 'results.pdf', user_input)
+        plot_3p(sampler_ABC.T, 'results.pdf', user_input)
 
     else:
-        raise ValueError('Only 1, 2, 3, and 4 dimensional plots are implemented so far!')
+        raise ValueError('Only 1, 2, and 3 dimensional plots are implemented so far!')
 
 if __name__=='__main__':
   
