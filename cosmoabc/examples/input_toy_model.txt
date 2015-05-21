@@ -30,7 +30,7 @@ screen          = 0			           # rather (1) or not (0) to screen outputs
 ncores          = 1				   # number of cores
 split_output    = 1                                # number of intermediate steps written to file
 
-simulation_func = simulation                       # simulation function
-distance_func	= distance                         # distance function
+simulation_func = my_simulation                       # simulation function
+distance_func	= my_distance                         # distance function
 
 

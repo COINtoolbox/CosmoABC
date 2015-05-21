@@ -1,5 +1,5 @@
 import numpy as np
-from numpy.random import normal
+from scipy.stats import norm
 from scipy.stats import uniform
 
 def my_simulation(v):
@@ -14,9 +14,10 @@ def my_simulation(v):
     output: scalar 
     """
 
-    l1 = normal(loc=v['mean'],
-                scale=v['std'],
-                size=v['n'])
+    dist = norm(loc=v['mean'],
+                scale=v['std'])
+
+    l1 = dist.rvs(size=v['n'])
 
     return np.atleast_2d(l1).T
 
