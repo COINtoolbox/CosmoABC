@@ -11,7 +11,7 @@ from cosmoabc.distances import distance_quantiles, summ_quantiles
 from cosmoabc.priors import flat_prior
 from cosmoabc.ABC_sampler import ABC
 from cosmoabc.ABC_functions import SelectParamInnerLoop, SetDistanceFromSimulation, DrawAllParams, get_cores
-from cosmoabc.plots import plot_1p, plot_2p, plot_3p, plot_4p
+from cosmoabc.plots import plot_1p, plot_2p, plot_3p
 
 
 def ysim(v):
