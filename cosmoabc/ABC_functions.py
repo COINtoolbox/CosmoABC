@@ -56,6 +56,7 @@ def read_input(filename):
     params['param_to_fit'] = [params_ini['param_to_fit'][i] 
                              for i in xrange(
                                  params_ini['param_to_fit'].index('#'))]
+   
     params['param_to_sim'] = [params_ini['param_to_sim'][i] 
                              for i in xrange(
                                  params_ini['param_to_sim'].index('#'))]
@@ -70,7 +71,6 @@ def read_input(filename):
     params['prior_func'] = [params_ini['prior_func'][i] 
                              for i in xrange(
                                  params_ini['prior_func'].index('#'))]
-
     #functions
     from distances import distance_GRBF
     dispatcher = {'flat_prior': flat_prior, 
@@ -307,6 +307,7 @@ def DrawAllParams(prior_dic):
     """
 
     pars = []
+
     for element in prior_dic['sequence']:
         p1 = prior_dic[element]['func'](prior_dic[element])   
         pars.append(p1)

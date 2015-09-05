@@ -43,13 +43,13 @@ class ABC(object):
 
         params		-	Complete set of input parameters
         data		-	"Real" data catalog.
-	simulation	-	Simulation function.
-	distance	-	Distance function.
+    	simulation	-	Simulation function.
+    	distance	-	Distance function.
         prior		-	Prior distribution function.
-	delta		-	Parameter for convergence criteria.
-	M		-	Number of particles in each particle system.
-	qthreshold	-	Quantile for choosing subsequent distance thresholds.
-        T		-	Total number of particle system at convergence
+        delta		-	Parameter for convergence criteria.
+     	M		    -	Number of particles in each particle system.
+     	qthreshold	-	Quantile for choosing subsequent distance thresholds.
+        T		    -	Total number of particle system at convergence
 	
 
 	Method attributes
@@ -59,7 +59,7 @@ class ABC(object):
 	BuildPSystem		-	Build subsequent particle system
 	UpdateWeights		-	Update weights 
 	fullABC			-	Run full ABC algorithm
-        ContinueStoppedRun	-	Continue algorithm from previous  one
+    ContinueStoppedRun	-	Continue algorithm from previous  one
         """ 
 
         self.params = params                             
@@ -156,16 +156,20 @@ class ABC(object):
             args = [self.params for item in xrange(self.params['Mini']/ \
                                     int(self.params['split_output'][0]))]
 
-            pool = Pool(processes=self.params['ncores'])
-            p = pool.map_async(SetDistanceFromSimulation, args)
-            try:
-                 dist = p.get(0xFFFF)
-            except KeyboardInterrupt:
-                print 'Interruputed by the user!'
-                sys.exit()
+            if self.params['ncores'] > 0:
+                pool = Pool(processes=self.params['ncores'])
+                p = pool.map_async(SetDistanceFromSimulation, args)
+                try:
+                     dist = p.get(0xFFFF)
+                except KeyboardInterrupt:
+                    print 'Interruputed by the user!'
+                    sys.exit()
 
-            pool.close()
-            pool.join()
+                pool.close()
+                pool.join()
+
+            else:
+                dist = [SetDistanceFromSimulation(obj) for obj in args]
 
             time_end = time.time() - time_ini
 
@@ -303,16 +307,20 @@ class ABC(object):
         for iteration in xrange(begin_int, int(self.params['split_output'][0])):   
             args = [var for j in xrange(self.params['M']/int(self.params['split_output'][0]))]
 
-            pool = Pool(self.params['ncores'])
-            p = pool.map_async(SelectParamInnerLoop, args)
-            try:
-                surv_param_local = p.get(0xFFFF)
-            except KeyboardInterrupt:
-                print 'Interruputed by the user!'
-                sys.exit()
+            if self.params['ncores'] > 0:
+                pool = Pool(self.params['ncores'])
+                p = pool.map_async(SelectParamInnerLoop, args)
+                try:
+                    surv_param_local = p.get(0xFFFF)
+                except KeyboardInterrupt:
+                    print 'Interruputed by the user!'
+                    sys.exit()
 
-            pool.close()
-            pool.join() 
+                pool.close()
+                pool.join() 
+
+            else:
+                surv_param_local = [SelectParamInnerLoop(item) for item in args]
 
             for item in surv_param_local:
                 surv_param.append(item)

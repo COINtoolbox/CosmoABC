@@ -69,9 +69,9 @@ def main( args ):
             op1.write('\n')
         op1.close()
 
-     
+    dist_try = user_input['distance_func'](user_input['dataset1'], user_input)
     if 'dist_dim' not in user_input.keys():    
-        user_input['dist_dim'] = len(user_input['distance_func'](user_input['dataset1'], user_input))
+        user_input['dist_dim'] = len(dist_try)
 
     #initiate ABC construct
     sampler_ABC = ABC(params=user_input) 

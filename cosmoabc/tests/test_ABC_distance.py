@@ -68,6 +68,9 @@ def main(args):
         print 'Error in calculating single distance with parameters:'
         for item in params['param_to_fit']:
             print item + '=' + str(params['simulation_input'][item])
+
+    if str(distance_single) is 'nan':
+        print 'NaN found!'
     
     #generate grid for distance behaviour inspection
     ngrid = int(raw_input('Enter number of draws in parameter grid: '))    
