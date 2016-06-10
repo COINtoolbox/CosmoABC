@@ -1,3 +1,14 @@
+"""
+Created by Emille Ishida in 10 June 2016.
+
+Example of functions to be used as input to CosmoABC. 
+You are free to customize this functions to your own problem
+as long as you respect the input/ouput requirements and 
+***do not change the functions names***. 
+
+"""
+
+
 import numpy as np
 from scipy.stats import norm
 from scipy.stats import uniform
