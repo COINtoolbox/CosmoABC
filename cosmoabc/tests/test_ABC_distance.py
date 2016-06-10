@@ -27,14 +27,14 @@ def main(args):
         m1 = imp.load_source( args.functions[:-3], args.functions )
 
         if isinstance(params['distance_func'], list):
-            params['distance_func'] = m1.distance
+            params['distance_func'] = getattr(m1, params['distance_func'][0])
 
         if isinstance(params['simulation_func'], list):
-            params['simulation_func'] = m1.simulation
+            params['simulation_func'] = getattr(m1, params['simulation_func'][0])
 
         for par in params['param_to_fit']:
             if isinstance(params['prior'][par]['func'], str):
-                params['prior'][par]['func'] = m1.prior
+                params['prior'][par]['func'] = getattr(m1, params['prior_func'][0])
 
     if not args.output:
         output_file = raw_input('Enter root for output files (no extension):  ')

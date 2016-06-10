@@ -4,7 +4,15 @@ Created by Emille Ishida in 10 June 2016.
 Example of functions to be used as input to CosmoABC. 
 You are free to customize this functions to your own problem
 as long as you respect the input/ouput requirements and 
-***do not change the functions names***. 
+***
+    update the function names into the keywords 
+
+    distance_func
+    simulation_func
+    prior_func
+  
+    in the user input file
+***. 
 
 """
 
