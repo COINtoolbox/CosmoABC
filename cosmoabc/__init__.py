@@ -56,7 +56,7 @@ from plots import plot_1p, plot_2p, plot_3p
 
 def __cite__():
 
-    print '@ARTICLE{2015arXiv150406129I,'
+    print '@ARTICLE{ishida2015,'
     print ('author = {{Ishida}, E.~E.~O. and {Vitenti}, S.~D.~P. ' + 
           'and {Penna-Lima}, M. and')
     print ('          {Cisewski}, J. and {de Souza}, R.~S. and {Trindade},' + 
@@ -64,15 +64,18 @@ def __cite__():
     print '          {Cameron}, E. and {V.~C.~Busti}},'
     print ('          title = "{cosmoabc: Likelihood-free inference via ' + 
            'Population Monte Carlo Approximate Bayesian Computation}",')
-    print 'journal = {ArXiv e-prints},'
+    print 'journal = {Astronomy and Computing},'
     print 'archivePrefix = "arXiv",'
     print 'eprint = {1504.06129},'
     print ('keywords = {Astrophysics - Cosmology and Nongalactic ' + 
            'Astrophysics, Astrophysics - Instrumentation and Methods' + 
            ' for Astrophysics},')
     print 'year = 2015,'
-    print 'month = apr,'
-    print 'adsurl = {http://adsabs.harvard.edu/abs/2015arXiv150406129I},'
+    print 'month = nov,'
+    print 'volume = 13,'
+    print 'pages = {1-11},'
+    print 'doi = {10.1016/j.ascom.2015.09.001},'
+    print 'adsurl = {http://adsabs.harvard.edu/abs/2015A%26C....13....1I},'
     print 'adsnote = {Provided by the SAO/NASA Astrophysics Data System}'
     print '}'
             
