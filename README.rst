@@ -349,11 +349,6 @@ Other projects developed under COIN can be found in the `COINtoolbox <http://coi
 Acknowledgements
 ****************
 
-This work is a product of the 1st COIN Residence Program. We thank Rafael S. de Souza and Alberto Krone-Martins for encouraging the realization of this edition. The program was held in Lisbon, Portugal in August/2014 and supported by the University of Lisbon.
-
-A complete report of COIN products and finished projects can be found in the `COINtoolbox <http://cointoolbox.github.io/>`_. 
-
-
 In order to give proper credit to the online sources used in the development of this work, we list bellow the main  websites, foruns and blogs which were used in different parts of its development. **We deeply thank everyone who contributes to open learning plataforms**.
 
 `Multiprocessing and KeyboarInterrupt <http://bryceboe.com/2010/08/26/python-multiprocessing-and-keyboardinterrupt/>`_
