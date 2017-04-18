@@ -71,6 +71,8 @@ def read_input(filename):
     params['prior_func'] = [params_ini['prior_func'][i] 
                              for i in xrange(
                                  params_ini['prior_func'].index('#'))]
+    params['dist_dim'] = int(params_ini['dist_dim'][0])
+    
     #functions
     from distances import distance_GRBF
     dispatcher = {'flat_prior': flat_prior, 
