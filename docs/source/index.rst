@@ -291,20 +291,22 @@ The code includes a built-in citation function which outputs the bibtex entry
 
 this will return::
 
-    @ARTICLE{2015arXiv150406129I,
-    author = {{Ishida}, E.~E.~O. and {Vitenti}, S.~D.~P. and {Penna-Lima}, M. and
-              {Cisewski}, J. and {de Souza}, R.~S. and {Trindade}, A.~M.~M. and
-              {Cameron}, E. and {V.~C.~Busti}},
-    title = "{cosmoabc: Likelihood-free inference via Population Monte Carlo Approximate Bayesian Computation}",
-    journal = {ArXiv e-prints},
+    @ARTICLE{2015A&C....13....1I,
+    author = {{Ishida}, E.~E.~O. and {Vitenti}, S.~D.~P. and {Penna-Lima}, M. and 
+	     {Cisewski}, J. and {de Souza}, R.~S. and {Trindade}, A.~M.~M. and 
+	     {Cameron}, E. and {Busti}, V.~C.},
+    title = "{COSMOABC: Likelihood-free inference via Population Monte Carlo Approximate Bayesian Computation}",
+    journal = {Astronomy and Computing},
     archivePrefix = "arXiv",
     eprint = {1504.06129},
-    keywords = {Astrophysics - Cosmology and Nongalactic Astrophysics, Astrophysics - Instrumentation and Methods for Astrophysics},
+    keywords = {Galaxies: statistics, (cosmology:) large-scale structure of universe},
     year = 2015,
-    month = apr,
-    adsurl = {http://adsabs.harvard.edu/abs/2015arXiv150406129I},
+    month = nov,
+    volume = 13,
+    pages = {1-11},
+    doi = {10.1016/j.ascom.2015.09.001},
+    adsurl = {http://adsabs.harvard.edu/abs/2015A%26C....13....1I},
     adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-    }
 
         
 
