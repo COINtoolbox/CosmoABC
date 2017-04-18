@@ -150,6 +150,11 @@ class ABC(object):
         else:
             begin_int = 0
 
+        # check if there are left over from previous runs
+        if not isinstance(begin_int, int):
+            raise UnboundLocalError('Erase intermediate files from ' + 
+                                    'previous attempts!')
+
         for iteration in xrange(begin_int, 
                                 int(self.params['split_output'][0])):
             time_ini = time.time()
