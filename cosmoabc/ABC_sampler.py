@@ -151,7 +151,7 @@ class ABC(object):
             begin_int = 0
 
         # check if there are left over from previous runs
-        if not isinstance(begin_int, int):
+        if not 'begin_int' in locals():
             raise UnboundLocalError('Erase intermediate files from ' + 
                                     'previous attempts!')
 
