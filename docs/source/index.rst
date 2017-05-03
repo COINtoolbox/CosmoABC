@@ -147,6 +147,7 @@ Considering we are using built-in simulation, prior and distance functions,
 
     from cosmoabc.priors import flat_prior
     from cosmoabc.ABC_sampler import ABC
+    from cosmoabc.ABC_functions import read_input
     from cosmoabc.plots import plot_2p
     import numpy as np
      
@@ -175,6 +176,7 @@ If you are using your own distance function, remember to determine the dimension
 
     from cosmoabc.priors import flat_prior
     from cosmoabc.ABC_sampler import ABC
+    from cosmoabc.ABC_functions import read_input
     import numpy as np
 
     from my_functions import my_distance
