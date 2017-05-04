@@ -170,7 +170,7 @@ Considering we are using built-in simulation, prior and distance functions,
     plot_2p( sampler_ABC.T, 'results.pdf' , params)
 
 
-If you are using your own distance function, remember to determine the dimension of its output manually,
+If you are using your own distance function, remember to update the dictionary of parameters and determine the dimension of its output manually,
 
 .. code-block:: python
 
@@ -179,7 +179,7 @@ If you are using your own distance function, remember to determine the dimension
     from cosmoabc.ABC_functions import read_input
     import numpy as np
 
-    from my_functions import my_distance
+    from my_functions import my_distance, my_sim
      
     #user input file
     filename = 'my_input.dat'
@@ -187,8 +187,16 @@ If you are using your own distance function, remember to determine the dimension
     #read  user input
     Parameters = read_input(filename)
 
+    # update dictionary of user input parameters
+    Parameters['distance_func'] = my_distance
+    Parameters['simulation_func'] = my_sim
+    
+    # in case you want to generate a pseudo-observed data set
+    Parameters['dataset1'] = my_sim(Parameters)
+
     #calculate distance between 2 catalogues
     dtemp = my_distance(Parameters['dataset1'], Parameters)
+
     #determine dimension of distance output
     Parameters['dist_dim'] = len(dtemp)
 
