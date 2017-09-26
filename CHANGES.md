@@ -1,3 +1,4 @@
+v1.0.6 Sep 26 2017 -- Upload corrected version to pip.
 v1.0.5 May 20 2015 -- Fixed plotting issues and update example files.
 v1.0.4 May 19 2015 -- Fixed random seed call in priors.
 v1.0.3 May 17 2015 -- Fixed plot titles bug. 
