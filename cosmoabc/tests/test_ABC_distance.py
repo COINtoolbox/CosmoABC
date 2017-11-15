@@ -34,7 +34,7 @@ def main(args):
 
         for par in params['param_to_fit']:
             if isinstance(params['prior'][par]['func'], str):
-                params['prior'][par]['func'] = getattr(m1, params['prior_func'][0])
+                params['prior'][par]['func'] = getattr(m1, params['prior_func'][params['param_to_fit'].index(par)])
 
     if not args.output:
         output_file = raw_input('Enter root for output files (no extension):  ')
