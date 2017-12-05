@@ -177,10 +177,11 @@ If you are using your own functions, remember to update the dictionary of parame
     from cosmoabc.priors import flat_prior
     from cosmoabc.ABC_sampler import ABC
     from cosmoabc.ABC_functions import read_input
+    from cosmoabc.plots import plot_2D
 
     import numpy as np
 
-    from my_functions import my_distance, my_sim
+    from my_functions import my_distance, my_sim, my_prior
      
     #user input file
     filename = 'my_input.dat'
@@ -191,9 +192,10 @@ If you are using your own functions, remember to update the dictionary of parame
     # update dictionary of user input parameters
     Parameters['distance_func'] = my_distance
     Parameters['simulation_func'] = my_sim
+    Parameters['prior']['mean']['func'] = my_prior
     
     # in case you want to generate a pseudo-observed data set
-    Parameters['dataset1'] = my_sim(Parameters)
+    Parameters['dataset1'] = my_sim(Parameters['simulation_input'])
 
     #calculate distance between 2 catalogues
     dtemp = my_distance(Parameters['dataset1'], Parameters)
@@ -209,6 +211,9 @@ If you are using your own functions, remember to update the dictionary of parame
 
     #update particle system until convergence
     sampler_ABC.fullABC()
+
+    #plot results
+    plot_2D( sampler_ABC.T, 'results.pdf' , params)
 
 .. warning:: 
     | When using your own **distance function** remember that it must take as input:
