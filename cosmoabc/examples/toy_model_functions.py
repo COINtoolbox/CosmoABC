@@ -21,7 +21,7 @@ import numpy as np
 from scipy.stats import norm
 from scipy.stats import uniform
 
-def my_simulation(v):
+def my_sim(v):
     """
     Toy model simulator.
     Samples a normally distributed random variable 

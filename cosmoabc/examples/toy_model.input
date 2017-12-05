@@ -6,7 +6,7 @@ param_to_sim    	= mean  std  n	           # parameters needed for simulation
 prior_func	        = my_prior flat_prior      # one prior function for each parameter
                                                    # under consideration 
 
-simulation_func = my_simulation                    # simulation function
+simulation_func = my_sim                           # simulation function
 distance_func	= my_distance                      # distance function
 dist_dim        = 1                                # dimension of output from distance function
 
