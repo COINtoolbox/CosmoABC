@@ -36,7 +36,7 @@ def my_simulation(v):
     dist = norm(loc=v['mean'],
                 scale=v['std'])
 
-    l1 = dist.rvs(size=v['n'])
+    l1 = dist.rvs(size=int(v['n']))
 
     return np.atleast_2d(l1).T
 
