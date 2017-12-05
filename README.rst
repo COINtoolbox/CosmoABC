@@ -152,7 +152,7 @@ Considering we are using built-in simulation, prior and distance functions,
     import numpy as np
      
     #user input file
-    filename = 'my_input.dat'
+    filename = 'user.input'
 
     #read  user input
     Parameters = read_input(filename)
@@ -184,7 +184,7 @@ If you are using your own functions, remember to update the dictionary of parame
     from my_functions import my_distance, my_sim, my_prior
      
     #user input file
-    filename = 'my_input.dat'
+    filename = 'user.input'
 
     #read  user input
     Parameters = read_input(filename)
@@ -192,6 +192,8 @@ If you are using your own functions, remember to update the dictionary of parame
     # update dictionary of user input parameters
     Parameters['distance_func'] = my_distance
     Parameters['simulation_func'] = my_sim
+
+    # update the dictionary of prior parameters for each parameter
     Parameters['prior']['mean']['func'] = my_prior
     
     # in case you want to generate a pseudo-observed data set
@@ -213,7 +215,7 @@ If you are using your own functions, remember to update the dictionary of parame
     sampler_ABC.fullABC()
 
     #plot results
-    plot_2D( sampler_ABC.T, 'results.pdf' , params)
+    plot_2D( sampler_ABC.T, 'results.pdf' , Parameters)
 
 .. warning:: 
     | When using your own **distance function** remember that it must take as input:
