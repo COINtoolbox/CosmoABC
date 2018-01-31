@@ -44,6 +44,12 @@ def main(args):
     if 'dataset1' not in params:
         params['dataset1'] = params['simulation_func'](params['simulation_input'])
 
+    if 'cov' in params['simulation_input']:
+        try:
+            params['simulation_input']['cov'] = np.genfromtxt(args.covariance)
+        except IOError:
+            print 'Provide name of file containing covariance matrix!'
+
     #test distance between identical cataloges
     distance_equal = np.atleast_1d(params['distance_func'](params['dataset1'], params))
 
@@ -146,6 +152,7 @@ if __name__=='__main__':
     parser.add_argument('-i', '--input', dest='input', help='User input file name.',required=True)
     parser.add_argument('-f', '--functions',  dest='functions', help='File name for user defined functions.', required=False)
     parser.add_argument('-o', '--output', dest='output', help='Output plot file name.', required=False)
+    parser.add_argument('-c', '--covariance', dest='covariance', help='File name for covariance matrix.', required=False)
     args = parser.parse_args()
    
     main( args )
