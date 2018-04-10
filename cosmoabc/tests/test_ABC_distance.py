@@ -46,7 +46,9 @@ def main(args):
 
     if 'cov' in params['simulation_input']:
         try:
-            params['simulation_input']['cov'] = np.genfromtxt(args.covariance)
+            fname_cov = args.covariance
+            params['simulation_input']['cov'] = np.loadtxt(fname_cov)
+            params['cov'] = np.loadtxt(fname_cov)
         except IOError:
             print 'Provide name of file containing covariance matrix!'
 

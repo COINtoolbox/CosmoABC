@@ -1,4 +1,4 @@
-.. image:: nstatic/COIN.jpg
+.. image:: nstatic/COIN_logo_small.png
 
 
 

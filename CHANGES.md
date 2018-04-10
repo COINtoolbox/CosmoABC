@@ -1,3 +1,4 @@
+v1.0.9 Jan 31 2018 -- Fixed covariance call file name. 
 v1.0.8 Jan 31 2018 -- Accept covariance matrix in distance test.
 v1.0.7 Nov 15 2017 -- Fixed prior call on distance test.
 v1.0.6 Sep 26 2017 -- Upload corrected version to pip.
