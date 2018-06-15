@@ -431,7 +431,7 @@ class ABC(object):
               
 
 
-    def fullABC(self, build_first_system=False):
+    def fullABC(self, build_first_system=False, nruns=-9):
         """
         Run complete ABC sampler algorithm. 
 
@@ -441,6 +441,12 @@ class ABC(object):
 		build_first_system (optional) -> boolean (read or generate 
                                                  first particle system). 
                                                  Default is False.
+
+                nruns (optional) -> int (number of ABC iterations to run)
+                                    if < 0 use convergence criteria
+                                    elif > 0 run only through this number
+                                             of iterations
+                                    default is -9
    	
         output:	particle systems and corresponding 
                 weights written in data files.
@@ -476,37 +482,69 @@ class ABC(object):
         t = 0
         K = self.M
 
-        while float(self.M)/K > self.delta:      
+        if nruns < 0:
+            while float(self.M)/K > self.delta:      
 
-            t = t + 1
+                t = t + 1
 
-            self.T = t 
+                self.T = t 
 
-            sys_new = self.BuildPSystem(sys1, W1, t)
+                sys_new = self.BuildPSystem(sys1, W1, t)
         
-            W2 = self.UpdateWeights(W1, sys1, sys_new)
+                W2 = self.UpdateWeights(W1, sys1, sys_new)
 
-            K = sum(sys_new[:, (len(self.params['param_to_fit']) + 
-                    self.params['dist_dim'])])
+                K = sum(sys_new[:, (len(self.params['param_to_fit']) + 
+                        self.params['dist_dim'])])
 
-            del sys1, W1
+                del sys1, W1
 
-            sys1 = sys_new
-            W1 = W2
+                sys1 = sys_new
+                W1 = W2
 
-            del sys_new, W2 
+                del sys_new, W2 
 
-            print (' finished PS ' + str(t) + ',    convergence = ' + 
-                   str(float(self.M)/K))
+                print(' finished PS ' + str(t) + ',    convergence = ' + 
+                       str(float(self.M)/K))
            
-        self.T = t
+            self.T = t
 
+        elif nruns > 0:
+            for iterations in range(nruns):
+
+                t = t + 1
+
+                self.T = t 
+
+                sys_new = self.BuildPSystem(sys1, W1, t)
         
-    def  ContinueStoppedRun(self, t):
+                W2 = self.UpdateWeights(W1, sys1, sys_new)
+
+                K = sum(sys_new[:, (len(self.params['param_to_fit']) + 
+                            self.params['dist_dim'])])
+
+                del sys1, W1
+
+                sys1 = sys_new
+                W1 = W2
+
+                del sys_new, W2 
+
+                print(' finished PS ' + str(t) + ',    convergence = ' + 
+                       str(float(self.M)/K))
+           
+                self.T = t
+        
+    def  ContinueStoppedRun(self, t, nruns=-9):
         """
         Continue ABC sampler algorithm from a specific time-step (run). 
 
         input: 	t -> index of last completed particle system (int)
+
+                nruns (optional) -> int (number of ABC iterations to run)
+                                    if < 0 use convergence criteria
+                                    elif > 0 run only through this number
+                                             of iterations
+                                    default is -9
 
 	output:	subsequent particle systems and corresponding weights 
                 written in data files.
@@ -536,33 +574,64 @@ class ABC(object):
             W1 = [1.0/self.M for i2 in xrange(self.M)]
     
 
-        while float(self.M)/K > self.delta:
+        if nruns < 0:
+            while float(self.M)/K > self.delta:
 
-            t = t + 1
+                t = t + 1
 
-            self.T = t
+                self.T = t
 
-            sys_new = self.BuildPSystem(sys1, W1, t)
+                sys_new = self.BuildPSystem(sys1, W1, t)
         
-            W2 = self.UpdateWeights(W1, sys1, sys_new)
+                W2 = self.UpdateWeights(W1, sys1, sys_new)
 
  
-            K = sum(sys_new[:, len(self.params['param_to_fit' ]) + 
-                                   self.params['dist_dim']])
+                K = sum(sys_new[:, len(self.params['param_to_fit' ]) + 
+                                       self.params['dist_dim']])
 
-            del sys1, W1
+                del sys1, W1
 
-            sys1 = sys_new
-            W1 = W2
+                sys1 = sys_new
+                W1 = W2
 
-            del sys_new, W2 
+                del sys_new, W2 
 
 
-            print (' finished PS' + str(t) + ',    convergence = ' + 
-                   str(float(self.M)/K))
+                print(' finished PS' + str(t) + ',    convergence = ' + 
+                       str(float(self.M)/K))
         
                   
-        self.T = t
+            self.T = t
+
+        elif nruns > 0:
+            for iterations in range(nruns):
+
+                t = t + 1
+
+                self.T = t
+
+                sys_new = self.BuildPSystem(sys1, W1, t)
+        
+                W2 = self.UpdateWeights(W1, sys1, sys_new)
+
+ 
+                K = sum(sys_new[:, len(self.params['param_to_fit' ]) + 
+                                       self.params['dist_dim']])
+
+                del sys1, W1
+
+                sys1 = sys_new
+                W1 = W2
+
+                del sys_new, W2 
+
+
+                print(' finished PS' + str(t) + ',    convergence = ' + 
+                       str(float(self.M)/K))
+        
+                  
+            self.T = t
+
 
 
 

@@ -28,6 +28,7 @@ M 		= 100				   # number of particle in each particle system
 Mini            = 200                              # number of draws for 1st particle system
 delta 		= 0.25				   # convergence criteria
 qthreshold 	= 0.75				   # quantile in distance threshold 
+nruns           = -9                               # number of iterations to run. if <0 run until convergence
 
 file_root 	= toy_model_PS                     # root to output files names 
 screen          = 0			           # rather (1) or not (0) to screen outputs
