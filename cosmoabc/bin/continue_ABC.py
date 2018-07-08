@@ -68,7 +68,7 @@ def main(args):
     sampler_ABC.T = int(args.PS)
     
     #continue from previous run
-    sampler_ABC.ContinueStoppedRun(sampler_ABC.T)
+    sampler_ABC.ContinueStoppedRun(sampler_ABC.T, nruns=int(user_input['nruns'][0]))
 
 
 
