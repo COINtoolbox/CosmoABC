@@ -12,6 +12,8 @@ The code was originally designed for cosmological parameter inference from galax
 
 Nevertheless, the user can easily take advantage of the ABC sampler along with his/her own simulator, as well as  test personalized prior distributions and distance functions. 
 
+This documentation is also available at `readthedocs <https://cosmoabc.readthedocs.io/en/latest/>`_.
+
 
 Get it now!
 ***********
