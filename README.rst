@@ -36,7 +36,7 @@ You can run a few tests with::
 
 The test outputs a file illustrating the evolution of the posterior.
 
-.. image:: nstatic/results_gaussian_sim.gif
+.. image:: docs/source/nstatic/results_gaussian_sim.gif
 
 Input Parameter File
 ********************
@@ -287,7 +287,7 @@ Here is an example from using the built-in tool to check the suitability of the 
 
 The output file will contain a plot like this:
 
-.. image:: nstatic/distance_toy_model.png
+.. image:: docs/source/nstatic/distance_toy_model.png
  
 
 The example above corresponds to a perfect distance definition, since it gets close to zero as parameters ``mean`` and ``std`` approaches the fiducial values and sharply increases for further values.
