@@ -362,7 +362,7 @@ The Cosmostatistics Initiative (COIN)
 The Cosmostatistics Initiative (`COIN <https://cosmostatistics-initiative.org/>`_) is a non-profit organization whose aim is to nourish the synergy between astrophysics, cosmology, statistics and machine learning communities. 
 This work is a product of the first `COIN Residence Program, Lisbon, August/2014 <https://cosmostatistics-initiative.org/residence-programs/crp1-2/>`_.
 
-Other projects developed under COIN can be found in the `COIN Portifolio <https://cosmostatistics-initiative.org/projects/>`_
+Other projects developed under COIN can be found in the `COIN Portifolio <https://cosmostatistics-initiative.org/projects/>`_.
 
 Acknowledgements
 ****************
