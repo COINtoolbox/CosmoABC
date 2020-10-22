@@ -1,5 +1,6 @@
 .. image:: nstatic/COIN_logo_small.png
 
+# <img align="right" src="nstatic/COIN_logo_small.png" width="350"> 
 
 
 cosmoabc - Likelihood free inference for cosmology
