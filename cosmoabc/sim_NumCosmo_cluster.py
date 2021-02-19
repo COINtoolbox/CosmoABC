@@ -111,7 +111,7 @@ class ChooseParamsInput(object):
          self.params["OL"] = 1. - self.params["Om"] - self.params["Ob"]
     
     def update_keys(self,x):
-       for i in xrange(len( self.keys )):
+       for i in range(len( self.keys )):
           self.params[self.keys[i]] = x[i]
 
 
