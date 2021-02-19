@@ -58,7 +58,6 @@ def main( args ):
         if  isinstance(user_input['distance_func'][0], str):
             user_input['distance_func'] = getattr(m1, user_input['distance_func'][0])
 
-   
     #check if observed data exist, simulate in case negative
     if user_input['path_to_obs'] == 'None':
         user_input['dataset1'] = user_input['simulation_func'](user_input['simulation_input'])

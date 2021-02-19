@@ -1,4 +1,4 @@
-.. image:: nstatic/COIN.jpg
+.. image:: nstatic/COIN_logo_small.png
 
 
 
@@ -147,11 +147,12 @@ Considering we are using built-in simulation, prior and distance functions,
 
     from cosmoabc.priors import flat_prior
     from cosmoabc.ABC_sampler import ABC
+    from cosmoabc.ABC_functions import read_input
     from cosmoabc.plots import plot_2p
     import numpy as np
      
     #user input file
-    filename = 'my_input.dat'
+    filename = 'user.input'
 
     #read  user input
     Parameters = read_input(filename)
@@ -166,27 +167,40 @@ Considering we are using built-in simulation, prior and distance functions,
     sampler_ABC.fullABC()
 
     #plot results
-    plot_2p( sampler_ABC.T, 'results.pdf' , params)
+    plot_2p( sampler_ABC.T, 'results.pdf' , Parameters)
 
 
-If you are using your own distance function, remember to determine the dimension of its output manually,
+If you are using your own distance function, remember to update the dictionary of parameters and determine the dimension of its output manually,
 
 .. code-block:: python
 
     from cosmoabc.priors import flat_prior
     from cosmoabc.ABC_sampler import ABC
+    from cosmoabc.ABC_functions import read_input
+    from cosmoabc.plots import plot_2p
     import numpy as np
 
-    from my_functions import my_distance
+    from my_functions import my_distance, my_sim, my_prior
      
     #user input file
-    filename = 'my_input.dat'
+    filename = 'user.input'
 
     #read  user input
     Parameters = read_input(filename)
 
+    # update dictionary of user input parameters
+    Parameters['distance_func'] = my_distance
+    Parameters['simulation_func'] = my_sim
+
+    # update the dictionary of prior parameters for each parameter
+    Parameters['prior']['mean']['func'] = my_prior
+    
+    # in case you want to generate a pseudo-observed data set
+    Parameters['dataset1'] = my_sim(Parameters['simulation_input'])
+
     #calculate distance between 2 catalogues
     dtemp = my_distance(Parameters['dataset1'], Parameters)
+
     #determine dimension of distance output
     Parameters['dist_dim'] = len(dtemp)
 
@@ -198,6 +212,9 @@ If you are using your own distance function, remember to determine the dimension
 
     #update particle system until convergence
     sampler_ABC.fullABC()
+
+    #plot results
+    plot_2p( sampler_ABC.T, 'results.pdf' , params)
 
 .. warning:: 
     | When using your own **distance function** remember that it must take as input:
@@ -291,20 +308,22 @@ The code includes a built-in citation function which outputs the bibtex entry
 
 this will return::
 
-    @ARTICLE{2015arXiv150406129I,
-    author = {{Ishida}, E.~E.~O. and {Vitenti}, S.~D.~P. and {Penna-Lima}, M. and
-              {Cisewski}, J. and {de Souza}, R.~S. and {Trindade}, A.~M.~M. and
-              {Cameron}, E. and {V.~C.~Busti}},
-    title = "{cosmoabc: Likelihood-free inference via Population Monte Carlo Approximate Bayesian Computation}",
-    journal = {ArXiv e-prints},
+    @ARTICLE{2015A&C....13....1I,
+    author = {{Ishida}, E.~E.~O. and {Vitenti}, S.~D.~P. and {Penna-Lima}, M. and 
+	     {Cisewski}, J. and {de Souza}, R.~S. and {Trindade}, A.~M.~M. and 
+	     {Cameron}, E. and {Busti}, V.~C.},
+    title = "{COSMOABC: Likelihood-free inference via Population Monte Carlo Approximate Bayesian Computation}",
+    journal = {Astronomy and Computing},
     archivePrefix = "arXiv",
     eprint = {1504.06129},
-    keywords = {Astrophysics - Cosmology and Nongalactic Astrophysics, Astrophysics - Instrumentation and Methods for Astrophysics},
+    keywords = {Galaxies: statistics, (cosmology:) large-scale structure of universe},
     year = 2015,
-    month = apr,
-    adsurl = {http://adsabs.harvard.edu/abs/2015arXiv150406129I},
+    month = nov,
+    volume = 13,
+    pages = {1-11},
+    doi = {10.1016/j.ascom.2015.09.001},
+    adsurl = {http://adsabs.harvard.edu/abs/2015A%26C....13....1I},
     adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-    }
 
         
 
@@ -337,10 +356,10 @@ License
 The Cosmostatistics Initiative (COIN)
 *************************************
 
-The IAA Cosmostatistics Initiative (`COIN <https://asaip.psu.edu/organizations/iaa/iaa-working-group-of-cosmostatistics>`_) is a non-profit organization whose aim is to nourish the synergy between astrophysics, cosmology, statistics and machine learning communities. 
-This work is a product of the first COIN Summer Residence Program, Lisbon, August/2014.
+The IAA Cosmostatistics Initiative (`COIN <https://cosmostatistics-initiative.org/>`_) is a non-profit organization whose aim is to nourish the synergy between astrophysics, cosmology, statistics and machine learning communities. 
+This work is a product of the first `COIN Residence Program, Lisbon, August/2014 <https://cosmostatistics-initiative.org/residence-programs/crp1-2/>`_.
 
-Other projects developed under COIN can be found in the `COINtoolbox <http://cointoolbox.github.io/>`_
+Other projects developed under COIN can be found in the `COIN Portifolio <https://cosmostatistics-initiative.org/projects/>`_.
 
 Acknowledgements
 ****************

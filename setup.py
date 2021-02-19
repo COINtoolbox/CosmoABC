@@ -32,7 +32,7 @@ setup(name='cosmoabc',
       include_package_data=True,
       package_dir= {'cosmoabc': 'cosmoabc', 'data': 'cosmoabc/data', 
                     'examples':'cosmoabc/examples'},
-      package_data = {'cosmoabc/data':'SPT_sample.dat'},
+      package_data = {'cosmoabc/data':['SPT_sample.dat']},
       zip_safe=False,
       classifiers = [
         'Programming Language :: Python',

@@ -27,14 +27,14 @@ def main(args):
         m1 = imp.load_source( args.functions[:-3], args.functions )
 
         if isinstance(params['distance_func'], list):
-            params['distance_func'] = m1.distance
+            params['distance_func'] = getattr(m1, params['distance_func'][0])
 
         if isinstance(params['simulation_func'], list):
-            params['simulation_func'] = m1.simulation
+            params['simulation_func'] = getattr(m1, params['simulation_func'][0])
 
         for par in params['param_to_fit']:
             if isinstance(params['prior'][par]['func'], str):
-                params['prior'][par]['func'] = m1.prior
+                params['prior'][par]['func'] = getattr(m1, params['prior_func'][params['param_to_fit'].index(par)])
 
     if not args.output:
         output_file = raw_input('Enter root for output files (no extension):  ')
@@ -43,6 +43,14 @@ def main(args):
 
     if 'dataset1' not in params:
         params['dataset1'] = params['simulation_func'](params['simulation_input'])
+
+    if 'cov' in params['simulation_input']:
+        try:
+            fname_cov = args.covariance
+            params['simulation_input']['cov'] = np.loadtxt(fname_cov)
+            params['cov'] = np.loadtxt(fname_cov)
+        except IOError:
+            print 'Provide name of file containing covariance matrix!'
 
     #test distance between identical cataloges
     distance_equal = np.atleast_1d(params['distance_func'](params['dataset1'], params))
@@ -68,6 +76,9 @@ def main(args):
         print 'Error in calculating single distance with parameters:'
         for item in params['param_to_fit']:
             print item + '=' + str(params['simulation_input'][item])
+
+    if str(distance_single) is 'nan':
+        print 'NaN found!'
     
     #generate grid for distance behaviour inspection
     ngrid = int(raw_input('Enter number of draws in parameter grid: '))    
@@ -143,6 +154,7 @@ if __name__=='__main__':
     parser.add_argument('-i', '--input', dest='input', help='User input file name.',required=True)
     parser.add_argument('-f', '--functions',  dest='functions', help='File name for user defined functions.', required=False)
     parser.add_argument('-o', '--output', dest='output', help='Output plot file name.', required=False)
+    parser.add_argument('-c', '--covariance', dest='covariance', help='File name for covariance matrix.', required=False)
     args = parser.parse_args()
    
     main( args )

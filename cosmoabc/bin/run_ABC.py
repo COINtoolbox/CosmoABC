@@ -5,7 +5,7 @@ Approximate Bayesian Computation package.
 
 
 Usage:
- - 	python run_ABC.py  -i <user_input_file>
+ - 	python run_ABC.py  -i <user_input_file> -f <user_function_files>
 
 Files description:
  - 	priors.py:			Functions for initial prior PDF.
@@ -69,9 +69,10 @@ def main( args ):
             op1.write('\n')
         op1.close()
 
-     
+    dist_try = user_input['distance_func'](user_input['dataset1'], user_input)
     if 'dist_dim' not in user_input.keys():    
-        user_input['dist_dim'] = len(user_input['distance_func'](user_input['dataset1'], user_input))
+        user_input['dist_dim'] = len(dist_try)
+
 
     #initiate ABC construct
     sampler_ABC = ABC(params=user_input) 
@@ -80,7 +81,8 @@ def main( args ):
     sys1 = sampler_ABC.BuildFirstPSystem()
 
     #update particle system until convergence
-    sampler_ABC.fullABC()
+    
+    sampler_ABC.fullABC(nruns=int(user_input['nruns'][0]))
 
     #plot results
     if len(user_input['param_to_fit'] ) == 1 :

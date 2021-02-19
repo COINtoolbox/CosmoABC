@@ -649,7 +649,12 @@ def plot_3p(T, file_output, Parameters):
 
             d = [elem.split() for elem in lin1]
             d1 = np.array([[float(item) for item in line] for line in d[1:]])
-     
+
+            p1_indx = d[0].index(Parameters['param_to_sim'][0])
+            p2_indx = d[0].index(Parameters['param_to_sim'][1]) 
+            p3_indx = d[0].index(Parameters['param_to_sim'][2])
+
+
             epsilon_ev.append([float(d[1][d[0].index('dist_threshold' + 
                                str(jj + 1))])  
                               for jj in xrange(Parameters['dist_dim'])])
@@ -665,16 +670,16 @@ def plot_3p(T, file_output, Parameters):
             else:
                 w1 = np.array([1.0/len(d1) for k in range(len(d1))])
 
-            kde1 = gaussian_kde(d1[:,0] , weights=w1)
+            kde1 = gaussian_kde(d1[:, p1_indx] , weights=w1)
             y1 = kde1(samp[0])
 
-            kde2 = gaussian_kde(d1[:,1], weights=w1)
+            kde2 = gaussian_kde(d1[:, p2_indx], weights=w1)
             y2 = kde2(samp[1])
 
-            kde3 = gaussian_kde(d1[:,2], weights=w1)
+            kde3 = gaussian_kde(d1[:, p3_indx], weights=w1)
             y3 = kde3(samp[2]) 
  
-            kde12 = gaussian_kde(np.array([d1[:,0], d1[:,1]]), weights=w1)
+            kde12 = gaussian_kde(np.array([d1[:, p1_indx], d1[:, p2_indx]]), weights=w1)
             xx12, yy12 = np.meshgrid(samp2[0], samp2[1])
             y12 = kde12((np.ravel(xx12), np.ravel(yy12)))
             zz12 = np.reshape(y12, xx12.shape)
@@ -685,7 +690,7 @@ def plot_3p(T, file_output, Parameters):
                                     Parameters['prior'][p2]['max']), 
                                     cmap='hot', origin='lower') 
 
-            kde13 = gaussian_kde(np.array([d1[:,0], d1[:,2]]), weights=w1)
+            kde13 = gaussian_kde(np.array([d1[:,p1_indx], d1[:,p3_indx]]), weights=w1)
             xx13, yy13 = np.meshgrid(samp2[0], samp2[2])
             y13 = kde13(( np.ravel(xx13), np.ravel(yy13)))
             zz13 = np.reshape( y13, xx13.shape)    
@@ -696,7 +701,7 @@ def plot_3p(T, file_output, Parameters):
                                     Parameters['prior'][p3]['max']), 
                                     cmap='hot', origin='lower')
 
-            kde23 = gaussian_kde(np.array([d1[:,1], d1[:,2]]), weights=w1)
+            kde23 = gaussian_kde(np.array([d1[:,p2_indx], d1[:,p3_indx]]), weights=w1)
             xx23, yy23 = np.meshgrid(samp2[1], samp2[2])
             y23 = kde23((np.ravel(xx23), np.ravel(yy23)))
             zz23 = np.reshape(y23, xx23.shape)

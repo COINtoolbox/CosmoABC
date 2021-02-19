@@ -70,7 +70,7 @@ def main( args ):
     sys1 = sampler_ABC.BuildFirstPSystem()
 
     #update particle system until convergence
-    sampler_ABC.fullABC()
+    sampler_ABC.fullABC(nruns=int(user_input['nruns'][0]))
      
          
 

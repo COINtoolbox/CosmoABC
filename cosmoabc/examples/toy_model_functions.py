@@ -1,8 +1,27 @@
+"""
+Created by Emille Ishida in 10 June 2016.
+
+Example of functions to be used as input to CosmoABC. 
+You are free to customize this functions to your own problem
+as long as you respect the input/ouput requirements and 
+***
+    update the function names into the keywords 
+
+    distance_func
+    simulation_func
+    prior_func
+  
+    in the user input file
+***. 
+
+"""
+
+
 import numpy as np
 from scipy.stats import norm
 from scipy.stats import uniform
 
-def my_simulation(v):
+def my_sim(v):
     """
     Toy model simulator.
     Samples a normally distributed random variable 
@@ -17,7 +36,7 @@ def my_simulation(v):
     dist = norm(loc=v['mean'],
                 scale=v['std'])
 
-    l1 = dist.rvs(size=v['n'])
+    l1 = dist.rvs(size=int(v['n']))
 
     return np.atleast_2d(l1).T
 

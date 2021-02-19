@@ -43,13 +43,13 @@ class ABC(object):
 
         params		-	Complete set of input parameters
         data		-	"Real" data catalog.
-	simulation	-	Simulation function.
-	distance	-	Distance function.
+    	simulation	-	Simulation function.
+    	distance	-	Distance function.
         prior		-	Prior distribution function.
-	delta		-	Parameter for convergence criteria.
-	M		-	Number of particles in each particle system.
-	qthreshold	-	Quantile for choosing subsequent distance thresholds.
-        T		-	Total number of particle system at convergence
+        delta		-	Parameter for convergence criteria.
+     	M		    -	Number of particles in each particle system.
+     	qthreshold	-	Quantile for choosing subsequent distance thresholds.
+        T		    -	Total number of particle system at convergence
 	
 
 	Method attributes
@@ -59,7 +59,7 @@ class ABC(object):
 	BuildPSystem		-	Build subsequent particle system
 	UpdateWeights		-	Update weights 
 	fullABC			-	Run full ABC algorithm
-        ContinueStoppedRun	-	Continue algorithm from previous  one
+    ContinueStoppedRun	-	Continue algorithm from previous  one
         """ 
 
         self.params = params                             
@@ -150,22 +150,31 @@ class ABC(object):
         else:
             begin_int = 0
 
+        # check if there are left over from previous runs
+        if not 'begin_int' in locals():
+            raise UnboundLocalError('Erase intermediate files from ' + 
+                                    'previous attempts!')
+
         for iteration in xrange(begin_int, 
                                 int(self.params['split_output'][0])):
             time_ini = time.time()
             args = [self.params for item in xrange(self.params['Mini']/ \
                                     int(self.params['split_output'][0]))]
 
-            pool = Pool(processes=self.params['ncores'])
-            p = pool.map_async(SetDistanceFromSimulation, args)
-            try:
-                 dist = p.get(0xFFFF)
-            except KeyboardInterrupt:
-                print 'Interruputed by the user!'
-                sys.exit()
+            if self.params['ncores'] > 0:
+                pool = Pool(processes=self.params['ncores'])
+                p = pool.map_async(SetDistanceFromSimulation, args)
+                try:
+                     dist = p.get(0xFFFF)
+                except KeyboardInterrupt:
+                    print 'Interruputed by the user!'
+                    sys.exit()
 
-            pool.close()
-            pool.join()
+                pool.close()
+                pool.join()
+
+            else:
+                dist = [SetDistanceFromSimulation(obj) for obj in args]
 
             time_end = time.time() - time_ini
 
@@ -303,16 +312,20 @@ class ABC(object):
         for iteration in xrange(begin_int, int(self.params['split_output'][0])):   
             args = [var for j in xrange(self.params['M']/int(self.params['split_output'][0]))]
 
-            pool = Pool(self.params['ncores'])
-            p = pool.map_async(SelectParamInnerLoop, args)
-            try:
-                surv_param_local = p.get(0xFFFF)
-            except KeyboardInterrupt:
-                print 'Interruputed by the user!'
-                sys.exit()
+            if self.params['ncores'] > 0:
+                pool = Pool(self.params['ncores'])
+                p = pool.map_async(SelectParamInnerLoop, args)
+                try:
+                    surv_param_local = p.get(0xFFFF)
+                except KeyboardInterrupt:
+                    print 'Interruputed by the user!'
+                    sys.exit()
 
-            pool.close()
-            pool.join() 
+                pool.close()
+                pool.join() 
+
+            else:
+                surv_param_local = [SelectParamInnerLoop(item) for item in args]
 
             for item in surv_param_local:
                 surv_param.append(item)
@@ -418,7 +431,7 @@ class ABC(object):
               
 
 
-    def fullABC(self, build_first_system=False):
+    def fullABC(self, build_first_system=False, nruns=-9):
         """
         Run complete ABC sampler algorithm. 
 
@@ -428,6 +441,12 @@ class ABC(object):
 		build_first_system (optional) -> boolean (read or generate 
                                                  first particle system). 
                                                  Default is False.
+
+                nruns (optional) -> int (number of ABC iterations to run)
+                                    if < 0 use convergence criteria
+                                    elif > 0 run only through this number
+                                             of iterations
+                                    default is -9
    	
         output:	particle systems and corresponding 
                 weights written in data files.
@@ -463,37 +482,69 @@ class ABC(object):
         t = 0
         K = self.M
 
-        while float(self.M)/K > self.delta:      
+        if nruns < 0:
+            while float(self.M)/K > self.delta:      
 
-            t = t + 1
+                t = t + 1
 
-            self.T = t 
+                self.T = t 
 
-            sys_new = self.BuildPSystem(sys1, W1, t)
+                sys_new = self.BuildPSystem(sys1, W1, t)
         
-            W2 = self.UpdateWeights(W1, sys1, sys_new)
+                W2 = self.UpdateWeights(W1, sys1, sys_new)
 
-            K = sum(sys_new[:, (len(self.params['param_to_fit']) + 
-                    self.params['dist_dim'])])
+                K = sum(sys_new[:, (len(self.params['param_to_fit']) + 
+                        self.params['dist_dim'])])
 
-            del sys1, W1
+                del sys1, W1
 
-            sys1 = sys_new
-            W1 = W2
+                sys1 = sys_new
+                W1 = W2
 
-            del sys_new, W2 
+                del sys_new, W2 
 
-            print (' finished PS ' + str(t) + ',    convergence = ' + 
-                   str(float(self.M)/K))
+                print(' finished PS ' + str(t) + ',    convergence = ' + 
+                       str(float(self.M)/K))
            
-        self.T = t
+            self.T = t
 
+        elif nruns > 0:
+            for iterations in range(nruns):
+
+                t = t + 1
+
+                self.T = t 
+
+                sys_new = self.BuildPSystem(sys1, W1, t)
         
-    def  ContinueStoppedRun(self, t):
+                W2 = self.UpdateWeights(W1, sys1, sys_new)
+
+                K = sum(sys_new[:, (len(self.params['param_to_fit']) + 
+                            self.params['dist_dim'])])
+
+                del sys1, W1
+
+                sys1 = sys_new
+                W1 = W2
+
+                del sys_new, W2 
+
+                print(' finished PS ' + str(t) + ',    convergence = ' + 
+                       str(float(self.M)/K))
+           
+                self.T = t
+        
+    def  ContinueStoppedRun(self, t, nruns=-9):
         """
         Continue ABC sampler algorithm from a specific time-step (run). 
 
         input: 	t -> index of last completed particle system (int)
+
+                nruns (optional) -> int (number of ABC iterations to run)
+                                    if < 0 use convergence criteria
+                                    elif > 0 run only through this number
+                                             of iterations
+                                    default is -9
 
 	output:	subsequent particle systems and corresponding weights 
                 written in data files.
@@ -523,33 +574,64 @@ class ABC(object):
             W1 = [1.0/self.M for i2 in xrange(self.M)]
     
 
-        while float(self.M)/K > self.delta:
+        if nruns < 0:
+            while float(self.M)/K > self.delta:
 
-            t = t + 1
+                t = t + 1
 
-            self.T = t
+                self.T = t
 
-            sys_new = self.BuildPSystem(sys1, W1, t)
+                sys_new = self.BuildPSystem(sys1, W1, t)
         
-            W2 = self.UpdateWeights(W1, sys1, sys_new)
+                W2 = self.UpdateWeights(W1, sys1, sys_new)
 
  
-            K = sum(sys_new[:, len(self.params['param_to_fit' ]) + 
-                                   self.params['dist_dim']])
+                K = sum(sys_new[:, len(self.params['param_to_fit' ]) + 
+                                       self.params['dist_dim']])
 
-            del sys1, W1
+                del sys1, W1
 
-            sys1 = sys_new
-            W1 = W2
+                sys1 = sys_new
+                W1 = W2
 
-            del sys_new, W2 
+                del sys_new, W2 
 
 
-            print (' finished PS' + str(t) + ',    convergence = ' + 
-                   str(float(self.M)/K))
+                print(' finished PS' + str(t) + ',    convergence = ' + 
+                       str(float(self.M)/K))
         
                   
-        self.T = t
+            self.T = t
+
+        elif nruns > 0:
+            for iterations in range(nruns):
+
+                t = t + 1
+
+                self.T = t
+
+                sys_new = self.BuildPSystem(sys1, W1, t)
+        
+                W2 = self.UpdateWeights(W1, sys1, sys_new)
+
+ 
+                K = sum(sys_new[:, len(self.params['param_to_fit' ]) + 
+                                       self.params['dist_dim']])
+
+                del sys1, W1
+
+                sys1 = sys_new
+                W1 = W2
+
+                del sys_new, W2 
+
+
+                print(' finished PS' + str(t) + ',    convergence = ' + 
+                       str(float(self.M)/K))
+        
+                  
+            self.T = t
+
 
 
 
