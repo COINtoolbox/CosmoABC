@@ -11,6 +11,8 @@ import matplotlib.gridspec as gridspec
 
 from .weighted_gaussian_kde import gaussian_kde
 
+np.warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning) 
+
 
 def plot_1p(T, file_output, Parameters):
     """

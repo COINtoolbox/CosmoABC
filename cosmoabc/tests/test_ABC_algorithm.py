@@ -83,8 +83,13 @@ class TestABC(unittest.TestCase):
 
         #set distance
         r2 = SetDistanceFromSimulation(self.params)
-
-        self.assertTrue(r2 >= 0)
+        
+        if isinstance(r2, float):
+            check_dist = r2 > 0
+        else:
+            check_dist = np.linalg.norm(r2[0]) > 0
+        
+        self.assertTrue(check_dist)
 
     def test_plot(self):
 
