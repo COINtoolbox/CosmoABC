@@ -68,7 +68,7 @@ class TestABC(unittest.TestCase):
         r1 = DrawAllParams(self.params['prior'])
 
         res = []
-        for i1 in xrange(len(r1)):
+        for i1 in range(len(r1)):
             par = self.params['param_to_fit'][i1]
             if r1[i1] >= self.params['prior'][par]['min'] and r1[i1] <= self.params['prior'][par]['max']:
                 res.append(True)
