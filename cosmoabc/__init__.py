@@ -40,8 +40,8 @@ __author__ = ("E. E. O. Ishida, S. D. P. Vitenti, M. Penna-Lima," +
              "V. C. Busti, E. Cameron")
 __maintainer__ = "E. E. O. Ishida"
 __copyright__ = "Copyright 2015"
-__version__ = "1.0.9"
-__email__ = "emilleishida@gmail.com"
+__version__ = "1.0.10"
+__email__ = "emille@cosmostatistics-initiative.org"
 __status__ = "Prototype"
 __license__ = "GPL3"
 
