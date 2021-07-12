@@ -45,6 +45,7 @@ __email__ = "emille@cosmostatistics-initiative.org"
 __status__ = "Prototype"
 __license__ = "GPL3"
 
+import numpy as np
 
 
 from .ABC_functions import SelectParamInnerLoop, SetDistanceFromSimulation, DrawAllParams
