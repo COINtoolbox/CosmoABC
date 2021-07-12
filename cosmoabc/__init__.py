@@ -56,23 +56,23 @@ from plots import plot_1p, plot_2p, plot_3p
 
 def __cite__():
 
-    print '@ARTICLE{2015A&C....13....1I,'
-    print 'author = {{Ishida}, E.~E.~O. and {Vitenti}, S.~D.~P. and {Penna-Lima}, M. and'
-    print '         {Cisewski}, J. and {de Souza}, R.~S. and {Trindade}, A.~M.~M. and' 
-    print '         {Cameron}, E. and {Busti}, V.~C.},'
-    print 'title = "{COSMOABC: Likelihood-free inference via Population Monte Carlo Approximate Bayesian Computation}",'
-    print 'journal = {Astronomy and Computing},'
-    print 'archivePrefix = "arXiv",'
-    print 'eprint = {1504.06129},'
-    print 'keywords = {Galaxies: statistics, (cosmology:) large-scale structure of universe},'
-    print 'year = 2015,'
-    print 'month = nov,'
-    print 'volume = 13,'
-    print 'pages = {1-11},'
-    print 'doi = {10.1016/j.ascom.2015.09.001},'
-    print 'adsurl = {http://adsabs.harvard.edu/abs/2015A%26C....13....1I},'
-    print 'adsnote = {Provided by the SAO/NASA Astrophysics Data System}'
-    print '}'
+    print('@ARTICLE{2015A&C....13....1I,')
+    print('author = {{Ishida}, E.~E.~O. and {Vitenti}, S.~D.~P. and {Penna-Lima}, M. and')
+    print('         {Cisewski}, J. and {de Souza}, R.~S. and {Trindade}, A.~M.~M. and')
+    print('         {Cameron}, E. and {Busti}, V.~C.},')
+    print('title = "{COSMOABC: Likelihood-free inference via Population Monte Carlo Approximate Bayesian Computation}",')
+    print('journal = {Astronomy and Computing},')
+    print('archivePrefix = "arXiv",')
+    print('eprint = {1504.06129},')
+    print('keywords = {Galaxies: statistics, (cosmology:) large-scale structure of universe},')
+    print('year = 2015,')
+    print('month = nov,')
+    print('volume = 13,')
+    print('pages = {1-11},')
+    print('doi = {10.1016/j.ascom.2015.09.001},')
+    print('adsurl = {http://adsabs.harvard.edu/abs/2015A%26C....13....1I},')
+    print('adsnote = {Provided by the SAO/NASA Astrophysics Data System}')
+    print('}')
             
 
 
