@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Auxiliary script to test distance before using it in the ABC sampler. 

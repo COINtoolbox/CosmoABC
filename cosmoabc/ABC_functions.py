@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Functions to optimize parallelization.
@@ -7,7 +7,7 @@ import numpy as np
 import time
 import sys
 import os
-	
+
 from inspect import isfunction
 
 from scipy.stats import multivariate_normal
