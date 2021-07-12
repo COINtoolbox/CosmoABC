@@ -17,8 +17,8 @@ from scipy.stats import norm
 
 from statsmodels.stats.weightstats import DescrStatsW
 
-from .distances import distance_quantiles, distance_GRBF 
-from .priors import flat_prior, gaussian_prior, beta_prior
+from distances import distance_quantiles, distance_GRBF 
+from priors import flat_prior, gaussian_prior, beta_prior
 
 
 ################################################
@@ -27,7 +27,7 @@ def get_cores():
     """
     Ask the user to input number of cores.
     """
-    cores = eval(input('Please enter the number of cores: '))
+    cores = raw_input('Please enter the number of cores: ')
 
     return int(cores) 
 
@@ -54,11 +54,11 @@ def read_input(filename):
     params = {}
     params['path_to_obs'] = params_ini['path_to_obs'][0] 
     params['param_to_fit'] = [params_ini['param_to_fit'][i] 
-                             for i in range(
+                             for i in xrange(
                                  params_ini['param_to_fit'].index('#'))]
    
     params['param_to_sim'] = [params_ini['param_to_sim'][i] 
-                             for i in range(
+                             for i in xrange(
                                  params_ini['param_to_sim'].index('#'))]
     params['npar'] = len(params['param_to_fit'])
     params['M'] = int(params_ini['M'][0])
@@ -69,12 +69,12 @@ def read_input(filename):
     params['screen'] = bool(int(params_ini['screen'][0]))
     params['ncores'] = int(params_ini['ncores'][0])
     params['prior_func'] = [params_ini['prior_func'][i] 
-                             for i in range(
+                             for i in xrange(
                                  params_ini['prior_func'].index('#'))]
     params['dist_dim'] = int(params_ini['dist_dim'][0])
     
     #functions
-    from .distances import distance_GRBF
+    from distances import distance_GRBF
     dispatcher = {'flat_prior': flat_prior, 
                   'gaussian_prior': gaussian_prior, 'beta_prior': beta_prior, 
                   'distance_quantiles': distance_quantiles, 
@@ -87,10 +87,10 @@ def read_input(filename):
 
         prior_dic = {}
         prior_dic['sequence'] = params['param_to_fit']
-        for i1 in range(params['npar']):
+        for i1 in xrange(params['npar']):
             el = params['param_to_fit'][i1]
             prior_dic[el] = {}
-            if el + '_lim' in list(params_ini.keys()):
+            if el + '_lim' in params_ini.keys():
                 prior_dic[el]['min'] = float(params_ini[el + '_lim'][0])
                 prior_dic[el]['max'] = float(params_ini[el + '_lim'][1])
 
@@ -132,9 +132,9 @@ def read_input(filename):
 
         try: 
             from gi.repository import NumCosmo as Nc
-            from .sim_NumCosmo_cluster import NCountSimul
-            from .sim_NumCosmo_cluster import ChooseParamsInput 
-            from .sim_NumCosmo_cluster import numcosmo_sim_cluster
+            from sim_NumCosmo_cluster import NCountSimul
+            from sim_NumCosmo_cluster import ChooseParamsInput 
+            from sim_NumCosmo_cluster import numcosmo_sim_cluster
         except ImportError:
             raise ImportError('You must have NumCosmo running to use the ' + 
                               'sim_NumCosmo simulation!' +
@@ -161,29 +161,29 @@ def read_input(filename):
         params['dataset1'] = np.array([[float(item) for item in line] 
                                         for line in data2])  
 
-    elif 'simulation_func' in list(params.keys()):
+    elif 'simulation_func' in params.keys():
         params['dataset1'] = params['simulation_func'](
                                     params['simulation_input']
                                     )
     
-    if params_ini['distance_func'][0] in list(dispatcher.keys()):
+    if params_ini['distance_func'][0] in dispatcher.keys():
         params['distance_func'] = dispatcher[params_ini['distance_func'][0]]
 
         if params['distance_func'] == distance_GRBF:
-            from .distances import GRBF, logf, norm_GRBF, prep_GRBF
-            from .distances import distance_GRBF
+            from distances import GRBF, logf, norm_GRBF, prep_GRBF
+            from distances import distance_GRBF
             params['s'] = float(params_ini['s'][0])
             params = prep_GRBF(params)
 
         elif (('dataset1' in params) and 
               (params['distance_func'] == distance_quantiles)):
-            from .distances import summ_quantiles
+            from distances import summ_quantiles
             params['dist_dim'] = len(params['dataset1'][0]) + 1
             params['quantile_nodes'] = int(params_ini['quantile_nodes'][0])
             params = summ_quantiles(params['dataset1'], params)
 
-    for key in list(params_ini.keys()):
-        if key not in list(params.keys()):
+    for key in params_ini.keys():
+        if key not in params.keys():
             params[key] = params_ini[key]
 
     return params
@@ -201,7 +201,7 @@ def SelectParamInnerLoop(var1):
     """
 
     try:
-        dist = [10**10 for i in range(var1['params']['dist_dim'])]
+        dist = [10**10 for i in xrange(var1['params']['dist_dim'])]
         K = 0
         np.random.seed()
 
@@ -214,14 +214,14 @@ def SelectParamInnerLoop(var1):
                              var1['previous_particle_system'][:, kk], 
                              prob=var1['params']['qthreshold']
                              )[0] 
-                      for kk in range(
+                      for kk in xrange(
                                       len(var1['params']['param_to_fit']), 
                                       len(var1['params']['param_to_fit']) + 
                                       var1['params']['dist_dim']
                                       )
                   ]
 
-        flag = [False for ii in range(var1['params']['dist_dim'])]
+        flag = [False for ii in xrange(var1['params']['dist_dim'])]
 
         while False in flag:               
  
@@ -229,13 +229,13 @@ def SelectParamInnerLoop(var1):
             K = K + 1 
 
             #draw model parameters to serve as mean 
-            index_theta0 = np.random.choice(list(range(len(var1['W']))), 
+            index_theta0 = np.random.choice(xrange(len(var1['W'])), 
                                             p=var1['W'])
             indx = len(var1['params']['param_to_fit'])
             theta0 = np.atleast_2d(var1['previous_particle_system'][index_theta0][:indx])
 
             #initialize boolean parmeter vector
-            theta_t = [False for i in range(len(var1['params']['param_to_fit']))]
+            theta_t = [False for i in xrange(len(var1['params']['param_to_fit']))]
            
             while False in theta_t:
           
@@ -276,7 +276,7 @@ def SelectParamInnerLoop(var1):
               
             #check if it satisfies distance thresholds 
             flag = [] 
-            for ll in range(len( dist )):
+            for ll in xrange(len( dist )):
                 if dist[ll] > epsilon[ll]:
                     flag.append(False)
                 else:
@@ -292,11 +292,11 @@ def SelectParamInnerLoop(var1):
             theta_t_try.append(d3)
 
         if var1['params']['screen']:
-            print(('Number of draws = ' + str(K)))
+            print 'Number of draws = ' + str(K)
 
         return theta_t_try
     
-    except KeyboardInterrupt as e:
+    except KeyboardInterrupt, e:
         pass
 
 
@@ -344,15 +344,15 @@ def SetDistanceFromSimulation(var):
 
             total_time = time.time() - time1
             if var['screen']:
-                print(('Calculated distance: \n   ' + str(dist)))
+                print 'Calculated distance: \n   ' + str(dist)
 
             result = (dist, total_time, ParTry)
  
             return result
         else:
-            print(('dist = ' + str(dist)))
-            print(('DataSimul = ' + str(DataSimul)))
-            print(('ParTry = ' + str(ParTry)))
+            print 'dist = ' + str(dist)
+            print 'DataSimul = ' + str(DataSimul)
+            print 'ParTry = ' + str(ParTry)
 
             op1=open('simulation.dat', 'w')
             for line in DataSimul:
@@ -362,7 +362,7 @@ def SetDistanceFromSimulation(var):
             op1.close() 
             raise ValueError('Found negative distance value!')
 
-    except KeyboardInterrupt as e:
+    except KeyboardInterrupt, e:
         pass        
 
 def main():

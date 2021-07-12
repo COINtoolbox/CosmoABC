@@ -60,7 +60,7 @@ class TestABC(unittest.TestCase):
         #initiate ABC sampler
         self.sampler_ABC = ABC( self.params ) 
 
-        self.W = [1.0/self.params['M'] for i in range( self.params['M'] )]
+        self.W = [1.0/self.params['M'] for i in xrange( self.params['M'] )]
         self.params = summ_quantiles(self.params['dataset1'], self.params)   	 
 
     def test_DrawAllParams( self ):
@@ -69,7 +69,7 @@ class TestABC(unittest.TestCase):
         r1 = DrawAllParams(self.params['prior'])
 
         res = []
-        for i1 in range(len(r1)):
+        for i1 in xrange(len(r1)):
             par = self.params['param_to_fit'][i1]
             if r1[i1] >= self.params['prior'][par]['min'] and r1[i1] <= self.params['prior'][par]['max']:
                 res.append(True)
