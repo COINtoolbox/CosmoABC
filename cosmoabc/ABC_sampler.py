@@ -18,8 +18,8 @@ from statsmodels.stats.weightstats import DescrStatsW
 
 from multiprocessing import Pool 
 
-from .ABC_functions import SelectParamInnerLoop, SetDistanceFromSimulation 
-from .ABC_functions import DrawAllParams
+from ABC_functions import SelectParamInnerLoop, SetDistanceFromSimulation 
+from ABC_functions import DrawAllParams
 
 ################################################
 
@@ -89,7 +89,7 @@ class ABC(object):
         self.min_keys = ['simulation_input', 'param_to_fit', 'prior', 
                          'M', 'qthreshold', 'delta','file_root']  
         for item in self.min_keys:
-            if item not in list(self.params.keys()):
+            if item not in self.params.keys():
                 raise IOError('Keyword ' + str(item) + 
                               '  is missing from inputed dictionary of ' + 
                               'parameters (params)!') 
@@ -126,26 +126,26 @@ class ABC(object):
                                the first particle system
         """
 
-        print('Building first particle system:')
+        print 'Building first particle system:'
 
         theta = []
 
         #check if there are previous partial results
         temp_files = [self.params['file_root'] + '0_p' + str(part) + '.dat'
-                      for part in range(int(self.params['split_output'][0]))]
+                      for part in xrange(int(self.params['split_output'][0]))]
 
         file_list = os.listdir(os.getcwd())
         if temp_files[0] in file_list:
-           for partial_calc in range(int(self.params['split_output'][0])):
+           for partial_calc in xrange(int(self.params['split_output'][0])):
                if temp_files[partial_calc] in file_list:
                    local_data = np.loadtxt(temp_files[partial_calc])
                    for line in local_data:
                        theta.append(line) 
                else:
                    begin_int = partial_calc
-                   print('Found ' + str(len(theta)) + ' values in t = 0')
-                   print(('Calculations will begin in particle system' + 
-                         ' t = 0 part ' + str(begin_int)))
+                   print 'Found ' + str(len(theta)) + ' values in t = 0'
+                   print ('Calculations will begin in particle system' + 
+                         ' t = 0 part ' + str(begin_int))
                    break 
         else:
             begin_int = 0
@@ -155,11 +155,11 @@ class ABC(object):
             raise UnboundLocalError('Erase intermediate files from ' + 
                                     'previous attempts!')
 
-        for iteration in range(begin_int, 
+        for iteration in xrange(begin_int, 
                                 int(self.params['split_output'][0])):
             time_ini = time.time()
-            n = int(self.params['Mini']/float(self.params['split_output'][0]))
-            args = [self.params for item in range(n)]
+            args = [self.params for item in xrange(self.params['Mini']/ \
+                                    int(self.params['split_output'][0]))]
 
             if self.params['ncores'] > 0:
                 pool = Pool(processes=self.params['ncores'])
@@ -167,7 +167,7 @@ class ABC(object):
                 try:
                      dist = p.get(0xFFFF)
                 except KeyboardInterrupt:
-                    print('Interruputed by the user!')
+                    print 'Interruputed by the user!'
                     sys.exit()
 
                 pool.close()
@@ -203,7 +203,7 @@ class ABC(object):
 
         #choose smaller distance 
         d1 = np.array([ np.sqrt(sum(line[j]**2 
-                         for j in range(len(self.params['param_to_fit']),
+                         for j in xrange(len(self.params['param_to_fit']),
                                          len(self.params['param_to_fit']) 
                                          + self.params['dist_dim']))) 
                                          for line in theta])
@@ -220,25 +220,25 @@ class ABC(object):
         for item in self.params['param_to_fit']:
             op.write(item  + '    ')
 
-        for i2 in range(self.params['dist_dim']):
+        for i2 in xrange(self.params['dist_dim']):
             op.write('distance' + str(i2 + 1) + '    ')     
  
         op.write('NDraws    time       ')
-        for i2 in range(self.params['dist_dim']):
+        for i2 in xrange(self.params['dist_dim']):
             op.write('dist_threshold' + str(i2 + 1) + '    ')
         op.write('\n')
 
         for line in theta_new:
             for elem in line:
                 op.write(str(elem)  + '    ')
-            for i3 in range(self.params['dist_dim']):
+            for i3 in xrange(self.params['dist_dim']):
                 indx = self.params['dist_dim'] + i3
                 op.write(str(max(np.array(theta_new)[:,-indx])) + '    ')
             op.write('\n')
         op.close()
 
         #determine initial weights
-        W1 = [1.0/self.M for i2 in range(self.M)]
+        W1 = [1.0/self.M for i2 in xrange(self.M)]
 
         op2 = open(self.params['file_root'] + '0weights.dat', 'w')
         for item in W1:
@@ -247,7 +247,7 @@ class ABC(object):
 
         #erase temporary files 
         if output:
-            for iteration in range(int(self.params['split_output'][0])):
+            for iteration in xrange(int(self.params['split_output'][0])):
                 os.remove(self.params['file_root'] + '0_p' + 
                           str(iteration) + '.dat')
  
@@ -289,29 +289,28 @@ class ABC(object):
         #check if there are previous partial results
         temp_files = [self.params['file_root'] + str(t) + '_p' + 
                                                  str(part) + '.dat'
-                      for part in range(int(self.params['split_output'][0]))]
+                      for part in xrange(int(self.params['split_output'][0]))]
 
         file_list = os.listdir(os.getcwd())
         if temp_files[0] in file_list:
-           for partial_calc in range(int(self.params['split_output'][0])):
+           for partial_calc in xrange(int(self.params['split_output'][0])):
                if temp_files[partial_calc] in file_list:
                    local_data = np.loadtxt(temp_files[partial_calc])
                    for line in local_data:
                        surv_param.append(line) 
                else:
                    begin_int = partial_calc
-                   print(('Found ' + str(len(surv_param)) + 
-                         ' values in t = ' + str(t)))
-                   print(('Calculations will begin in particle system t = ' + 
-                         str(t) + ' part ' + str(begin_int)))
+                   print ('Found ' + str(len(surv_param)) + 
+                         ' values in t = ' + str(t))
+                   print ('Calculations will begin in particle system t = ' + 
+                         str(t) + ' part ' + str(begin_int))
                    break 
         else:
             begin_int = 0
             
         #run sampler in separate chuncks 
-        for iteration in range(begin_int, int(self.params['split_output'][0])):   
-            nn = int(self.params['M']/int(float(self.params['split_output'][0])))
-            args = [var for j in range(nn)]
+        for iteration in xrange(begin_int, int(self.params['split_output'][0])):   
+            args = [var for j in xrange(self.params['M']/int(self.params['split_output'][0]))]
 
             if self.params['ncores'] > 0:
                 pool = Pool(self.params['ncores'])
@@ -319,7 +318,7 @@ class ABC(object):
                 try:
                     surv_param_local = p.get(0xFFFF)
                 except KeyboardInterrupt:
-                    print('Interruputed by the user!')
+                    print 'Interruputed by the user!'
                     sys.exit()
 
                 pool.close()
@@ -344,10 +343,10 @@ class ABC(object):
         op = open(self.params['file_root'] + str(t) + '.dat' , 'w')
         for item in self.params['param_to_fit']:
             op.write(item  + '    ' )
-        for jj in range(self.params['dist_dim']):
+        for jj in xrange(self.params['dist_dim']):
             op.write('distance' + str(jj) + '    ')     
         op.write('NDraws    time    ')
-        for kk in range(self.params['dist_dim']): 
+        for kk in xrange(self.params['dist_dim']): 
             op.write('dist_threshold' + str(kk + 1) + '    ')
         op.write('\n')
         for line in surv_param:
@@ -357,7 +356,7 @@ class ABC(object):
         op.close()
 
         if output:
-            for iteration in range(int(self.params['split_output'][0])):   
+            for iteration in xrange(int(self.params['split_output'][0])):   
                 os.remove(self.params['file_root'] + str(t) + '_p' + 
                           str(iteration) + '.dat')
 
@@ -388,7 +387,7 @@ class ABC(object):
         output:   vector of updated weights                       
         """
 
-        print('updating weights')
+        print 'updating weights'
 
         #calculate weighted covariance matrix from previous particle system
         indx = len(self.params['param_to_fit'])
@@ -406,7 +405,7 @@ class ABC(object):
             nominator = np.prod([distributions[i2].pdf(
                                    current_particle_system[i4][i2]
                                                       )  
-                                   for i2 in range(
+                                   for i2 in xrange(
                                       len(self.params['param_to_fit'])
                                                    )
                                  ])
@@ -415,7 +414,7 @@ class ABC(object):
             denominator = sum(W[i3]*multivariate_normal.pdf(
                               current_particle_system[i4][:indx], 
                               previous_particle_system[i3][:indx], cov=cov1) 
-                              for i3 in range(len(W)))
+                              for i3 in xrange(len(W)))
 
             new_weights.append(nominator/denominator)
 
@@ -454,7 +453,7 @@ class ABC(object):
         """
 
         #determine initial weights
-        W1 = [1.0/self.M for i2 in range(self.M)]
+        W1 = [1.0/self.M for i2 in xrange(self.M)]
 
         if build_first_system == True:
             #build first particle system
@@ -468,16 +467,16 @@ class ABC(object):
         t1 = np.atleast_2d([elem.split() for elem in lin[1:]])
 
         sys1 = np.array([np.array([float(line[i1]) 
-                         for i1 in range(len(self.params['param_to_fit']) 
+                         for i1 in xrange(len(self.params['param_to_fit']) 
                                         + self.params['dist_dim'])]) 
                               for line in t1])
 
         #determine number of draws in previous particle system generation
-        K =  sum(int(float(line[len(self.params['param_to_fit']) + 
-                 self.params['dist_dim']])) for line in t1)
+        K =  sum(int(line[len(self.params['param_to_fit']) + 
+                 self.params['dist_dim']]) for line in t1)
 
         if self.params['screen']:
-            print('number of draws PS0 = ' + str(K))
+            print 'number of draws PS0 = ' + str(K)
 
         #initiate iteration counter
         t = 0
@@ -504,8 +503,8 @@ class ABC(object):
 
                 del sys_new, W2 
 
-                print((' finished PS ' + str(t) + ',    convergence = ' + 
-                       str(float(self.M)/K)))
+                print(' finished PS ' + str(t) + ',    convergence = ' + 
+                       str(float(self.M)/K))
            
             self.T = t
 
@@ -530,8 +529,8 @@ class ABC(object):
 
                 del sys_new, W2 
 
-                print((' finished PS ' + str(t) + ',    convergence = ' + 
-                       str(float(self.M)/K)))
+                print(' finished PS ' + str(t) + ',    convergence = ' + 
+                       str(float(self.M)/K))
            
                 self.T = t
         
@@ -559,7 +558,7 @@ class ABC(object):
         t1 = [elem.split() for elem in lin]
         
         sys1 = np.array([np.array([float(line[i1]) 
-                          for i1 in range(len(self.params['param_to_fit']) + 
+                          for i1 in xrange(len(self.params['param_to_fit']) + 
                                            self.params['dist_dim'])]) 
                                             for line in t1[1:]])
         
@@ -567,12 +566,12 @@ class ABC(object):
         #determine number of draws in previous particle system generation
         K =  int(sum(float(line[list(t1[0]).index('NDraws')]) 
                      for line in t1[1:]))
-        print('number of draws PS' + str(t) + ' = ' + str(K))
+        print 'number of draws PS' + str(t) + ' = ' + str(K)
         
         if t > 0:        
             W1 = np.loadtxt(self.params['file_root'] + str(t) + 'weights.dat')
         elif t == 0:
-            W1 = [1.0/self.M for i2 in range(self.M)]
+            W1 = [1.0/self.M for i2 in xrange(self.M)]
     
 
         if nruns < 0:
@@ -598,8 +597,8 @@ class ABC(object):
                 del sys_new, W2 
 
 
-                print((' finished PS' + str(t) + ',    convergence = ' + 
-                       str(float(self.M)/K)))
+                print(' finished PS' + str(t) + ',    convergence = ' + 
+                       str(float(self.M)/K))
         
                   
             self.T = t
@@ -627,8 +626,8 @@ class ABC(object):
                 del sys_new, W2 
 
 
-                print((' finished PS' + str(t) + ',    convergence = ' + 
-                       str(float(self.M)/K)))
+                print(' finished PS' + str(t) + ',    convergence = ' + 
+                       str(float(self.M)/K))
         
                   
             self.T = t

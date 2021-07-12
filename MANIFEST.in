@@ -3,4 +3,4 @@ include CHANGES.md
 include cosmoabc/data/SPT.dat
 include cosmoabc/examples/input_NumCosmo.txt
 include cosmoabc/examples/data_format_SZ.dat
-include cosmoabc/examples/toy_model.input
+include cosmoabc/examples/input_toy_model.txt

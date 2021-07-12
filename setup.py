@@ -19,6 +19,7 @@ setup(name='cosmoabc',
                       'scipy>=0.14.0',
                       'statsmodels>=0.5.0',
                       'matplotlib>=1.3.1',
+                      'multiprocessing>=0.70a1',
                       'distribute',
                       'datetime'               
       ],
