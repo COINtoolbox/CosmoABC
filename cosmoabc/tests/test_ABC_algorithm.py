@@ -32,13 +32,13 @@ class TestABC(unittest.TestCase):
         self.params['simulation_func'] = ysim
         self.params['simulation_input'] = {'mu': self.mu, 'sigma':self.sigma, 'n':self.n} 
         self.params['dataset1'] = self.params['simulation_func']( self.params['simulation_input'] )
-        self.params['param_to_fit']=['mu', 'sigma']							
+        self.params['param_to_fit']=['mu', 'sigma']
         self.params['screen'] = 0
-        self.params['Mini'] = 200 							
-        self.params['M'] = 100				
-        self.params['delta'] =0.1				
+        self.params['Mini'] = 200 
+        self.params['M'] = 100
+        self.params['delta'] =0.1
         self.params['qthreshold'] = 0.75
-        self.params['file_root'] = os.getcwd() + '/test_PS'	
+        self.params['file_root'] = os.getcwd() + '/test_PS'
         self.params['distance_func'] =  distance_quantiles  
         self.params['quantile_nodes'] = 20
         self.params['split_output'] = [1]
@@ -61,7 +61,7 @@ class TestABC(unittest.TestCase):
         self.sampler_ABC = ABC( self.params ) 
 
         self.W = [1.0/self.params['M'] for i in range( self.params['M'] )]
-        self.params = summ_quantiles(self.params['dataset1'], self.params)   	 
+        self.params = summ_quantiles(self.params['dataset1'], self.params) 
 
     def test_DrawAllParams( self ):
          
