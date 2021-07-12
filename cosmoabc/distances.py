@@ -33,7 +33,7 @@ def GRBF(vec):
   
         return np.log(core_exp)
 
-    except KeyboardInterrupt, e:
+    except KeyboardInterrupt as e:
         pass
 
 def logf(var):
@@ -121,7 +121,7 @@ def summ_quantiles( dataset1, Parameters ):
     qlist = np.arange(0.05, 1.0, 0.95/Parameters['quantile_nodes'])
 
     Parameters['extra'] = []
-    for i1 in xrange(len( dataset1[0])):
+    for i1 in range(len( dataset1[0])):
 
         Parameters['extra'].append(np.array([mquantiles(dataset1[:,i1], 
                                    prob=item) for item in qlist]))
@@ -145,7 +145,7 @@ def distance_quantiles(dataset2, Parameters):
 
 
     qd = []
-    for j1 in xrange(len(dataset2[0])):
+    for j1 in range(len(dataset2[0])):
         qd.append(np.array([mquantiles(dataset2[:, j1 ], prob=item) 
                               for item in qlist]))
         
@@ -154,7 +154,7 @@ def distance_quantiles(dataset2, Parameters):
     l2 = len(dataset2)
 
     d = []
-    for j2 in xrange(len(dataset2[0])):
+    for j2 in range(len(dataset2[0])):
         d.append(np.linalg.norm(Parameters['extra'][ j2] - qd[j2]))
 
     
