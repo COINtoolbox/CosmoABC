@@ -47,11 +47,11 @@ __license__ = "GPL3"
 
 
 
-from ABC_functions import SelectParamInnerLoop, SetDistanceFromSimulation, DrawAllParams
-from ABC_sampler import ABC
-from distances import distance_quantiles, distance_GRBF
-from priors import flat_prior, gaussian_prior, beta_prior
-from plots import plot_1p, plot_2p, plot_3p
+from .ABC_functions import SelectParamInnerLoop, SetDistanceFromSimulation, DrawAllParams
+from .ABC_sampler import ABC
+from .distances import distance_quantiles, distance_GRBF
+from .priors import flat_prior, gaussian_prior, beta_prior
+from .plots import plot_1p, plot_2p, plot_3p
 
 
 def __cite__():
