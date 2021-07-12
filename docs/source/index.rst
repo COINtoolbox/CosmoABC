@@ -331,14 +331,12 @@ this will return::
 Requirements
 ************
 
-* Python 2.7
-* numpy >=1.8.2
-* scipy >= 0.14.0
-* statsmodels >= 0.5.0
-* matplotlib >= 1.3.1     
+* Python 3.7.1
+* numpy >=1.21.0
+* scipy >= 1.7.0
+* statsmodels >= 0.12.0
+* matplotlib >= 3.4.2     
 * argparse >= 1.1
-* multiprocessing >= 0.70a1
-
 
 
 Optional
