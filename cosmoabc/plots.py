@@ -9,7 +9,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 
-from .weighted_gaussian_kde import gaussian_kde
+from weighted_gaussian_kde import gaussian_kde
 
 np.warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning) 
 
@@ -46,7 +46,7 @@ def plot_1p(T, file_output, Parameters):
 
     par1 = Parameters['param_to_fit'][0]
     y0 = [Parameters['prior'][par1]['func'](Parameters['prior'][par1]) 
-          for x in range(Parameters['M'])]
+          for x in xrange(Parameters['M'])]
     w0 = [1.0/len(y0) for i1 in y0]
 
     kde0 = gaussian_kde(y0 , weights=w0)
@@ -79,7 +79,7 @@ def plot_1p(T, file_output, Parameters):
         pdf.savefig()
         plt.close()
 
-        print('Finished plotting particle system T=0')
+        print 'Finished plotting particle system T=0'
 
         for i in range(T+1):
            
@@ -92,7 +92,7 @@ def plot_1p(T, file_output, Parameters):
      
             epsilon_ev.append([float(d[1][d[0].index('dist_threshold' + 
                                str(jj + 1))]) 
-                               for jj in range(Parameters['dist_dim'])])
+                               for jj in xrange(Parameters['dist_dim'])])
             time_ev.append(sum(float(line[d[0].index('time')]) 
                            for line in d1[1:]))
             ndraws_ev.append(sum(float(line[d[0].index('NDraws')]) 
@@ -123,15 +123,15 @@ def plot_1p(T, file_output, Parameters):
             pdf.savefig()
             plt.close()
 
-            print('Finished plotting particle system T=' + str(i + 1))
+            print 'Finished plotting particle system T=' + str(i + 1)
 
         convergence = np.array([float(Parameters['M'])/item  
                                 for item in ndraws_ev])
     
         #Plot epsilon evolution
         plt.figure()
-        for kk in range(Parameters['dist_dim']):
-            plt.scatter(list(range(1,  T + 2)), np.array(epsilon_ev)[:,kk]/
+        for kk in xrange(Parameters['dist_dim']):
+            plt.scatter(range(1,  T + 2), np.array(epsilon_ev)[:,kk]/
                         max(np.array(epsilon_ev)[:,kk]), 
                         color=color[kk], marker=marker[kk], 
                         label='distance threshold' + str(kk + 1))
@@ -142,7 +142,7 @@ def plot_1p(T, file_output, Parameters):
         plt.close()
 
         plt.figure()
-        plt.scatter(list(range(1, T + 2)), np.array(time_ev), 
+        plt.scatter(range(1, T + 2), np.array(time_ev), 
                    color=color[Parameters['dist_dim']], 
                    marker=marker[Parameters['dist_dim']], 
                    label='time' )
@@ -153,7 +153,7 @@ def plot_1p(T, file_output, Parameters):
         plt.close()
 
         plt.figure()
-        plt.scatter(list(range(1, T + 2)), convergence, 
+        plt.scatter(range(1, T + 2), convergence, 
                     color=color[Parameters['dist_dim'] + 1], 
                     marker=marker[Parameters['dist_dim'] + 1], 
                     label='convergence')
@@ -203,7 +203,7 @@ def plot_2p(T, file_output, Parameters):
 
     y0 = np.array([[Parameters['prior'][par]['func'](Parameters['prior'][par]) 
                     for par in Parameters['param_to_fit']] 
-                    for x in range(Parameters['M'])])
+                    for x in xrange(Parameters['M'])])
     
     w0 = [1.0/len(y0) for i in y0]
 
@@ -296,7 +296,7 @@ def plot_2p(T, file_output, Parameters):
         pdf.savefig()
         plt.close()
 
-        print('Finished plotting particle system T=0') 
+        print 'Finished plotting particle system T=0' 
 
         for i in range(T+1):
            
@@ -309,7 +309,7 @@ def plot_2p(T, file_output, Parameters):
      
             epsilon_ev.append([float(d[1][d[0].index('dist_threshold' + 
                                str(jj + 1))])       
-                               for jj in range(Parameters['dist_dim'])])
+                               for jj in xrange(Parameters['dist_dim'])])
 
             time_ev.append(sum(float(line[d[0].index('time')]) 
                            for line in d1[1:]))
@@ -396,7 +396,7 @@ def plot_2p(T, file_output, Parameters):
             pdf.savefig()
             plt.close()
            
-            print('Finished plotting particle system T=' + str(i + 1))
+            print 'Finished plotting particle system T=' + str(i + 1)
 
     
         convergence = np.array([float(Parameters['M'])/item  
@@ -404,8 +404,8 @@ def plot_2p(T, file_output, Parameters):
     
         #Plot epsilon evolution
         plt.figure()
-        for jj in range(Parameters['dist_dim']):
-            plt.scatter(list(range(1, T + 2)), np.array(epsilon_ev)[:,jj]/
+        for jj in xrange(Parameters['dist_dim']):
+            plt.scatter(range(1, T + 2), np.array(epsilon_ev)[:,jj]/
                         max(np.array(epsilon_ev)[:,jj]), 
                         color=color[jj], marker=marker[jj], 
                         label='distance threshold' + str(jj + 1))
@@ -416,7 +416,7 @@ def plot_2p(T, file_output, Parameters):
         plt.close()
 
         plt.figure()
-        plt.scatter(list(range(1, T + 2)), np.array(time_ev), 
+        plt.scatter(range(1, T + 2), np.array(time_ev), 
                    color=color[Parameters['dist_dim']], 
                    marker=marker[Parameters['dist_dim']], label='time')
         plt.legend(loc='upper left')
@@ -426,7 +426,7 @@ def plot_2p(T, file_output, Parameters):
         plt.close()
 
         plt.figure()
-        plt.scatter(list(range(1, T + 2)), convergence, 
+        plt.scatter(range(1, T + 2), convergence, 
                     color=color[Parameters['dist_dim'] + 1], 
                     marker=marker[Parameters['dist_dim'] + 1], 
                     label='convergence')
@@ -501,7 +501,7 @@ def plot_3p(T, file_output, Parameters):
 
     y0 = np.array([[Parameters['prior'][par]['func'](Parameters['prior'][par]) 
                     for par in Parameters['param_to_fit']] 
-                    for x in range(Parameters['M'])])
+                    for x in xrange(Parameters['M'])])
     
     w0 = [1.0/len(y0) for i in y0]
 
@@ -640,7 +640,7 @@ def plot_3p(T, file_output, Parameters):
         pdf.savefig()
         plt.close()
 
-        print('Finished plotting particle system T=0')
+        print 'Finished plotting particle system T=0'
 
         for i in range(T+1):
            
@@ -659,7 +659,7 @@ def plot_3p(T, file_output, Parameters):
 
             epsilon_ev.append([float(d[1][d[0].index('dist_threshold' + 
                                str(jj + 1))])  
-                              for jj in range(Parameters['dist_dim'])])
+                              for jj in xrange(Parameters['dist_dim'])])
 
             time_ev.append(sum(float(line[ d[0].index('time')]) 
                            for line in d1[1:]))
@@ -819,15 +819,15 @@ def plot_3p(T, file_output, Parameters):
             pdf.savefig()
             plt.close()
 
-            print('Finished plotting particle system T=' + str(i + 1))
+            print 'Finished plotting particle system T=' + str(i + 1)
     
         convergence = np.array([float(Parameters['M'])/item  
                                 for item in ndraws_ev])
     
         #Plot epsilon evolution
         plt.figure()
-        for jj in range(Parameters['dist_dim']):
-            plt.scatter(list(range(1,T + 2)), np.array(epsilon_ev)[:, jj]/ 
+        for jj in xrange(Parameters['dist_dim']):
+            plt.scatter(range(1,T + 2), np.array(epsilon_ev)[:, jj]/ 
                         max(np.array(epsilon_ev)[:,jj]), 
                         color=color[jj], marker=marker[jj], 
                         label='distance threshold' + str(jj + 1))
@@ -838,7 +838,7 @@ def plot_3p(T, file_output, Parameters):
         plt.close()
 
         plt.figure()
-        plt.scatter(list(range(1, T+2)), np.array(time_ev), 
+        plt.scatter(range(1, T+2 ), np.array(time_ev), 
                     color=color[Parameters['dist_dim']], 
                     marker=marker[Parameters['dist_dim']], label='time')
         plt.legend(loc='upper left')
@@ -848,7 +848,7 @@ def plot_3p(T, file_output, Parameters):
         plt.close()
 
         plt.figure()
-        plt.scatter(list(range(1, T + 2)), convergence, 
+        plt.scatter(range(1, T + 2), convergence, 
                     color=color[Parameters['dist_dim'] + 1], 
                     marker=marker[Parameters['dist_dim'] + 1], 
                     label='convergence')

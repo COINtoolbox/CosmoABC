@@ -37,7 +37,7 @@ def main(args):
                 params['prior'][par]['func'] = getattr(m1, params['prior_func'][params['param_to_fit'].index(par)])
 
     if not args.output:
-        output_file = input('Enter root for output files (no extension):  ')
+        output_file = raw_input('Enter root for output files (no extension):  ')
     else:
         output_file = args.output
 
@@ -50,7 +50,7 @@ def main(args):
             params['simulation_input']['cov'] = np.loadtxt(fname_cov)
             params['cov'] = np.loadtxt(fname_cov)
         except IOError:
-            print('Provide name of file containing covariance matrix!')
+            print 'Provide name of file containing covariance matrix!'
 
     #test distance between identical cataloges
     distance_equal = np.atleast_1d(params['distance_func'](params['dataset1'], params))
@@ -58,37 +58,37 @@ def main(args):
     if distance_equal.any() != 0.0:
         raise ValueError('Distance for 2 identical cataloges = ' + str(distance_equal))
     else:
-        print('Distance between identical cataloges = ' + str(distance_equal))
+        print 'Distance between identical cataloges = ' + str(distance_equal)
 
     #test a single distance calculation
     new_sim_input = DrawAllParams(params['prior'])
 
-    for j in range(params['npar']):
+    for j in xrange(params['npar']):
         params['simulation_input'][params['param_to_fit'][j]] = new_sim_input[j]
  
     data_simul = params['simulation_func'](params['simulation_input'])   
 
     try:
         distance_single = params['distance_func'](data_simul, params)
-        print('New parameter value = ' + str(new_sim_input))
-        print('Distance between observed and simulated data = ' + str(distance_single)) 
+        print 'New parameter value = ' + str(new_sim_input)
+        print 'Distance between observed and simulated data = ' + str(distance_single) 
     except ValueError:
-        print('Error in calculating single distance with parameters:')
+        print 'Error in calculating single distance with parameters:'
         for item in params['param_to_fit']:
-            print(item + '=' + str(params['simulation_input'][item]))
+            print item + '=' + str(params['simulation_input'][item])
 
-    if str(distance_single) == 'nan':
-        print('NaN found!')
+    if str(distance_single) is 'nan':
+        print 'NaN found!'
     
     #generate grid for distance behaviour inspection
-    ngrid = int(input('Enter number of draws in parameter grid: '))    
-    param_grid = [DrawAllParams(params['prior']) for j1 in range(ngrid)]
+    ngrid = int(raw_input('Enter number of draws in parameter grid: '))    
+    param_grid = [DrawAllParams(params['prior']) for j1 in xrange(ngrid)]
 
     #open output data file
     op = open(output_file + '.dat', 'w')
     for par in params['param_to_fit']:
         op.write(par + '    ')
-    for i1 in range(len(distance_equal)):
+    for i1 in xrange(len(distance_equal)):
         op.write('dist' + str(i1 + 1) + '    ')
     op.write('\n')
 
@@ -96,11 +96,11 @@ def main(args):
     for pars in param_grid:
 
         if params['screen']:         
-            print('Particle index: ' + str(len(grid)+1))
+            print 'Particle index: ' + str(len(grid)+1)
  
         grid_element = list(pars)
  
-        for j1 in range(params['npar']):
+        for j1 in xrange(params['npar']):
             params['simulation_input'][params['param_to_fit'][j1]] = pars[j1]
          
         data_simul_grid = params['simulation_func'](params['simulation_input']) 
@@ -127,9 +127,9 @@ def main(args):
                         wspace=0.25, hspace=0.25)
     
     n=0
-    for par_indx in range(params['npar']):
+    for par_indx in xrange(params['npar']):
         p1 = params['param_to_fit'][par_indx]
-        for dist_indx in range(len(distance_single)):
+        for dist_indx in xrange(len(distance_single)):
 
             n = n + 1
             ylim = np.std( grid[:,params['npar'] + dist_indx])
@@ -145,7 +145,7 @@ def main(args):
     plt.savefig(output_file + '.pdf')
     plt.close()
   
-    print('\n Figure containing distance results is stored in ' + output_file + '.pdf')
+    print '\n Figure containing distance results is stored in ' + output_file + '.pdf'
 
 if __name__=='__main__':
   
