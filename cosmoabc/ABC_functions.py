@@ -339,9 +339,14 @@ def SetDistanceFromSimulation(var):
    
         #calculate distance
         dist = var['distance_func'](DataSimul, var)
+        
+        if isinstance(dist, float):
+            check_dist = dist > 0
+        else:
+            dist = np.array(dist, dtype=object)
+            check_dist = np.linalg.norm(dist) > 0
 
-        if dist >= 0:
-
+        if check_dist:
             total_time = time.time() - time1
             if var['screen']:
                 print 'Calculated distance: \n   ' + str(dist)
