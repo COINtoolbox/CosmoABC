@@ -31,7 +31,7 @@ Optional external dependences:
 """
 
 import argparse
-import imp
+import importlib.machinery as imp
 
 from cosmoabc.distances import distance_quantiles, distance_GRBF
 from cosmoabc.priors import flat_prior, gaussian_prior, beta_prior
@@ -42,7 +42,7 @@ from cosmoabc.ABC_functions import read_input, get_cores, DrawAllParams, SetDist
 def main( args ):
 
     user_input = read_input(args.input)
-    m1 = imp.load_source(args.functions[:-3], args.functions)
+    m1 = imp.SourceFileLoader(args.functions[:-3], args.functions).load_module()
 
     user_input['simulation_func'] = getattr(m1, user_input['simulation_func'][0])
 
