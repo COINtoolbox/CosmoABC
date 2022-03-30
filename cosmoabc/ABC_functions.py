@@ -74,7 +74,7 @@ def read_input(filename):
     params['dist_dim'] = int(params_ini['dist_dim'][0])
     
     #functions
-    from distances import distance_GRBF
+    from .distances import distance_GRBF
     dispatcher = {'flat_prior': flat_prior, 
                   'gaussian_prior': gaussian_prior, 'beta_prior': beta_prior, 
                   'distance_quantiles': distance_quantiles, 

@@ -19,7 +19,6 @@ setup(name='cosmoabc',
                       'scipy>=1.7.0',
                       'statsmodels>=0.12.2',
                       'matplotlib>=3.4.2',
-                      'distribute',
                       'datetime'               
       ],
       scripts=['cosmoabc/bin/run_ABC.py', 'cosmoabc/bin/run_ABC_NumCosmo.py',
