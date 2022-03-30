@@ -414,7 +414,8 @@ class ABC(object):
             indx = len(self.params['param_to_fit'])
             denominator = sum(W[i3]*multivariate_normal.pdf(
                               current_particle_system[i4][:indx], 
-                              previous_particle_system[i3][:indx], cov=cov1) 
+                              previous_particle_system[i3][:indx],
+                              cov=cov1, allow_singular=True) 
                               for i3 in range(len(W)))
 
             new_weights.append(nominator/denominator)
