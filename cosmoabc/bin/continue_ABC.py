@@ -31,7 +31,7 @@ Optional external dependences:
 """
 
 import argparse
-import imp
+import importlib.machinery as imp
 
 from cosmoabc.distances import distance_quantiles, distance_GRBF
 from cosmoabc.priors import flat_prior, gaussian_prior, beta_prior
@@ -45,7 +45,7 @@ def main(args):
     if user_input['path_to_obs'] == 'None':
         raise IOError('It is not possible to continue a process without determining a static data set.')    
 
-    m1 = imp.load_source(args.functions[:-3], args.functions)
+    m1 = imp.SourceFileLoader(args.functions[:-3], args.functions).load_module()
 
     user_input['simulation_func'] = getattr(m1, user_input['simulation_func'][0])
 
