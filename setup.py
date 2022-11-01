@@ -20,7 +20,7 @@ setup(name='cosmoabc',
                       'statsmodels>=0.12.2',
                       'matplotlib>=3.4.2',
                       'distribute',
-                      'datetime'               
+                      'datetime',
       ],
       scripts=['cosmoabc/bin/run_ABC.py', 'cosmoabc/bin/run_ABC_NumCosmo.py',
                'cosmoabc/bin/continue_ABC.py', 'cosmoabc/bin/continue_ABC_NumCosmo.py',
