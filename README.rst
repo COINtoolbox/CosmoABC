@@ -1,5 +1,6 @@
 .. image:: docs/source/nstatic/COIN_logo_small.png
   :align: right
+  :target: https://cosmostatistics-initiative.org/
 
 
 cosmoabc - Likelihood free inference for cosmology
